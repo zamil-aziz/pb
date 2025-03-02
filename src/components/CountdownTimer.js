@@ -1,4 +1,3 @@
-'use client';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { PhotoboothContext } from '../contexts/PhotoboothContext';
 import { capturePhoto } from '../lib/cameraUtils';
@@ -67,14 +66,12 @@ export default function CountdownTimer() {
                         return 0;
                     } else {
                         setMessage(`Great! ${state.photosPerSession - newCount} more to go`);
-                        setTimeout(() => {
-                            setCountdown(3);
-                            setMessage('Get Ready!');
-                        }, 1500);
+                        setCountdown(3); // Reset countdown immediately
+                        setMessage('Get Ready!');
                         return newCount;
                     }
                 });
-            }, 500);
+            }, 400);
         }
     }, [countdown, photosTaken, state.photosPerSession, dispatch]);
 
@@ -104,7 +101,7 @@ export default function CountdownTimer() {
                     }}
                 />
 
-                <div className='absolute inset-0 flex flex-col items-center justify-center'>
+                <div className='absolute z-20 inset-0 flex flex-col items-center justify-center'>
                     <div className='bg-black bg-opacity-60 rounded-full w-40 h-40 flex items-center justify-center'>
                         <span className='text-9xl font-bold text-white'>{countdown > 0 ? countdown : '📸'}</span>
                     </div>
@@ -116,7 +113,7 @@ export default function CountdownTimer() {
             </div>
 
             <div className='p-4 text-center'>
-                <p className='text-lg'>
+                <p className='text-2xl text-gray-400'>
                     Photo {photosTaken + 1} of {state.photosPerSession}
                 </p>
             </div>

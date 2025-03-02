@@ -16,9 +16,9 @@ export default function PhotoPreview() {
                 ))}
             </div>
 
-            <div className='p-4 text-center'>
+            <div className='p-4 text-center text-gray-400'>
                 <p className='text-2xl mb-4'>Looking good! What would you like to do?</p>
-                <p className='text-xl mb-6'>Price: ${state.price.toFixed(2)}</p>
+                <p className='text-xl mb-6'>Price: RM {state.price.toFixed(2)}</p>
             </div>
 
             <div className='grid grid-cols-2 gap-4 p-6'>

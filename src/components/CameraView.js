@@ -45,7 +45,7 @@ export default function CameraView() {
 
     return (
         <div className='w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden'>
-            <h2 className='text-3xl font-bold p-4 text-center'>Ready to Take Your Photos</h2>
+            <h2 className='text-2xl font-bold p-4 text-gray-400 text-center'>Ready to Take Your Photos</h2>
 
             <div className='relative mx-auto overflow-hidden rounded-lg'>
                 {state.selectedBackground && (
@@ -86,7 +86,7 @@ export default function CameraView() {
                 </button>
             </div>
 
-            <div className='text-center p-4'>
+            <div className='text-center p-4 text-gray-400'>
                 <p className='text-lg'>{state.photosPerSession} photos will be taken. Get ready to pose!</p>
             </div>
         </div>

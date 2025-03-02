@@ -91,14 +91,14 @@ export default function Photobooth() {
                 <div className='absolute bottom-40 left-40 w-16 h-16 rounded-full bg-gradient-to-r from-yellow-300 to-orange-300 opacity-20 blur-lg'></div>
 
                 {state.currentView === 'welcome' && (
-                    <div className='text-center p-8 max-w-6xl mx-auto bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white border-opacity-40 relative overflow-hidden'>
+                    <div className='text-center p-8 max-w-4xl mx-auto bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white border-opacity-40 relative overflow-hidden'>
                         <div className='absolute top-0 right-0 w-32 h-32 -mt-10 -mr-10 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full opacity-10'></div>
                         <div className='absolute bottom-0 left-0 w-40 h-40 -mb-16 -ml-16 bg-gradient-to-tr from-blue-400 to-indigo-400 rounded-full opacity-10'></div>
 
                         <h2 className='text-6xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600'>
                             Touch to Start!
                         </h2>
-                        <p className='text-2xl mb-10 text-gray-700'>Capture memories with amazing backgrounds</p>
+                        <p className='text-3xl mb-10 text-gray-700'>Capture memories with amazing backgrounds</p>
 
                         <div className='mb-10'>
                             <BackgroundSelector />
@@ -109,7 +109,6 @@ export default function Photobooth() {
                             className='bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-6 px-12 rounded-full text-3xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl'
                         >
                             Start
-                            <span className='ml-2'>✨</span>
                         </button>
                     </div>
                 )}
