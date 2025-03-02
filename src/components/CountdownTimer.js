@@ -1,6 +1,7 @@
+'use client';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { PhotoboothContext } from '../contexts/PhotoboothContext';
-import { capturePhoto } from '../lib/cameraUtils';
+import { capturePhoto, preloadSegmentationModel } from '../lib/cameraUtils';
 
 export default function CountdownTimer() {
     const videoRef = useRef(null);
@@ -9,10 +10,12 @@ export default function CountdownTimer() {
     const [photosTaken, setPhotosTaken] = useState(0);
     const [message, setMessage] = useState('Get Ready!');
     const [showCountdown, setShowCountdown] = useState(true);
+    const [modelLoaded, setModelLoaded] = useState(false);
     const { state, dispatch } = useContext(PhotoboothContext);
 
-    // Initialize camera
+    // Initialize camera and load TensorFlow model
     useEffect(() => {
+        // Start camera
         if (videoRef.current) {
             navigator.mediaDevices
                 .getUserMedia({
@@ -38,6 +41,14 @@ export default function CountdownTimer() {
                 });
         }
 
+        // Preload the segmentation model
+        const loadModel = async () => {
+            const success = await preloadSegmentationModel();
+            setModelLoaded(success);
+        };
+
+        loadModel();
+
         return () => {
             if (videoRef.current && videoRef.current.srcObject) {
                 videoRef.current.srcObject.getTracks().forEach(track => track.stop());
@@ -54,8 +65,9 @@ export default function CountdownTimer() {
             // Take photo
             setMessage('Smile!');
 
-            setTimeout(() => {
-                const photo = capturePhoto(videoRef.current, canvasRef.current, state.selectedBackground);
+            setTimeout(async () => {
+                // Capture photo with segmentation
+                const photo = await capturePhoto(videoRef.current, canvasRef.current, state.selectedBackground);
                 dispatch({ type: 'ADD_PHOTO', payload: photo });
 
                 // First hide the countdown
@@ -125,10 +137,16 @@ export default function CountdownTimer() {
                     playsInline
                     className='w-full h-auto z-10 relative'
                     style={{
-                        mixBlendMode: state.selectedBackground ? 'screen' : 'normal',
-                        opacity: state.selectedBackground ? 0.9 : 1,
+                        mixBlendMode: 'normal', // No longer using blend mode - we'll use segmentation
+                        opacity: 1,
                     }}
                 />
+
+                {!modelLoaded && state.selectedBackground && (
+                    <div className='absolute top-0 left-0 right-0 bg-yellow-500 text-black p-2 text-center'>
+                        <p>Loading segmentation model for better backgrounds...</p>
+                    </div>
+                )}
 
                 {showCountdown && (
                     <div className='absolute z-20 inset-0 flex flex-col items-center justify-center'>
