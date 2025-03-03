@@ -2,7 +2,6 @@
 import { useRef, useEffect, useContext, useState } from 'react';
 import { PhotoboothContext } from '../contexts/PhotoboothContext';
 import * as bodyPix from '@tensorflow-models/body-pix';
-import * as tf from '@tensorflow/tfjs';
 
 export default function CameraView() {
     const videoRef = useRef(null);
@@ -14,37 +13,31 @@ export default function CameraView() {
     const backgroundImageRef = useRef(null);
     const [error, setError] = useState(null);
 
+    // Initialize camera with simpler approach
+    const initializeCamera = async () => {
+        if (!videoRef.current) return;
+
+        try {
+            // Try main camera first
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: false,
+            });
+
+            if (videoRef.current) {
+                videoRef.current.srcObject = stream;
+            }
+        } catch (err) {
+            console.error('Camera access failed:', err);
+            setError(
+                'Could not access camera. Please check your browser permissions and ensure your camera is working.'
+            );
+        }
+    };
+
     // Initialize camera and load TensorFlow model
     useEffect(() => {
-        // Start camera
-        if (videoRef.current) {
-            navigator.mediaDevices
-                .getUserMedia({
-                    video: {
-                        facingMode: 'environment',
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 },
-                    },
-                })
-                .then(stream => {
-                    videoRef.current.srcObject = stream;
-                })
-                .catch(err => {
-                    console.error('Error accessing camera:', err);
-                    setError('Camera access error. Please allow camera access.');
-                    // Fallback to any available camera
-                    navigator.mediaDevices
-                        .getUserMedia({ video: true })
-                        .then(stream => {
-                            videoRef.current.srcObject = stream;
-                            setError(null);
-                        })
-                        .catch(fallbackErr => {
-                            console.error('Fallback camera also failed:', fallbackErr);
-                            setError('Could not access any camera. Please check your browser permissions.');
-                        });
-                });
-        }
+        initializeCamera();
 
         // Load background image if selected
         if (state.selectedBackground && state.selectedBackground.url) {
@@ -60,23 +53,25 @@ export default function CameraView() {
             backgroundImageRef.current = null;
         }
 
-        // Preload the segmentation model
+        // Preload the segmentation model (only if a background is selected)
         const loadModel = async () => {
-            try {
-                console.log('Loading BodyPix model...');
-                const loadedModel = await bodyPix.load({
-                    architecture: 'MobileNetV1',
-                    outputStride: 16,
-                    multiplier: 0.75,
-                    quantBytes: 2,
-                });
-                console.log('BodyPix model loaded successfully');
-                setModel(loadedModel);
-                setModelLoaded(true);
-            } catch (error) {
-                console.error('Failed to load BodyPix model:', error);
-                setModelLoaded(false);
-                setError('Failed to load the background segmentation model. Please try again later.');
+            if (state.selectedBackground) {
+                try {
+                    console.log('Loading BodyPix model...');
+                    const loadedModel = await bodyPix.load({
+                        architecture: 'MobileNetV1',
+                        outputStride: 16,
+                        multiplier: 0.75,
+                        quantBytes: 2,
+                    });
+                    console.log('BodyPix model loaded successfully');
+                    setModel(loadedModel);
+                    setModelLoaded(true);
+                } catch (error) {
+                    console.error('Failed to load BodyPix model:', error);
+                    setModelLoaded(false);
+                    setError('Failed to load the background segmentation model. Please try again later.');
+                }
             }
         };
 
@@ -97,6 +92,11 @@ export default function CameraView() {
 
     // Setup segmentation preview when model is loaded
     useEffect(() => {
+        // If no background is selected, don't try to do segmentation
+        if (!state.selectedBackground) {
+            return;
+        }
+
         // Important check: If we don't have all required elements, don't proceed
         if (!model || !videoRef.current || !canvasRef.current) {
             console.log('Missing required elements for segmentation:', {
@@ -104,12 +104,6 @@ export default function CameraView() {
                 video: !!videoRef.current,
                 canvas: !!canvasRef.current,
             });
-            return;
-        }
-
-        // If no background is selected, don't try to do segmentation
-        if (!state.selectedBackground) {
-            console.log('No background selected, skipping segmentation');
             return;
         }
 
@@ -243,29 +237,6 @@ export default function CameraView() {
         };
     }, [model, state.selectedBackground]);
 
-    // Function to render a fallback view when no segmentation is possible
-    const renderFallbackView = () => {
-        if (videoRef.current && canvasRef.current) {
-            const ctx = canvasRef.current.getContext('2d');
-            if (ctx) {
-                ctx.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
-            }
-        }
-    };
-
-    // Simple fallback for showing video when segmentation is not working
-    useEffect(() => {
-        if (!model && videoRef.current && canvasRef.current) {
-            const interval = setInterval(() => {
-                if (videoRef.current.readyState >= 2) {
-                    renderFallbackView();
-                }
-            }, 100);
-
-            return () => clearInterval(interval);
-        }
-    }, [model]);
-
     return (
         <div className='p-8 max-w-4xl mx-auto bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white border-opacity-40 relative overflow-hidden'>
             {/* Decorative elements */}
@@ -279,11 +250,19 @@ export default function CameraView() {
             </h2>
 
             <div className='relative mx-auto overflow-hidden rounded-xl shadow-lg mb-8'>
-                {/* Video element - visible as fallback if canvas fails */}
-                <video ref={videoRef} autoPlay playsInline className={model ? 'hidden' : 'w-full h-auto rounded-xl'} />
+                {/* Show video directly when no background is selected */}
+                <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    className={!state.selectedBackground || !modelLoaded ? 'w-full h-auto rounded-xl' : 'hidden'}
+                />
 
-                {/* Canvas for segmentation */}
-                <canvas ref={canvasRef} className={model ? 'w-full h-auto rounded-xl' : 'hidden'} />
+                {/* Canvas for segmentation when background is selected */}
+                <canvas
+                    ref={canvasRef}
+                    className={state.selectedBackground && modelLoaded ? 'w-full h-auto rounded-xl' : 'hidden'}
+                />
 
                 {!modelLoaded && state.selectedBackground && (
                     <div className='absolute top-0 left-0 right-0 bg-yellow-500 text-black p-2 text-center'>
@@ -317,6 +296,12 @@ export default function CameraView() {
             <div className='text-center'>
                 <p className='text-xl text-gray-700 mb-2'>{state.photosPerSession} photos will be taken</p>
                 <p className='text-lg text-gray-500'>Get ready to strike your best pose!</p>
+
+                {!state.selectedBackground && (
+                    <p className='mt-4 text-amber-400 font-medium'>
+                        No background selected. Photos will be taken with your natural background.
+                    </p>
+                )}
             </div>
         </div>
     );
