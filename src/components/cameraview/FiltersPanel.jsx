@@ -1,6 +1,23 @@
 import React from 'react';
+import { Camera, Film, Sun, Moon } from 'lucide-react';
 
 export const FiltersPanel = ({ filters, selectedFilter, applyFilter }) => {
+    // Map filter IDs to appropriate icons with colors
+    const getFilterIcon = filterId => {
+        switch (filterId) {
+            case 'normal':
+                return <Camera size={24} className='text-purple-600' />;
+            case 'grayscale':
+                return <Film size={24} className='text-gray-600' />;
+            case 'warm':
+                return <Sun size={24} className='text-amber-500' />;
+            case 'high-contrast':
+                return <Moon size={24} className='text-indigo-600' />;
+            default:
+                return <Camera size={24} className='text-purple-600' />;
+        }
+    };
+
     return (
         <div className='space-y-2 sm:space-y-4'>
             <div className='flex justify-between items-center'>
@@ -47,9 +64,14 @@ export const FiltersPanel = ({ filters, selectedFilter, applyFilter }) => {
                         }}
                     >
                         <div
-                            className='w-full bg-gradient-to-r from-indigo-200 to-purple-200'
-                            style={{ ...filter.style, aspectRatio: '5/3', maxHeight: '60px' }}
-                        ></div>
+                            className={`w-full flex items-center justify-center py-3 ${
+                                selectedFilter === filter.id ? 'bg-purple-100' : 'bg-gray-50'
+                            }`}
+                            style={{ aspectRatio: '5/3', maxHeight: '80px' }}
+                        >
+                            {/* Display the filter icon */}
+                            {getFilterIcon(filter.id)}
+                        </div>
                         <div
                             className={`text-center py-1 text-xs sm:text-sm ${
                                 selectedFilter === filter.id ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-800'

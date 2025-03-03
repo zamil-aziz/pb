@@ -27,10 +27,7 @@ export default function CameraPreview() {
     // Define available filters
     const filters = [
         { id: 'normal', name: 'Normal', style: {} },
-        { id: 'grayscale', name: 'Grayscale', style: { filter: 'grayscale(100%)' } },
-        { id: 'sepia', name: 'Sepia', style: { filter: 'sepia(80%)' } },
-        { id: 'vintage', name: 'Vintage', style: { filter: 'sepia(50%) contrast(120%) brightness(90%)' } },
-        { id: 'cool', name: 'Cool', style: { filter: 'saturate(120%) hue-rotate(180deg)' } },
+        { id: 'grayscale', name: 'Retro', style: { filter: 'grayscale(100%)' } },
         { id: 'warm', name: 'Warm', style: { filter: 'saturate(130%) hue-rotate(30deg) brightness(105%)' } },
         { id: 'high-contrast', name: 'High Contrast', style: { filter: 'contrast(150%) brightness(110%)' } },
     ];

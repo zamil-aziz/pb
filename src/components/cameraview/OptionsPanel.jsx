@@ -14,7 +14,7 @@ export const OptionsPanel = ({
 }) => {
     return (
         <div
-            className='mb-3 sm:mb-4 bg-white bg-opacity-80 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-md sm:shadow-lg border border-purple-100 flex-shrink-0 w-full max-w-full sm:max-w-xl md:max-w-2xl mx-auto'
+            className='mb-3 sm:mb-4 bg-white bg-opacity-80 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-md sm:shadow-lg border border-purple-100 flex-shrink-0 w-full max-w-full'
             style={{ height: '25vh', maxHeight: '25vh' }}
         >
             <div className='flex text-center border-b border-purple-100'>

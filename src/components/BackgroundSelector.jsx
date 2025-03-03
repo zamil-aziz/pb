@@ -23,7 +23,7 @@ export default function BackgroundSelector() {
                     }}
                 >
                     <div
-                        className='bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center'
+                        className='bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center w-full h-full'
                         style={{ aspectRatio: '5/3', maxHeight: '100px' }}
                     >
                         <span className='text-sm sm:text-base md:text-lg font-medium text-gray-600'>No Background</span>
@@ -46,11 +46,11 @@ export default function BackgroundSelector() {
                             }
                         }}
                     >
-                        <div className='relative' style={{ aspectRatio: '5/3', maxHeight: '100px' }}>
+                        <div className='relative w-full h-full' style={{ aspectRatio: '5/3', maxHeight: '100px' }}>
                             <img
                                 src={bg.url}
                                 alt={bg.name}
-                                className='h-full w-full object-cover transition-transform duration-500 group-hover:scale-110'
+                                className='absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110'
                                 loading='lazy'
                             />
                             <div className='absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
