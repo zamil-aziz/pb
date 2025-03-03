@@ -17,8 +17,8 @@ export default function CameraView() {
     const backgroundImageRef = useRef(null);
     const [error, setError] = useState(null);
     const [selectedFilter, setSelectedFilter] = useState(null);
-    // Add this state to track the active tab
     const [selectedTab, setSelectedTab] = useState('backgrounds');
+    const [isLoading, setIsLoading] = useState(true);
 
     // Define available filters
     const filters = [
@@ -36,20 +36,42 @@ export default function CameraView() {
         if (!videoRef.current) return;
 
         try {
-            // Try main camera first
+            setIsLoading(true);
+            // First try user-facing camera for selfies
             const stream = await navigator.mediaDevices.getUserMedia({
-                video: true,
+                video: { facingMode: { ideal: 'user' } },
                 audio: false,
             });
 
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
+                videoRef.current.onloadedmetadata = () => {
+                    setIsLoading(false);
+                };
             }
         } catch (err) {
-            console.error('Camera access failed:', err);
-            setError(
-                'Could not access camera. Please check your browser permissions and ensure your camera is working.'
-            );
+            console.error('Front camera access failed, trying any camera:', err);
+
+            // Fallback to any available camera
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false,
+                });
+
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
+                    videoRef.current.onloadedmetadata = () => {
+                        setIsLoading(false);
+                    };
+                }
+            } catch (fallbackErr) {
+                console.error('Camera access failed completely:', fallbackErr);
+                setIsLoading(false);
+                setError(
+                    'Could not access camera. Please check your browser permissions and ensure your camera is working.'
+                );
+            }
         }
     };
 
@@ -293,21 +315,28 @@ export default function CameraView() {
     };
 
     return (
-        <div className='p-8 max-w-4xl mx-auto bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white border-opacity-40 relative overflow-hidden h-full flex flex-col'>
-            {/* Decorative elements */}
-            <div className='absolute top-0 right-0 w-32 h-32 -mt-10 -mr-10 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full opacity-10'></div>
-            <div className='absolute bottom-0 left-0 w-40 h-40 -mb-16 -ml-16 bg-gradient-to-tr from-blue-400 to-indigo-400 rounded-full opacity-10'></div>
-            <div className='absolute top-10 left-10 w-24 h-24 rounded-full bg-gradient-to-r from-pink-300 to-purple-300 opacity-30 blur-xl'></div>
-            <div className='absolute bottom-20 right-10 w-32 h-32 rounded-full bg-gradient-to-r from-blue-300 to-indigo-300 opacity-30 blur-xl'></div>
+        <div className='p-3 sm:p-6 md:p-8 max-w-full w-full sm:max-w-2xl md:max-w-4xl mx-auto bg-white bg-opacity-90 backdrop-blur-sm rounded-xl sm:rounded-2xl md:rounded-3xl shadow-xl sm:shadow-2xl border border-white border-opacity-40 relative overflow-hidden h-full flex flex-col'>
+            {/* Decorative elements - hidden on small screens */}
+            <div className='absolute top-0 right-0 w-16 sm:w-24 md:w-32 h-16 sm:h-24 md:h-32 -mt-5 sm:-mt-8 md:-mt-10 -mr-5 sm:-mr-8 md:-mr-10 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full opacity-10 hidden sm:block'></div>
+            <div className='absolute bottom-0 left-0 w-20 sm:w-32 md:w-40 h-20 sm:h-32 md:h-40 -mb-8 sm:-mb-12 md:-mb-16 -ml-8 sm:-ml-12 md:-ml-16 bg-gradient-to-tr from-blue-400 to-indigo-400 rounded-full opacity-10 hidden sm:block'></div>
 
-            <h2 className='text-3xl font-bold mb-4 text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600'>
+            <h2 className='text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 md:mb-4 text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600'>
                 Ready to Take Your Photos
             </h2>
 
             <div
-                className='relative mx-auto overflow-hidden rounded-xl shadow-lg mb-4 flex-shrink-0'
-                style={{ height: '40vh' }}
+                className='relative mx-auto overflow-hidden rounded-lg sm:rounded-xl shadow-md sm:shadow-lg mb-3 sm:mb-4 flex-shrink-0 w-full'
+                style={{ height: '35vh', maxHeight: '40vh' }}
             >
+                {isLoading && (
+                    <div className='absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-70 z-20'>
+                        <div className='flex flex-col items-center'>
+                            <div className='w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin'></div>
+                            <p className='mt-2 text-indigo-700 font-medium'>Initializing camera...</p>
+                        </div>
+                    </div>
+                )}
+
                 {/* Show video directly when no background is selected */}
                 <video
                     ref={videoRef}
@@ -329,13 +358,13 @@ export default function CameraView() {
                 />
 
                 {!modelLoaded && state.selectedBackground && (
-                    <div className='absolute top-0 left-0 right-0 bg-yellow-500 text-black p-2 text-center'>
+                    <div className='absolute top-0 left-0 right-0 bg-yellow-500 text-black p-1 sm:p-2 text-center text-xs sm:text-sm'>
                         <p>Loading segmentation model for better backgrounds...</p>
                     </div>
                 )}
 
                 {error && (
-                    <div className='absolute top-0 left-0 right-0 bg-red-500 text-white p-2 text-center'>
+                    <div className='absolute top-0 left-0 right-0 bg-red-500 text-white p-1 sm:p-2 text-center text-xs sm:text-sm'>
                         <p>{error}</p>
                     </div>
                 )}
@@ -343,46 +372,51 @@ export default function CameraView() {
 
             {/* Options panel - with updated UI */}
             <div
-                className='mb-4 bg-white bg-opacity-80 backdrop-blur-sm rounded-xl shadow-lg border border-purple-100 flex-shrink-0 overflow-hidden'
-                style={{ maxHeight: '35vh' }}
+                className='mb-3 sm:mb-4 bg-white bg-opacity-80 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-md sm:shadow-lg border border-purple-100 flex-shrink-0 overflow-hidden w-full max-w-full sm:max-w-xl md:max-w-2xl mx-auto'
+                style={{ maxHeight: '30vh' }}
             >
                 <div className='flex text-center border-b border-purple-100'>
                     <button
-                        className={`flex-1 py-3 px-4 font-medium text-lg ${
+                        className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 font-medium text-sm sm:text-base md:text-lg ${
                             selectedTab === 'backgrounds'
                                 ? 'text-purple-700 border-b-2 border-purple-600'
                                 : 'text-gray-600 hover:text-purple-600'
                         }`}
                         onClick={() => setSelectedTab('backgrounds')}
+                        aria-label='Select backgrounds tab'
                     >
                         Backgrounds
                     </button>
                     <button
-                        className={`flex-1 py-3 px-4 font-medium text-lg ${
+                        className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 font-medium text-sm sm:text-base md:text-lg ${
                             selectedTab === 'filters'
                                 ? 'text-purple-700 border-b-2 border-purple-600'
                                 : 'text-gray-600 hover:text-purple-600'
                         }`}
                         onClick={() => setSelectedTab('filters')}
+                        aria-label='Select filters tab'
                     >
                         Filters
                     </button>
                 </div>
 
-                <div className='p-4 overflow-y-auto' style={{ maxHeight: '28vh' }}>
+                <div className='p-2 sm:p-4 overflow-y-auto' style={{ maxHeight: '25vh' }}>
                     {selectedTab === 'backgrounds' && (
-                        <div className='space-y-4'>
+                        <div className='space-y-2 sm:space-y-4'>
                             <div className='flex justify-between items-center'>
-                                <h3 className='text-lg font-semibold text-purple-700'>Choose Background</h3>
+                                <h3 className='text-base sm:text-lg font-semibold text-purple-700'>
+                                    Choose Background
+                                </h3>
                                 {state.selectedBackground && (
                                     <button
                                         onClick={() => dispatch({ type: 'SET_BACKGROUND', payload: null })}
-                                        className='text-sm text-purple-600 hover:text-purple-800 flex items-center'
+                                        className='text-xs sm:text-sm text-purple-600 hover:text-purple-800 flex items-center'
+                                        aria-label='Reset background selection'
                                     >
                                         <span className='mr-1'>Reset</span>
                                         <svg
                                             xmlns='http://www.w3.org/2000/svg'
-                                            className='h-4 w-4'
+                                            className='h-3 w-3 sm:h-4 sm:w-4'
                                             fill='none'
                                             viewBox='0 0 24 24'
                                             stroke='currentColor'
@@ -402,18 +436,19 @@ export default function CameraView() {
                     )}
 
                     {selectedTab === 'filters' && (
-                        <div className='space-y-4'>
+                        <div className='space-y-2 sm:space-y-4'>
                             <div className='flex justify-between items-center'>
-                                <h3 className='text-lg font-semibold text-purple-700'>Choose Filter</h3>
+                                <h3 className='text-base sm:text-lg font-semibold text-purple-700'>Choose Filter</h3>
                                 {selectedFilter && selectedFilter !== 'normal' && (
                                     <button
                                         onClick={() => applyFilter('normal')}
-                                        className='text-sm text-purple-600 hover:text-purple-800 flex items-center'
+                                        className='text-xs sm:text-sm text-purple-600 hover:text-purple-800 flex items-center'
+                                        aria-label='Reset filter'
                                     >
                                         <span className='mr-1'>Reset</span>
                                         <svg
                                             xmlns='http://www.w3.org/2000/svg'
-                                            className='h-4 w-4'
+                                            className='h-3 w-3 sm:h-4 sm:w-4'
                                             fill='none'
                                             viewBox='0 0 24 24'
                                             stroke='currentColor'
@@ -428,7 +463,7 @@ export default function CameraView() {
                                     </button>
                                 )}
                             </div>
-                            <div className='grid grid-cols-3 sm:grid-cols-4 gap-3'>
+                            <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3'>
                                 {filters.map(filter => (
                                     <div
                                         key={filter.id}
@@ -436,13 +471,21 @@ export default function CameraView() {
                                         className={`relative rounded-lg overflow-hidden cursor-pointer transition-all transform hover:scale-105 ${
                                             selectedFilter === filter.id ? 'ring-2 ring-purple-600 scale-105' : ''
                                         }`}
+                                        role='button'
+                                        aria-label={`Apply ${filter.name} filter`}
+                                        tabIndex={0}
+                                        onKeyDown={e => {
+                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                applyFilter(filter.id);
+                                            }
+                                        }}
                                     >
                                         <div
-                                            className='h-16 w-full bg-gradient-to-r from-indigo-200 to-purple-200'
+                                            className='h-10 sm:h-16 w-full bg-gradient-to-r from-indigo-200 to-purple-200'
                                             style={filter.style}
                                         ></div>
                                         <div
-                                            className={`text-center py-1 text-sm ${
+                                            className={`text-center py-1 text-xs sm:text-sm ${
                                                 selectedFilter === filter.id
                                                     ? 'bg-purple-600 text-white'
                                                     : 'bg-gray-100 text-gray-800'
@@ -454,7 +497,7 @@ export default function CameraView() {
                                             <div className='absolute top-1 right-1'>
                                                 <svg
                                                     xmlns='http://www.w3.org/2000/svg'
-                                                    className='h-5 w-5 text-white bg-purple-600 rounded-full p-1'
+                                                    className='h-4 w-4 sm:h-5 sm:w-5 text-white bg-purple-600 rounded-full p-0.5 sm:p-1'
                                                     fill='none'
                                                     viewBox='0 0 24 24'
                                                     stroke='currentColor'
@@ -476,28 +519,30 @@ export default function CameraView() {
                 </div>
             </div>
 
-            <div className='grid grid-cols-2 gap-4 mb-3 mt-auto'>
+            <div className='grid grid-cols-2 gap-2 sm:gap-4 mb-2 sm:mb-3 mt-auto'>
                 <button
                     onClick={() => dispatch({ type: 'SET_VIEW', payload: 'countdown' })}
-                    className='bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl text-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl'
+                    className='bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-2 sm:py-3 md:py-4 px-4 sm:px-5 md:px-6 rounded-lg sm:rounded-xl text-sm sm:text-base md:text-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50'
+                    aria-label='Take photos'
                 >
                     Take Photos
                 </button>
 
                 <button
                     onClick={() => dispatch({ type: 'SET_VIEW', payload: 'welcome' })}
-                    className='bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-4 px-6 rounded-xl text-xl shadow-lg transform transition-all duration-300 hover:scale-105'
+                    className='bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 sm:py-3 md:py-4 px-4 sm:px-5 md:px-6 rounded-lg sm:rounded-xl text-sm sm:text-base md:text-xl shadow-lg transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50'
+                    aria-label='Go back to welcome screen'
                 >
                     Go Back
                 </button>
             </div>
 
             <div className='text-center'>
-                <p className='text-md text-gray-700 mb-1'>{state.photosPerSession} photos will be taken</p>
-                <p className='text-sm text-gray-500'>Get ready to strike your best pose!</p>
+                <p className='text-sm sm:text-md text-gray-700 mb-1'>{state.photosPerSession} photos will be taken</p>
+                <p className='text-xs sm:text-sm text-gray-500'>Get ready to strike your best pose!</p>
 
                 {!state.selectedBackground && (
-                    <p className='mt-2 text-amber-400 text-sm font-medium'>
+                    <p className='mt-1 sm:mt-2 text-amber-400 text-xs sm:text-sm font-medium'>
                         No background selected. Photos will be taken with your natural background.
                     </p>
                 )}
