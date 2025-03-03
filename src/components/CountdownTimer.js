@@ -34,6 +34,11 @@ export default function CountdownTimer() {
 
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
+
+                // Apply the selected filter if any
+                if (state.selectedFilter) {
+                    videoRef.current.style.filter = state.selectedFilter;
+                }
             }
         } catch (err) {
             console.error('Camera access failed:', err);
@@ -200,6 +205,11 @@ export default function CountdownTimer() {
 
                 // Put the modified image data back
                 ctx.putImageData(imageData, 0, 0);
+
+                // Apply filter if selected
+                if (state.selectedFilter) {
+                    displayCanvasRef.current.style.filter = state.selectedFilter;
+                }
             } catch (error) {
                 console.error('Segmentation error:', error);
             }
@@ -239,6 +249,11 @@ export default function CountdownTimer() {
             const ctx = displayCanvasRef.current.getContext('2d');
             if (ctx) {
                 ctx.drawImage(videoRef.current, 0, 0, width, height);
+
+                // Apply filter if selected
+                if (state.selectedFilter) {
+                    displayCanvasRef.current.style.filter = state.selectedFilter;
+                }
             }
         }
     };
@@ -328,6 +343,69 @@ export default function CountdownTimer() {
             } else {
                 // Simple fallback - just draw the video frame
                 ctx.drawImage(videoRef.current, 0, 0);
+            }
+
+            // Apply filter if selected - need to use CSS filter simulation on canvas
+            if (state.selectedFilter) {
+                // Create a temporary canvas to apply the filter
+                const tempFilterCanvas = document.createElement('canvas');
+                tempFilterCanvas.width = width;
+                tempFilterCanvas.height = height;
+                const tempFilterCtx = tempFilterCanvas.getContext('2d');
+
+                if (tempFilterCtx) {
+                    // Draw the current canvas to the temp canvas
+                    tempFilterCtx.drawImage(canvasRef.current, 0, 0);
+
+                    // Apply CSS filter effects manually
+                    // This is a simplified approach - in a real app, you'd implement the actual filter algorithms
+                    const imageData = tempFilterCtx.getImageData(0, 0, width, height);
+                    const data = imageData.data;
+
+                    // Apply filter effects based on the selected filter
+                    if (state.selectedFilter.includes('grayscale')) {
+                        for (let i = 0; i < data.length; i += 4) {
+                            const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                            data[i] = avg; // R
+                            data[i + 1] = avg; // G
+                            data[i + 2] = avg; // B
+                        }
+                    } else if (state.selectedFilter.includes('sepia')) {
+                        for (let i = 0; i < data.length; i += 4) {
+                            const r = data[i];
+                            const g = data[i + 1];
+                            const b = data[i + 2];
+
+                            data[i] = Math.min(255, r * 0.393 + g * 0.769 + b * 0.189); // R
+                            data[i + 1] = Math.min(255, r * 0.349 + g * 0.686 + b * 0.168); // G
+                            data[i + 2] = Math.min(255, r * 0.272 + g * 0.534 + b * 0.131); // B
+                        }
+                    } else if (state.selectedFilter.includes('saturate')) {
+                        // Simplified saturation adjustment
+                        const saturationFactor = 1.3; // Corresponds to saturate(130%)
+                        for (let i = 0; i < data.length; i += 4) {
+                            // Convert RGB to HSL, adjust saturation, convert back to RGB
+                            // This is simplified - a real implementation would use proper color space conversion
+                            const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                            data[i] = Math.min(255, avg + (data[i] - avg) * saturationFactor); // R
+                            data[i + 1] = Math.min(255, avg + (data[i + 1] - avg) * saturationFactor); // G
+                            data[i + 2] = Math.min(255, avg + (data[i + 2] - avg) * saturationFactor); // B
+                        }
+                    } else if (state.selectedFilter.includes('contrast')) {
+                        // Simplified contrast adjustment
+                        const contrastFactor = 1.5; // Corresponds to contrast(150%)
+                        for (let i = 0; i < data.length; i += 4) {
+                            data[i] = Math.min(255, 128 + (data[i] - 128) * contrastFactor); // R
+                            data[i + 1] = Math.min(255, 128 + (data[i + 1] - 128) * contrastFactor); // G
+                            data[i + 2] = Math.min(255, 128 + (data[i + 2] - 128) * contrastFactor); // B
+                        }
+                    }
+
+                    tempFilterCtx.putImageData(imageData, 0, 0);
+
+                    // Draw the filtered image back to the main canvas
+                    ctx.drawImage(tempFilterCanvas, 0, 0);
+                }
             }
 
             // Get the image as data URL
@@ -486,6 +564,12 @@ export default function CountdownTimer() {
                 {!state.selectedBackground && (
                     <p className='mt-2 text-amber-600 font-medium'>
                         Using natural background (no virtual background selected)
+                    </p>
+                )}
+
+                {state.selectedFilter && (
+                    <p className='mt-2 text-indigo-600 font-medium'>
+                        Filter applied: {state.selectedFilter.replace('(', ': ').replace(')', '')}
                     </p>
                 )}
             </div>

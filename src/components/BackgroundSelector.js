@@ -5,9 +5,7 @@ export default function BackgroundSelector() {
     const { state, dispatch } = useContext(PhotoboothContext);
 
     return (
-        <div className='mb-12 px-4'>
-            <h3 className='text-xl mb-6 text-gray-600 border-b pb-2'>Choose Your Perfect Background</h3>
-
+        <div className='mb-12 px-0'>
             <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8'>
                 {/* No background option */}
                 <div
