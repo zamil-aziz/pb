@@ -14,6 +14,7 @@ export default function CountdownTimer() {
     const [showCountdown, setShowCountdown] = useState(true);
     const [modelLoaded, setModelLoaded] = useState(false);
     const [model, setModel] = useState(null);
+    const [error, setError] = useState(null);
     const { state, dispatch } = useContext(PhotoboothContext);
     const animationRef = useRef(null);
     const backgroundImageRef = useRef(null);
@@ -35,21 +36,32 @@ export default function CountdownTimer() {
                 })
                 .catch(err => {
                     console.error('Camera error:', err);
+                    setError('Camera access error. Please allow camera access.');
                     navigator.mediaDevices
                         .getUserMedia({ video: true })
                         .then(stream => {
                             videoRef.current.srcObject = stream;
+                            setError(null);
                         })
                         .catch(fallbackErr => {
                             console.error('Fallback camera also failed:', fallbackErr);
+                            setError('Could not access any camera. Please check your browser permissions.');
                         });
                 });
         }
 
         // Load background image if selected
-        if (state.selectedBackground) {
+        if (state.selectedBackground && state.selectedBackground.url) {
             backgroundImageRef.current = new Image();
             backgroundImageRef.current.src = state.selectedBackground.url;
+
+            // Handle loading errors
+            backgroundImageRef.current.onerror = () => {
+                console.warn(`Failed to load background image: ${state.selectedBackground.url}`);
+                backgroundImageRef.current = null;
+            };
+        } else {
+            backgroundImageRef.current = null;
         }
 
         // Preload the segmentation model
@@ -68,6 +80,7 @@ export default function CountdownTimer() {
             } catch (error) {
                 console.error('Failed to load BodyPix model:', error);
                 setModelLoaded(false);
+                setError('Failed to load the background segmentation model. Please try again later.');
             }
         };
 
@@ -79,19 +92,41 @@ export default function CountdownTimer() {
             }
             if (animationRef.current) {
                 cancelAnimationFrame(animationRef.current);
+                animationRef.current = null;
             }
         };
     }, []);
 
     // Setup segmentation preview when model is loaded
     useEffect(() => {
-        if (!model || !videoRef.current || !displayCanvasRef.current || !state.selectedBackground) return;
+        // Important check: If we don't have all required elements, don't proceed
+        if (!model || !videoRef.current || !displayCanvasRef.current) {
+            console.log('Missing required elements for segmentation:', {
+                model: !!model,
+                video: !!videoRef.current,
+                canvas: !!displayCanvasRef.current,
+            });
+            return;
+        }
+
+        // If no background is selected, don't try to do segmentation
+        if (!state.selectedBackground) {
+            console.log('No background selected, skipping segmentation');
+            return;
+        }
+
+        let isMounted = true;
 
         const segmentAndRender = async () => {
-            if (!videoRef.current || !displayCanvasRef.current || !model) return;
+            // Safety check if component unmounted or refs changed
+            if (!isMounted || !videoRef.current || !displayCanvasRef.current || !model) {
+                console.log('Segmentation stopped - component state changed');
+                return;
+            }
 
             // Check if video is ready
             if (videoRef.current.readyState < 2) {
+                console.log('Video not ready yet, waiting...');
                 animationRef.current = requestAnimationFrame(segmentAndRender);
                 return;
             }
@@ -101,10 +136,23 @@ export default function CountdownTimer() {
                 const width = videoRef.current.videoWidth;
                 const height = videoRef.current.videoHeight;
 
+                // Double-check canvas ref before modifying
+                if (!displayCanvasRef.current) {
+                    console.error('Canvas reference lost during segmentation');
+                    return;
+                }
+
                 // Ensure canvas has correct dimensions
                 if (displayCanvasRef.current.width !== width || displayCanvasRef.current.height !== height) {
                     displayCanvasRef.current.width = width;
                     displayCanvasRef.current.height = height;
+                }
+
+                // Get canvas context safely
+                const ctx = displayCanvasRef.current.getContext('2d');
+                if (!ctx) {
+                    console.error('Failed to get canvas context');
+                    return;
                 }
 
                 // Get segmentation data
@@ -114,14 +162,25 @@ export default function CountdownTimer() {
                     segmentationThreshold: 0.7,
                 });
 
-                const ctx = displayCanvasRef.current.getContext('2d');
+                // Safety check again after async operation
+                if (!displayCanvasRef.current || !ctx) {
+                    console.error('Canvas reference lost during segmentation processing');
+                    return;
+                }
 
-                // Draw background image
+                // Draw background image or color
                 if (backgroundImageRef.current) {
-                    ctx.drawImage(backgroundImageRef.current, 0, 0, width, height);
+                    try {
+                        ctx.drawImage(backgroundImageRef.current, 0, 0, width, height);
+                    } catch (err) {
+                        console.error('Error drawing background image:', err);
+                        // Fallback to color
+                        ctx.fillStyle = state.selectedBackground?.fallbackColor || 'black';
+                        ctx.fillRect(0, 0, width, height);
+                    }
                 } else {
-                    // If no background image, fill with a color
-                    ctx.fillStyle = 'black';
+                    // If no background image, fill with the fallback color
+                    ctx.fillStyle = state.selectedBackground?.fallbackColor || 'black';
                     ctx.fillRect(0, 0, width, height);
                 }
 
@@ -134,6 +193,11 @@ export default function CountdownTimer() {
                 tempCanvas.width = width;
                 tempCanvas.height = height;
                 const tempCtx = tempCanvas.getContext('2d');
+                if (!tempCtx) {
+                    console.error('Failed to get temporary canvas context');
+                    return;
+                }
+
                 tempCtx.drawImage(videoRef.current, 0, 0);
                 const videoData = tempCtx.getImageData(0, 0, width, height);
 
@@ -148,27 +212,61 @@ export default function CountdownTimer() {
                     }
                 }
 
+                // Final safety check
+                if (!displayCanvasRef.current || !ctx) {
+                    console.error('Canvas reference lost before putting image data');
+                    return;
+                }
+
                 // Put the modified image data back
                 ctx.putImageData(imageData, 0, 0);
             } catch (error) {
                 console.error('Segmentation error:', error);
+                // Don't set state error here to avoid too many re-renders
             }
 
-            // Continue loop only if we're not taking a photo
-            if (countdown > 0 || (countdown === 0 && message !== 'Smile!')) {
+            // Continue loop only if we're not taking a photo and component is still mounted
+            if (isMounted && (countdown > 0 || (countdown === 0 && message !== 'Smile!'))) {
                 animationRef.current = requestAnimationFrame(segmentAndRender);
             }
         };
 
         // Start the segmentation loop
+        console.log('Starting segmentation loop');
         segmentAndRender();
 
         return () => {
+            console.log('Cleaning up segmentation loop');
+            isMounted = false;
             if (animationRef.current) {
                 cancelAnimationFrame(animationRef.current);
+                animationRef.current = null;
             }
         };
     }, [model, state.selectedBackground, countdown, message]);
+
+    // Function to render a fallback view when no segmentation is possible
+    const renderFallbackView = () => {
+        if (videoRef.current && displayCanvasRef.current) {
+            const ctx = displayCanvasRef.current.getContext('2d');
+            if (ctx) {
+                ctx.drawImage(videoRef.current, 0, 0, displayCanvasRef.current.width, displayCanvasRef.current.height);
+            }
+        }
+    };
+
+    // Simple fallback for showing video when segmentation is not working
+    useEffect(() => {
+        if (!model && videoRef.current && displayCanvasRef.current) {
+            const interval = setInterval(() => {
+                if (videoRef.current.readyState >= 2) {
+                    renderFallbackView();
+                }
+            }, 100);
+
+            return () => clearInterval(interval);
+        }
+    }, [model]);
 
     // Handle countdown and photo capture
     useEffect(() => {
@@ -180,7 +278,11 @@ export default function CountdownTimer() {
             setMessage('Smile!');
 
             setTimeout(async () => {
-                if (!videoRef.current || !canvasRef.current || !model) return;
+                if (!videoRef.current || !canvasRef.current || !model) {
+                    console.error('Missing required elements for photo capture');
+                    setError('Failed to capture photo. Missing camera or model.');
+                    return;
+                }
 
                 try {
                     // Get video dimensions
@@ -192,6 +294,12 @@ export default function CountdownTimer() {
                     canvasRef.current.height = height;
                     const ctx = canvasRef.current.getContext('2d');
 
+                    if (!ctx) {
+                        console.error('Failed to get canvas context for photo capture');
+                        setError('Error capturing photo. Please try again.');
+                        return;
+                    }
+
                     // Get segmentation
                     const segmentation = await model.segmentPerson(videoRef.current, {
                         flipHorizontal: false,
@@ -201,9 +309,16 @@ export default function CountdownTimer() {
 
                     // Draw background first
                     if (backgroundImageRef.current) {
-                        ctx.drawImage(backgroundImageRef.current, 0, 0, width, height);
+                        try {
+                            ctx.drawImage(backgroundImageRef.current, 0, 0, width, height);
+                        } catch (err) {
+                            console.error('Error drawing background image during capture:', err);
+                            // Fallback to color
+                            ctx.fillStyle = state.selectedBackground?.fallbackColor || 'black';
+                            ctx.fillRect(0, 0, width, height);
+                        }
                     } else {
-                        ctx.fillStyle = 'black';
+                        ctx.fillStyle = state.selectedBackground?.fallbackColor || 'black';
                         ctx.fillRect(0, 0, width, height);
                     }
 
@@ -216,6 +331,13 @@ export default function CountdownTimer() {
                     tempCanvas.width = width;
                     tempCanvas.height = height;
                     const tempCtx = tempCanvas.getContext('2d');
+
+                    if (!tempCtx) {
+                        console.error('Failed to get temporary canvas context for photo capture');
+                        setError('Error processing photo. Please try again.');
+                        return;
+                    }
+
                     tempCtx.drawImage(videoRef.current, 0, 0);
                     const videoData = tempCtx.getImageData(0, 0, width, height);
 
@@ -235,14 +357,42 @@ export default function CountdownTimer() {
                     // Get the image as data URL
                     const photo = canvasRef.current.toDataURL('image/jpeg', 0.9);
                     dispatch({ type: 'ADD_PHOTO', payload: photo });
+                    setError(null);
                 } catch (error) {
                     console.error('Photo capture error:', error);
+                    setError('Failed to process photo. Trying fallback method...');
 
                     // Fallback: just take a screenshot of the display canvas
                     const displayCanvas = displayCanvasRef.current;
                     if (displayCanvas) {
-                        const photo = displayCanvas.toDataURL('image/jpeg', 0.9);
-                        dispatch({ type: 'ADD_PHOTO', payload: photo });
+                        try {
+                            const photo = displayCanvas.toDataURL('image/jpeg', 0.9);
+                            dispatch({ type: 'ADD_PHOTO', payload: photo });
+                            setError(null);
+                        } catch (fallbackError) {
+                            console.error('Display canvas fallback also failed:', fallbackError);
+                            setError('Could not capture photo. Please try again.');
+                        }
+                    } else {
+                        // Ultimate fallback: just capture the video frame
+                        try {
+                            const fallbackCanvas = document.createElement('canvas');
+                            fallbackCanvas.width = videoRef.current.videoWidth;
+                            fallbackCanvas.height = videoRef.current.videoHeight;
+                            const fallbackCtx = fallbackCanvas.getContext('2d');
+
+                            if (fallbackCtx && videoRef.current) {
+                                fallbackCtx.drawImage(videoRef.current, 0, 0);
+                                const photo = fallbackCanvas.toDataURL('image/jpeg', 0.9);
+                                dispatch({ type: 'ADD_PHOTO', payload: photo });
+                                setError(null);
+                            } else {
+                                setError('All photo capture methods failed. Please try again.');
+                            }
+                        } catch (ultimateFallbackError) {
+                            console.error('Ultimate fallback also failed:', ultimateFallbackError);
+                            setError('Photo capture failed completely. Please restart the app.');
+                        }
                     }
                 }
 
@@ -293,18 +443,30 @@ export default function CountdownTimer() {
     };
 
     return (
-        <div className='w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden'>
+        <div className='w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden p-8 bg-opacity-90 backdrop-blur-sm border border-white border-opacity-40 relative'>
+            {/* Decorative elements */}
+            <div className='absolute top-0 right-0 w-32 h-32 -mt-10 -mr-10 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full opacity-10'></div>
+            <div className='absolute bottom-0 left-0 w-40 h-40 -mb-16 -ml-16 bg-gradient-to-tr from-blue-400 to-indigo-400 rounded-full opacity-10'></div>
+            <div className='absolute top-10 left-10 w-24 h-24 rounded-full bg-gradient-to-r from-pink-300 to-purple-300 opacity-30 blur-xl'></div>
+            <div className='absolute bottom-20 right-10 w-32 h-32 rounded-full bg-gradient-to-r from-blue-300 to-indigo-300 opacity-30 blur-xl'></div>
+
             {/* Hidden elements for processing */}
             <canvas ref={canvasRef} className='hidden'></canvas>
-            <video ref={videoRef} autoPlay playsInline className='hidden' />
+            <video ref={videoRef} autoPlay playsInline className={model ? 'hidden' : 'w-full h-auto rounded-xl'} />
 
             <div className='relative'>
                 {/* Display segmented view */}
-                <canvas ref={displayCanvasRef} className='w-full h-auto'></canvas>
+                <canvas ref={displayCanvasRef} className={model ? 'w-full h-auto rounded-xl' : 'hidden'}></canvas>
 
                 {!modelLoaded && state.selectedBackground && (
                     <div className='absolute top-0 left-0 right-0 bg-yellow-500 text-black p-2 text-center'>
                         <p>Loading segmentation model for better backgrounds...</p>
+                    </div>
+                )}
+
+                {error && (
+                    <div className='absolute top-0 left-0 right-0 bg-red-500 text-white p-2 text-center'>
+                        <p>{error}</p>
                     </div>
                 )}
 
@@ -333,7 +495,7 @@ export default function CountdownTimer() {
                 )}
             </div>
 
-            <div className='p-4 text-center bg-gradient-to-r from-purple-100 to-blue-100'>
+            <div className='p-4 text-center bg-gradient-to-r from-purple-100 to-blue-100 mt-6 rounded-xl'>
                 <p className='text-2xl font-semibold text-gray-700'>
                     Photo <span className='text-purple-600'>{photosTaken + 1}</span> of{' '}
                     <span className='text-blue-600'>{state.photosPerSession}</span>
