@@ -22,7 +22,10 @@ export default function BackgroundSelector() {
                         }
                     }}
                 >
-                    <div className='bg-gradient-to-br from-gray-100 to-gray-200 h-20 sm:h-24 md:h-32 flex items-center justify-center'>
+                    <div
+                        className='bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center'
+                        style={{ aspectRatio: '5/3', maxHeight: '100px' }}
+                    >
                         <span className='text-sm sm:text-base md:text-lg font-medium text-gray-600'>No Background</span>
                     </div>
                 </div>
@@ -43,7 +46,7 @@ export default function BackgroundSelector() {
                             }
                         }}
                     >
-                        <div className='relative h-20 sm:h-24 md:h-32'>
+                        <div className='relative' style={{ aspectRatio: '5/3', maxHeight: '100px' }}>
                             <img
                                 src={bg.url}
                                 alt={bg.name}

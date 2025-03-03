@@ -326,7 +326,7 @@ export default function CameraView() {
 
             <div
                 className='relative mx-auto overflow-hidden rounded-lg sm:rounded-xl shadow-md sm:shadow-lg mb-3 sm:mb-4 flex-shrink-0 w-full'
-                style={{ height: '35vh', maxHeight: '40vh' }}
+                style={{ height: '50vh', aspectRatio: '4/3' }}
             >
                 {isLoading && (
                     <div className='absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-70 z-20'>
@@ -373,7 +373,7 @@ export default function CameraView() {
             {/* Options panel - with updated UI */}
             <div
                 className='mb-3 sm:mb-4 bg-white bg-opacity-80 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-md sm:shadow-lg border border-purple-100 flex-shrink-0 overflow-hidden w-full max-w-full sm:max-w-xl md:max-w-2xl mx-auto'
-                style={{ maxHeight: '30vh' }}
+                style={{ maxHeight: '25vh' }}
             >
                 <div className='flex text-center border-b border-purple-100'>
                     <button
@@ -481,8 +481,8 @@ export default function CameraView() {
                                         }}
                                     >
                                         <div
-                                            className='h-10 sm:h-16 w-full bg-gradient-to-r from-indigo-200 to-purple-200'
-                                            style={filter.style}
+                                            className='w-full bg-gradient-to-r from-indigo-200 to-purple-200'
+                                            style={{ ...filter.style, aspectRatio: '5/3', maxHeight: '80px' }}
                                         ></div>
                                         <div
                                             className={`text-center py-1 text-xs sm:text-sm ${
