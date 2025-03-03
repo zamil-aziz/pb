@@ -7,6 +7,7 @@ import PhotoPreview from '../components/PhotoPreview';
 import PaymentProcessor from '../components/PaymentProcessor';
 import PrintManager from '../components/PrintManager';
 import ThankYou from '../components/ThankYou';
+import { Camera, Image, PartyPopper } from 'lucide-react';
 
 export default function Photobooth() {
     const { state, dispatch } = useContext(PhotoboothContext);
@@ -85,10 +86,9 @@ export default function Photobooth() {
             clearTimeout(inactivityTimer);
             inactivityTimer = setTimeout(() => {
                 if (state.currentView !== 'welcome') {
-                    // Reset to welcome screen after 2 minutes of inactivity
                     dispatch({ type: 'RESET_APP' });
                 }
-            }, 120000); // 2 minutes
+            }, 30000); // 30 seconds
         };
 
         // Reset timer on any user interaction
@@ -103,44 +103,143 @@ export default function Photobooth() {
         };
     }, [state.currentView, dispatch]);
 
+    // Animated background elements
+    const BackgroundElements = () => (
+        <>
+            {/* Animated floating circles */}
+            <div className='absolute inset-0 overflow-hidden pointer-events-none'>
+                <div className='absolute top-10 left-5 w-20 h-20 rounded-full bg-pink-400 opacity-20 animate-float-slow'></div>
+                <div className='absolute top-3/4 right-10 w-32 h-32 rounded-full bg-purple-400 opacity-15 animate-float-medium'></div>
+                <div className='absolute top-1/3 left-3/4 w-16 h-16 rounded-full bg-indigo-400 opacity-20 animate-float-fast'></div>
+                <div className='absolute bottom-10 left-1/4 w-24 h-24 rounded-full bg-blue-400 opacity-15 animate-float-medium'></div>
+                <div className='absolute top-1/2 left-10 w-12 h-12 rounded-full bg-yellow-400 opacity-10 animate-float-fast'></div>
+            </div>
+
+            {/* Light rays */}
+            <div className='absolute inset-0 opacity-30 overflow-hidden'>
+                <div className='absolute top-0 left-1/4 w-full h-full bg-gradient-radial from-purple-300 to-transparent opacity-30 blur-xl'></div>
+                <div className='absolute bottom-0 right-1/4 w-full h-full bg-gradient-radial from-pink-300 to-transparent opacity-30 blur-xl'></div>
+            </div>
+
+            {/* Pattern overlay - using CSS gradients instead of SVG patterns */}
+            <div className='absolute inset-0 opacity-5'>
+                <div className='absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-10'></div>
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_10%_20%,rgba(255,255,255,0.3),transparent_10%)]'></div>
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(255,255,255,0.3),transparent_10%)]'></div>
+            </div>
+        </>
+    );
+
     return (
         <div className='min-h-screen w-full flex flex-col bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 overflow-hidden'>
-            {/* Responsive header */}
-            <header className='bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-500 p-2 sm:p-3 md:p-4 text-white shadow-lg relative overflow-hidden flex-shrink-0'>
-                <div className='absolute inset-0 opacity-20'>
-                    <div className='absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_50%,rgba(255,255,255,0.1),transparent_20%)]'></div>
-                    <div className='absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_70%_30%,rgba(255,255,255,0.1),transparent_25%)]'></div>
+            {/* Enhanced header with animated glow */}
+            <header className='bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-500 p-3 md:p-5 text-white shadow-xl relative overflow-hidden flex-shrink-0'>
+                <div className='absolute inset-0'>
+                    <div className='absolute top-0 left-0 w-full h-full opacity-10'>
+                        <div className='absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,white,transparent_5%)]'></div>
+                        <div className='absolute inset-0 bg-[radial-gradient(circle_at_75%_75%,white,transparent_5%)]'></div>
+                    </div>
+                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.2),transparent_30%)] animate-pulse-slow'></div>
+                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,255,255,0.2),transparent_30%)] animate-pulse-slow delay-1000'></div>
                 </div>
-                <h1 className='text-2xl sm:text-3xl md:text-4xl font-bold text-center tracking-wider relative z-10'>
-                    Photo Booth
-                    <span className='absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-16 sm:w-20 md:w-24 h-1 bg-yellow-300 rounded-full'></span>
-                </h1>
+
+                <div className='relative z-10 flex items-center justify-center'>
+                    <Image className='h-8 w-8 mr-3 text-yellow-300' />
+                    <h1 className='text-3xl md:text-4xl font-bold text-center tracking-wider group'>
+                        Photo Booth
+                        <span className='absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-yellow-300 rounded-full group-hover:animate-pulse'></span>
+                    </h1>
+                </div>
             </header>
 
-            {/* Content area with proper scrolling */}
-            <main className='flex-grow flex items-center justify-center p-2 sm:p-3 md:p-4 relative overflow-y-auto'>
-                {/* Background decorative elements - adjust visibility based on screen size */}
-                <div className='absolute top-10 left-10 w-12 sm:w-16 md:w-24 h-12 sm:h-16 md:h-24 rounded-full bg-gradient-to-r from-pink-300 to-purple-300 opacity-30 blur-xl hidden sm:block'></div>
-                <div className='absolute bottom-20 right-10 w-16 sm:w-24 md:w-32 h-16 sm:h-24 md:h-32 rounded-full bg-gradient-to-r from-blue-300 to-indigo-300 opacity-30 blur-xl hidden sm:block'></div>
-                <div className='absolute bottom-40 left-40 w-8 sm:w-12 md:w-16 h-8 sm:h-12 md:h-16 rounded-full bg-gradient-to-r from-yellow-300 to-orange-300 opacity-20 blur-lg hidden md:block'></div>
+            {/* Content area with enhanced visual elements */}
+            <main className='flex-grow flex items-center justify-center p-4 relative overflow-hidden'>
+                <BackgroundElements />
 
                 {state.currentView === 'welcome' && (
-                    <div className='text-center p-4 sm:p-6 md:p-8 w-full max-w-4xl mx-auto bg-white bg-opacity-90 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl border border-white border-opacity-40 relative overflow-hidden'>
-                        <div className='absolute top-0 right-0 w-16 sm:w-24 md:w-32 h-16 sm:h-24 md:h-32 -mt-5 sm:-mt-8 md:-mt-10 -mr-5 sm:-mr-8 md:-mr-10 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full opacity-10'></div>
-                        <div className='absolute bottom-0 left-0 w-20 sm:w-32 md:w-40 h-20 sm:h-32 md:h-40 -mb-8 sm:-mb-12 md:-mb-16 -ml-8 sm:-ml-12 md:-ml-16 bg-gradient-to-tr from-blue-400 to-indigo-400 rounded-full opacity-10'></div>
+                    <div className='text-center p-6 md:p-10 w-full max-w-4xl mx-auto bg-white bg-opacity-80 backdrop-blur-md rounded-3xl shadow-2xl border border-white border-opacity-60 relative overflow-hidden transform transition-all duration-500 hover:scale-102 hover:shadow-2xl'>
+                        {/* Decorative top corner accents */}
+                        <div className='absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full opacity-20'></div>
+                        <div className='absolute -bottom-20 -left-20 w-56 h-56 bg-gradient-to-tr from-blue-400 to-indigo-400 rounded-full opacity-20'></div>
 
-                        <h2 className='text-4xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6 md:mb-8 text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600'>
-                            Touch to Start!
-                        </h2>
-                        <p className='text-xl sm:text-2xl md:text-3xl mb-6 sm:mb-8 md:mb-10 text-gray-700'>
-                            Capture memories with amazing backgrounds
+                        {/* Shimmer effect overlay */}
+                        <div className='absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 -translate-x-full animate-shimmer'></div>
+
+                        {/* Header with icon */}
+                        <div className='flex flex-col items-center mb-0'>
+                            <div className='mb-4 p-5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full shadow-lg'>
+                                <Camera size={40} className='text-white' />
+                            </div>
+                            <h2 className='text-5xl md:text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600 animate-gradient'>
+                                Touch to Start!
+                            </h2>
+                        </div>
+
+                        <p className='text-2xl md:text-xl mb-8 text-gray-700 max-w-lg mx-auto'>
+                            Capture unforgettable memories with our photo booth. Choose your props, strike a pose, and
+                            take home a print to remember the moment.
                         </p>
+
+                        {/* Features grid */}
+                        <div className='grid grid-cols-3 gap-4 mb-8'>
+                            <div className='p-3 bg-indigo-50 rounded-xl'>
+                                <div className='bg-indigo-100 p-2 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2'>
+                                    <Image size={24} className='text-indigo-600' />
+                                </div>
+                                <p className='text-indigo-700 font-medium'>Amazing Filters</p>
+                            </div>
+                            <div className='p-3 bg-purple-50 rounded-xl'>
+                                <div className='bg-purple-100 p-2 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2'>
+                                    <PartyPopper size={24} className='text-purple-600' />
+                                </div>
+                                <p className='text-purple-700 font-medium'>Fun Props</p>
+                            </div>
+                            <div className='p-3 bg-pink-50 rounded-xl'>
+                                <div className='bg-pink-100 p-2 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2'>
+                                    <svg
+                                        xmlns='http://www.w3.org/2000/svg'
+                                        width='24'
+                                        height='24'
+                                        viewBox='0 0 24 24'
+                                        fill='none'
+                                        stroke='currentColor'
+                                        strokeWidth='2'
+                                        strokeLinecap='round'
+                                        strokeLinejoin='round'
+                                        className='text-pink-600'
+                                    >
+                                        <rect x='6' y='3' width='12' height='18' rx='2' />
+                                        <line x1='12' y1='7' x2='12' y2='7' />
+                                    </svg>
+                                </div>
+                                <p className='text-pink-700 font-medium'>Instant Prints</p>
+                            </div>
+                        </div>
 
                         <button
                             onClick={() => dispatch({ type: 'SET_VIEW', payload: 'camera' })}
-                            className='bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 sm:py-4 md:py-6 px-6 sm:px-8 md:px-12 rounded-full text-xl sm:text-2xl md:text-3xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50'
+                            className='bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-5 px-10 rounded-full text-2xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-purple-300 relative overflow-hidden group'
                         >
-                            Start
+                            <span className='relative z-10 flex items-center justify-center gap-2'>
+                                Start Now
+                                <svg
+                                    xmlns='http://www.w3.org/2000/svg'
+                                    width='24'
+                                    height='24'
+                                    viewBox='0 0 24 24'
+                                    fill='none'
+                                    stroke='currentColor'
+                                    strokeWidth='2'
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
+                                    className='ml-2 group-hover:translate-x-1 transition-transform'
+                                >
+                                    <path d='M5 12h14'></path>
+                                    <path d='m12 5 7 7-7 7'></path>
+                                </svg>
+                            </span>
+                            {/* Button glow effect */}
+                            <span className='absolute inset-0 bg-gradient-to-r from-indigo-400 to-purple-400 opacity-0 group-hover:opacity-30 blur-md transition-opacity'></span>
                         </button>
                     </div>
                 )}
@@ -153,8 +252,10 @@ export default function Photobooth() {
                 {state.currentView === 'thankyou' && <ThankYou />}
             </main>
 
-            {/* Decorative footer */}
-            <footer className='h-1 sm:h-1.5 md:h-2 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-500 flex-shrink-0'></footer>
+            {/* Enhanced footer with shine effect */}
+            <footer className='h-2 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-500 relative overflow-hidden flex-shrink-0'>
+                <div className='absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-40 -translate-x-full animate-shine'></div>
+            </footer>
         </div>
     );
 }
