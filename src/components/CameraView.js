@@ -2,6 +2,9 @@
 import { useRef, useEffect, useContext, useState } from 'react';
 import { PhotoboothContext } from '../contexts/PhotoboothContext';
 import * as bodyPix from '@tensorflow-models/body-pix';
+import * as tf from '@tensorflow/tfjs-core';
+import '@tensorflow/tfjs-backend-webgl'; // Import a backend
+import '@tensorflow/tfjs-backend-cpu'; // Fallback backend
 
 export default function CameraView() {
     const videoRef = useRef(null);
@@ -58,6 +61,10 @@ export default function CameraView() {
             if (state.selectedBackground) {
                 try {
                     console.log('Loading BodyPix model...');
+                    // Explicitly set preferred backend before loading the model
+                    await tf.setBackend('webgl');
+                    console.log('Using backend:', tf.getBackend());
+
                     const loadedModel = await bodyPix.load({
                         architecture: 'MobileNetV1',
                         outputStride: 16,
@@ -69,8 +76,26 @@ export default function CameraView() {
                     setModelLoaded(true);
                 } catch (error) {
                     console.error('Failed to load BodyPix model:', error);
-                    setModelLoaded(false);
-                    setError('Failed to load the background segmentation model. Please try again later.');
+                    // Try with CPU backend as fallback
+                    try {
+                        console.log('Trying CPU backend as fallback...');
+                        await tf.setBackend('cpu');
+                        console.log('Using backend:', tf.getBackend());
+
+                        const loadedModel = await bodyPix.load({
+                            architecture: 'MobileNetV1',
+                            outputStride: 16,
+                            multiplier: 0.5, // Lower multiplier for CPU
+                            quantBytes: 2,
+                        });
+                        console.log('BodyPix model loaded successfully with CPU backend');
+                        setModel(loadedModel);
+                        setModelLoaded(true);
+                    } catch (fallbackError) {
+                        console.error('Failed to load BodyPix model with fallback:', fallbackError);
+                        setModelLoaded(false);
+                        setError('Failed to load the background segmentation model. Please try again later.');
+                    }
                 }
             }
         };
