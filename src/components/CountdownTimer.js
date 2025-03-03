@@ -19,36 +19,35 @@ export default function CountdownTimer() {
     const animationRef = useRef(null);
     const backgroundImageRef = useRef(null);
 
+    // Use refs to track actions that should happen after render
+    const photoTakenRef = useRef(false);
+    const photoDataRef = useRef(null);
+
+    // Initialize camera with simpler approach
+    const initializeCamera = async () => {
+        if (!videoRef.current) return;
+
+        try {
+            // Try main camera first
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: true, // Simplified request without specifics
+                audio: false,
+            });
+
+            if (videoRef.current) {
+                videoRef.current.srcObject = stream;
+            }
+        } catch (err) {
+            console.error('Camera access failed:', err);
+            setError(
+                'Could not access camera. Please check your browser permissions and ensure your camera is working.'
+            );
+        }
+    };
+
     // Initialize camera and load TensorFlow model
     useEffect(() => {
-        // Start camera
-        if (videoRef.current) {
-            navigator.mediaDevices
-                .getUserMedia({
-                    video: {
-                        facingMode: 'environment',
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 },
-                    },
-                })
-                .then(stream => {
-                    videoRef.current.srcObject = stream;
-                })
-                .catch(err => {
-                    console.error('Camera error:', err);
-                    setError('Camera access error. Please allow camera access.');
-                    navigator.mediaDevices
-                        .getUserMedia({ video: true })
-                        .then(stream => {
-                            videoRef.current.srcObject = stream;
-                            setError(null);
-                        })
-                        .catch(fallbackErr => {
-                            console.error('Fallback camera also failed:', fallbackErr);
-                            setError('Could not access any camera. Please check your browser permissions.');
-                        });
-                });
-        }
+        initializeCamera();
 
         // Load background image if selected
         if (state.selectedBackground && state.selectedBackground.url) {
@@ -96,6 +95,18 @@ export default function CountdownTimer() {
             }
         };
     }, []);
+
+    // Handle when a photo is taken
+    useEffect(() => {
+        if (photoTakenRef.current && photoDataRef.current) {
+            // Process the photo data - this is now safely done in a useEffect
+            dispatch({ type: 'ADD_PHOTO', payload: photoDataRef.current });
+
+            // Reset the refs
+            photoTakenRef.current = false;
+            photoDataRef.current = null;
+        }
+    }, [photoTakenRef.current, photoDataRef.current, dispatch]);
 
     // Setup segmentation preview when model is loaded
     useEffect(() => {
@@ -268,6 +279,122 @@ export default function CountdownTimer() {
         }
     }, [model]);
 
+    // Function to capture photo
+    const capturePhoto = async () => {
+        if (!videoRef.current || !canvasRef.current) {
+            console.error('Missing required elements for photo capture');
+            setError('Failed to capture photo. Missing camera.');
+            return null;
+        }
+
+        try {
+            // Get video dimensions
+            const width = videoRef.current.videoWidth;
+            const height = videoRef.current.videoHeight;
+
+            // Prepare canvas for photo capture
+            canvasRef.current.width = width;
+            canvasRef.current.height = height;
+            const ctx = canvasRef.current.getContext('2d');
+
+            if (!ctx) {
+                console.error('Failed to get canvas context for photo capture');
+                setError('Error capturing photo. Please try again.');
+                return null;
+            }
+
+            // If we have model and background, use segmentation
+            if (model && state.selectedBackground) {
+                // Get segmentation
+                const segmentation = await model.segmentPerson(videoRef.current, {
+                    flipHorizontal: false,
+                    internalResolution: 'medium',
+                    segmentationThreshold: 0.7,
+                });
+
+                // Draw background first
+                if (backgroundImageRef.current) {
+                    try {
+                        ctx.drawImage(backgroundImageRef.current, 0, 0, width, height);
+                    } catch (err) {
+                        console.error('Error drawing background image during capture:', err);
+                        // Fallback to color
+                        ctx.fillStyle = state.selectedBackground?.fallbackColor || 'black';
+                        ctx.fillRect(0, 0, width, height);
+                    }
+                } else {
+                    ctx.fillStyle = state.selectedBackground?.fallbackColor || 'black';
+                    ctx.fillRect(0, 0, width, height);
+                }
+
+                // Apply person segmentation
+                const imageData = ctx.getImageData(0, 0, width, height);
+                const pixels = imageData.data;
+
+                // Get video frame
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = width;
+                tempCanvas.height = height;
+                const tempCtx = tempCanvas.getContext('2d');
+
+                if (!tempCtx) {
+                    console.error('Failed to get temporary canvas context for photo capture');
+                    setError('Error processing photo. Please try again.');
+                    return null;
+                }
+
+                tempCtx.drawImage(videoRef.current, 0, 0);
+                const videoData = tempCtx.getImageData(0, 0, width, height);
+
+                // Apply mask
+                for (let i = 0; i < segmentation.data.length; i++) {
+                    const n = i * 4;
+                    if (segmentation.data[i]) {
+                        pixels[n] = videoData.data[n]; // Red
+                        pixels[n + 1] = videoData.data[n + 1]; // Green
+                        pixels[n + 2] = videoData.data[n + 2]; // Blue
+                        pixels[n + 3] = 255; // Alpha
+                    }
+                }
+
+                ctx.putImageData(imageData, 0, 0);
+            } else {
+                // Simple fallback - just draw the video frame
+                ctx.drawImage(videoRef.current, 0, 0);
+            }
+
+            // Get the image as data URL
+            const photo = canvasRef.current.toDataURL('image/jpeg', 0.9);
+            setError(null);
+            return photo;
+        } catch (error) {
+            console.error('Photo capture error:', error);
+            setError('Failed to process photo. Trying fallback method...');
+
+            try {
+                // Ultimate fallback: just capture the video frame
+                const fallbackCanvas = document.createElement('canvas');
+                fallbackCanvas.width = videoRef.current.videoWidth;
+                fallbackCanvas.height = videoRef.current.videoHeight;
+                const fallbackCtx = fallbackCanvas.getContext('2d');
+
+                if (fallbackCtx && videoRef.current) {
+                    fallbackCtx.drawImage(videoRef.current, 0, 0);
+                    const photo = fallbackCanvas.toDataURL('image/jpeg', 0.9);
+                    setError(null);
+                    return photo;
+                } else {
+                    setError('All photo capture methods failed. Please try again.');
+                    return null;
+                }
+            } catch (ultimateFallbackError) {
+                console.error('Ultimate fallback also failed:', ultimateFallbackError);
+                setError('Photo capture failed completely. Please restart the app.');
+                return null;
+            }
+        }
+    };
+
     // Handle countdown and photo capture
     useEffect(() => {
         if (countdown > 0) {
@@ -278,122 +405,12 @@ export default function CountdownTimer() {
             setMessage('Smile!');
 
             setTimeout(async () => {
-                if (!videoRef.current || !canvasRef.current || !model) {
-                    console.error('Missing required elements for photo capture');
-                    setError('Failed to capture photo. Missing camera or model.');
-                    return;
-                }
+                const photo = await capturePhoto();
 
-                try {
-                    // Get video dimensions
-                    const width = videoRef.current.videoWidth;
-                    const height = videoRef.current.videoHeight;
-
-                    // Prepare canvas for photo capture
-                    canvasRef.current.width = width;
-                    canvasRef.current.height = height;
-                    const ctx = canvasRef.current.getContext('2d');
-
-                    if (!ctx) {
-                        console.error('Failed to get canvas context for photo capture');
-                        setError('Error capturing photo. Please try again.');
-                        return;
-                    }
-
-                    // Get segmentation
-                    const segmentation = await model.segmentPerson(videoRef.current, {
-                        flipHorizontal: false,
-                        internalResolution: 'medium',
-                        segmentationThreshold: 0.7,
-                    });
-
-                    // Draw background first
-                    if (backgroundImageRef.current) {
-                        try {
-                            ctx.drawImage(backgroundImageRef.current, 0, 0, width, height);
-                        } catch (err) {
-                            console.error('Error drawing background image during capture:', err);
-                            // Fallback to color
-                            ctx.fillStyle = state.selectedBackground?.fallbackColor || 'black';
-                            ctx.fillRect(0, 0, width, height);
-                        }
-                    } else {
-                        ctx.fillStyle = state.selectedBackground?.fallbackColor || 'black';
-                        ctx.fillRect(0, 0, width, height);
-                    }
-
-                    // Apply person segmentation
-                    const imageData = ctx.getImageData(0, 0, width, height);
-                    const pixels = imageData.data;
-
-                    // Get video frame
-                    const tempCanvas = document.createElement('canvas');
-                    tempCanvas.width = width;
-                    tempCanvas.height = height;
-                    const tempCtx = tempCanvas.getContext('2d');
-
-                    if (!tempCtx) {
-                        console.error('Failed to get temporary canvas context for photo capture');
-                        setError('Error processing photo. Please try again.');
-                        return;
-                    }
-
-                    tempCtx.drawImage(videoRef.current, 0, 0);
-                    const videoData = tempCtx.getImageData(0, 0, width, height);
-
-                    // Apply mask
-                    for (let i = 0; i < segmentation.data.length; i++) {
-                        const n = i * 4;
-                        if (segmentation.data[i]) {
-                            pixels[n] = videoData.data[n]; // Red
-                            pixels[n + 1] = videoData.data[n + 1]; // Green
-                            pixels[n + 2] = videoData.data[n + 2]; // Blue
-                            pixels[n + 3] = 255; // Alpha
-                        }
-                    }
-
-                    ctx.putImageData(imageData, 0, 0);
-
-                    // Get the image as data URL
-                    const photo = canvasRef.current.toDataURL('image/jpeg', 0.9);
-                    dispatch({ type: 'ADD_PHOTO', payload: photo });
-                    setError(null);
-                } catch (error) {
-                    console.error('Photo capture error:', error);
-                    setError('Failed to process photo. Trying fallback method...');
-
-                    // Fallback: just take a screenshot of the display canvas
-                    const displayCanvas = displayCanvasRef.current;
-                    if (displayCanvas) {
-                        try {
-                            const photo = displayCanvas.toDataURL('image/jpeg', 0.9);
-                            dispatch({ type: 'ADD_PHOTO', payload: photo });
-                            setError(null);
-                        } catch (fallbackError) {
-                            console.error('Display canvas fallback also failed:', fallbackError);
-                            setError('Could not capture photo. Please try again.');
-                        }
-                    } else {
-                        // Ultimate fallback: just capture the video frame
-                        try {
-                            const fallbackCanvas = document.createElement('canvas');
-                            fallbackCanvas.width = videoRef.current.videoWidth;
-                            fallbackCanvas.height = videoRef.current.videoHeight;
-                            const fallbackCtx = fallbackCanvas.getContext('2d');
-
-                            if (fallbackCtx && videoRef.current) {
-                                fallbackCtx.drawImage(videoRef.current, 0, 0);
-                                const photo = fallbackCanvas.toDataURL('image/jpeg', 0.9);
-                                dispatch({ type: 'ADD_PHOTO', payload: photo });
-                                setError(null);
-                            } else {
-                                setError('All photo capture methods failed. Please try again.');
-                            }
-                        } catch (ultimateFallbackError) {
-                            console.error('Ultimate fallback also failed:', ultimateFallbackError);
-                            setError('Photo capture failed completely. Please restart the app.');
-                        }
-                    }
+                if (photo) {
+                    // Store the photo in ref to process in a separate effect
+                    photoDataRef.current = photo;
+                    photoTakenRef.current = true;
                 }
 
                 // First hide the countdown
@@ -405,7 +422,10 @@ export default function CountdownTimer() {
                         const newCount = prev + 1;
 
                         if (newCount >= state.photosPerSession) {
-                            dispatch({ type: 'SET_VIEW', payload: 'preview' });
+                            // Schedule view change after render is complete
+                            setTimeout(() => {
+                                dispatch({ type: 'SET_VIEW', payload: 'preview' });
+                            }, 0);
                             return 0;
                         } else {
                             setMessage(`Great! ${state.photosPerSession - newCount} more to go`);
@@ -418,7 +438,7 @@ export default function CountdownTimer() {
                 }, 1000); // Show blank/no countdown for 1 second
             }, 500);
         }
-    }, [countdown, photosTaken, state.photosPerSession, dispatch, model]);
+    }, [countdown, photosTaken, state.photosPerSession]);
 
     // Function to determine countdown color
     const getCountdownColor = () => {
