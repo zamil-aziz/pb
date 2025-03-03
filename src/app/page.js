@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useContext } from 'react';
 import { PhotoboothContext } from '../contexts/PhotoboothContext';
-import CameraView from '../components/CameraView';
+import CameraPreview from '../components/CameraPreview';
 import CountdownTimer from '../components/CountdownTimer';
 import PhotoPreview from '../components/PhotoPreview';
 import PaymentProcessor from '../components/PaymentProcessor';
@@ -88,7 +88,8 @@ export default function Photobooth() {
                 if (state.currentView !== 'welcome') {
                     dispatch({ type: 'RESET_APP' });
                 }
-            }, 30000); // 30 seconds
+                // }, 30000); // 30 seconds
+            }, 3000000);
         };
 
         // Reset timer on any user interaction
@@ -244,7 +245,7 @@ export default function Photobooth() {
                     </div>
                 )}
 
-                {state.currentView === 'camera' && <CameraView />}
+                {state.currentView === 'camera' && <CameraPreview />}
                 {state.currentView === 'countdown' && <CountdownTimer />}
                 {state.currentView === 'preview' && <PhotoPreview />}
                 {state.currentView === 'payment' && <PaymentProcessor />}
