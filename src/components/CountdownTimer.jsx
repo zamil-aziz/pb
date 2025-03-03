@@ -495,8 +495,14 @@ export default function CountdownTimer() {
     };
 
     // Function to get message background color
-    const getMessageBgColor = () => {
-        return message === 'Smile!' ? 'bg-green-600 bg-opacity-80' : 'bg-black bg-opacity-60';
+    const getMessageStyles = () => {
+        if (message === 'Smile!') {
+            return 'bg-gradient-to-r from-green-600 to-emerald-500 bg-opacity-90 text-white shadow-lg shadow-green-500/30';
+        } else if (message === 'Get Ready!') {
+            return 'bg-gradient-to-r from-purple-600 to-indigo-600 bg-opacity-90 text-yellow-100 shadow-lg shadow-indigo-500/30';
+        } else {
+            return 'bg-gradient-to-r from-blue-600 to-indigo-600 bg-opacity-90 text-blue-100 shadow-lg shadow-blue-500/30';
+        }
     };
 
     return (
@@ -539,13 +545,34 @@ export default function CountdownTimer() {
                                 countdown > 0 ? 'scale-100 animate-pulse' : 'scale-110'
                             } transition-all duration-300`}
                         >
-                            <span className={`text-9xl font-bold ${getCountdownColor()} drop-shadow-lg`}>
-                                {countdown > 0 ? countdown : '📸'}
-                            </span>
+                            {countdown > 0 ? (
+                                <span className={`text-9xl font-bold ${getCountdownColor()} drop-shadow-lg`}>
+                                    {countdown}
+                                </span>
+                            ) : (
+                                <div className='relative w-full h-full'>
+                                    {/* Main flash effect - simple animation without keyframes */}
+                                    <div className='absolute inset-0 bg-white opacity-70 animate-pulse'></div>
+
+                                    {/* Center light source */}
+                                    <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'>
+                                        <div className='h-12 w-12 bg-white rounded-full opacity-90 shadow-lg'></div>
+                                        <div className='absolute inset-0 rounded-full bg-white animate-ping'></div>
+                                        <div className='absolute inset-0 rounded-full bg-white shadow-[0_0_15px_12px_rgba(255,255,255,0.7)]'></div>
+                                    </div>
+
+                                    {/* Light rays using standard utilities */}
+                                    <div className='absolute left-0 top-1/2 h-1 w-full bg-gradient-to-r from-white via-yellow-50 to-transparent -translate-y-1/2'></div>
+                                    <div className='absolute left-1/2 top-0 w-1 h-full bg-gradient-to-b from-white via-yellow-50 to-transparent -translate-x-1/2'></div>
+                                    <div className='absolute left-0 top-0 w-full h-full'>
+                                        <div className='absolute top-0 left-0 right-0 bottom-0 bg-gradient-radial from-white via-transparent to-transparent opacity-60'></div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div
-                            className={`mt-8 ${getMessageBgColor()} px-10 py-5 rounded-xl shadow-xl transform transition-all duration-300 ${
+                            className={`mt-8 ${getMessageStyles()} px-10 py-5 rounded-xl shadow-xl transform transition-all duration-300 ${
                                 message === 'Smile!' ? 'scale-110' : 'scale-100'
                             }`}
                         >
