@@ -242,7 +242,7 @@ export default function CameraView() {
                 // Don't set state error here to avoid too many re-renders
             }
 
-            // Continue loop only if still mounted
+            // Always continue the loop while component is mounted
             if (isMounted) {
                 animationRef.current = requestAnimationFrame(segmentAndRender);
             }

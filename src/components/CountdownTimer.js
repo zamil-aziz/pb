@@ -204,8 +204,8 @@ export default function CountdownTimer() {
                 console.error('Segmentation error:', error);
             }
 
-            // Continue loop only if we're not taking a photo and component is still mounted
-            if (isMounted && (countdown > 0 || (countdown === 0 && message !== 'Smile!'))) {
+            // Always continue the loop while component is mounted
+            if (isMounted) {
                 animationRef.current = requestAnimationFrame(segmentAndRender);
             }
         };
@@ -360,10 +360,13 @@ export default function CountdownTimer() {
             const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
             return () => clearTimeout(timer);
         } else if (countdown === 0) {
-            // Take photo
+            // Show "Smile!" message
             setMessage('Smile!');
 
+            // Keep preview running for 1 second while showing "Smile!"
+            // Only take the photo after the delay
             setTimeout(async () => {
+                // Take photo after the delay
                 const photo = await capturePhoto();
 
                 if (photo) {
@@ -395,7 +398,7 @@ export default function CountdownTimer() {
                         }
                     });
                 }, 1000); // Show blank/no countdown for 1 second
-            }, 500);
+            }, 1500); // Changed from 500ms to 1500ms (1.5 seconds total wait after "Smile!")
         }
     }, [countdown, photosTaken, state.photosPerSession]);
 
