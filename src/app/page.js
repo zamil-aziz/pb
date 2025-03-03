@@ -7,6 +7,7 @@ import CountdownTimer from '../components/CountdownTimer';
 import PhotoPreview from '../components/PhotoPreview';
 import PaymentProcessor from '../components/PaymentProcessor';
 import PrintManager from '../components/PrintManager';
+import ThankYou from '../components/ThankYou';
 
 export default function Photobooth() {
     const { state, dispatch } = useContext(PhotoboothContext);
@@ -118,39 +119,11 @@ export default function Photobooth() {
                 {state.currentView === 'preview' && <PhotoPreview />}
                 {state.currentView === 'payment' && <PaymentProcessor />}
                 {state.currentView === 'printing' && <PrintManager />}
-                {state.currentView === 'thankyou' && (
-                    <div className='text-center p-8 max-w-2xl mx-auto bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white border-opacity-40 relative overflow-hidden'>
-                        <div className='absolute top-0 right-0 w-32 h-32 -mt-10 -mr-10 bg-gradient-to-br from-green-400 to-teal-400 rounded-full opacity-10'></div>
-                        <div className='absolute bottom-0 left-0 w-40 h-40 -mb-16 -ml-16 bg-gradient-to-tr from-blue-400 to-indigo-400 rounded-full opacity-10'></div>
-
-                        <h2 className='text-5xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-teal-500'>
-                            Thank You!
-                        </h2>
-                        <p className='text-2xl mb-8 text-gray-700'>Your photos are printing...</p>
-
-                        <div className='mb-12 relative'>
-                            <div className='absolute inset-0 bg-gradient-to-r from-purple-200 to-pink-200 rounded-full opacity-20 blur-lg transform scale-110'></div>
-                            <img
-                                src='/images/printing.gif'
-                                alt='Printing animation'
-                                className='mx-auto w-48 h-48 object-contain relative z-10'
-                            />
-                        </div>
-
-                        <p className='text-xl mb-12 text-gray-600'>Enjoy your photos!</p>
-
-                        <button
-                            onClick={() => dispatch({ type: 'RESET_APP' })}
-                            className='bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-bold py-4 px-8 rounded-full text-2xl shadow-lg transform transition-all duration-300 hover:scale-105'
-                        >
-                            Start New Session
-                        </button>
-                    </div>
-                )}
+                {state.currentView === 'thankyou' && <ThankYou />}
             </div>
 
             {/* Decorative footer */}
-            <div className='h-2 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500'></div>
+            <div className='h-2 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-500'></div>
         </div>
     );
 }
