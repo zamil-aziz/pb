@@ -104,9 +104,9 @@ export default function FrameSelector() {
                                 ))}
                         </div>
                     </div>
-                    <p className='mt-3 text-sm text-gray-600 max-w-xs text-center'>
+                    {/* <p className='mt-3 text-sm text-gray-600 max-w-xs text-center'>
                         {frames.find(f => f.id === selectedFrame)?.description}
-                    </p>
+                    </p> */}
                 </div>
 
                 {/* Frame options - Fixed grid and scrolling */}
