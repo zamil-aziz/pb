@@ -4,6 +4,7 @@ import { PhotoboothContext } from '../contexts/PhotoboothContext';
 import CameraPreview from '../components/CameraPreview';
 import CountdownTimer from '../components/CountdownTimer';
 import PhotoPreview from '../components/PhotoPreview';
+import FrameSelector from '../components/FrameSelector';
 import PaymentProcessor from '../components/PaymentProcessor';
 import PrintManager from '../components/PrintManager';
 import ThankYou from '../components/ThankYou';
@@ -248,6 +249,7 @@ export default function Photobooth() {
                 {state.currentView === 'camera' && <CameraPreview />}
                 {state.currentView === 'countdown' && <CountdownTimer />}
                 {state.currentView === 'preview' && <PhotoPreview />}
+                {state.currentView === 'frame' && <FrameSelector />}
                 {state.currentView === 'payment' && <PaymentProcessor />}
                 {state.currentView === 'printing' && <PrintManager />}
                 {state.currentView === 'thankyou' && <ThankYou />}

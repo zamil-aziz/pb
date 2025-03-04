@@ -70,6 +70,12 @@ function reducer(state, action) {
                 selectedPhotos: action.payload,
                 lastActivityTime: Date.now(),
             };
+        case 'SET_FRAME':
+            return {
+                ...state,
+                selectedFrame: action.payload,
+                lastActivityTime: Date.now(),
+            };
         default:
             return state;
     }

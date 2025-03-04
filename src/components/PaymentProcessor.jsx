@@ -69,7 +69,7 @@ export default function PaymentProcessor() {
                 </button>
 
                 <button
-                    onClick={() => dispatch({ type: 'SET_VIEW', payload: 'preview' })}
+                    onClick={() => dispatch({ type: 'SET_VIEW', payload: 'frame' })}
                     disabled={isProcessing}
                     className='bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 disabled:from-gray-300 disabled:to-gray-400 text-white font-bold py-6 px-8 rounded-xl text-2xl shadow-lg transform transition-all duration-300 hover:scale-105'
                 >
