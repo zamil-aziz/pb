@@ -16,8 +16,8 @@ const initialState = {
         { id: 'high-contrast', name: 'High Contrast', style: { filter: 'contrast(150%) brightness(110%)' } },
     ],
     photos: [],
-    photosPerSession: 4,
-    price: 5.0,
+    photosPerSession: 8,
+    price: 10.0,
     lastActivityTime: Date.now(),
 };
 
@@ -62,6 +62,12 @@ function reducer(state, action) {
             return {
                 ...initialState,
                 availableBackgrounds: state.availableBackgrounds,
+                lastActivityTime: Date.now(),
+            };
+        case 'SET_SELECTED_PHOTOS':
+            return {
+                ...state,
+                selectedPhotos: action.payload,
                 lastActivityTime: Date.now(),
             };
         default:

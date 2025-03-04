@@ -1,8 +1,27 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { PhotoboothContext } from '../contexts/PhotoboothContext';
 
 export default function PhotoPreview() {
     const { state, dispatch } = useContext(PhotoboothContext);
+    const [selectedPhotos, setSelectedPhotos] = useState([]);
+
+    const togglePhotoSelection = photoIndex => {
+        if (selectedPhotos.includes(photoIndex)) {
+            setSelectedPhotos(selectedPhotos.filter(index => index !== photoIndex));
+        } else {
+            if (selectedPhotos.length < 4) {
+                setSelectedPhotos([...selectedPhotos, photoIndex]);
+            }
+        }
+    };
+
+    const continueWithSelected = () => {
+        if (selectedPhotos.length === 4) {
+            const selectedPhotoData = selectedPhotos.map(index => state.photos[index]);
+            dispatch({ type: 'SET_SELECTED_PHOTOS', payload: selectedPhotoData });
+            dispatch({ type: 'SET_VIEW', payload: 'payment' });
+        }
+    };
 
     return (
         <div className='p-8 max-w-4xl mx-auto bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white border-opacity-40 relative overflow-hidden'>
@@ -16,25 +35,72 @@ export default function PhotoPreview() {
                 Your Photos
             </h2>
 
+            <p className='text-center text-gray-700 mb-4'>
+                Select 4 photos to continue ({selectedPhotos.length}/4 selected)
+            </p>
+
             <div className='relative mx-auto overflow-hidden rounded-xl shadow-lg mb-8'>
-                <div className='grid grid-cols-2 gap-4'>
-                    {state.photos.map((photo, index) => (
-                        <div
-                            key={index}
-                            className='rounded-xl overflow-hidden shadow-lg border border-white border-opacity-40'
-                        >
-                            <img src={photo} alt={`Photo ${index + 1}`} className='w-full h-auto' />
-                        </div>
-                    ))}
+                <div className='grid grid-rows-2 gap-4'>
+                    {/* Top row - first 4 photos */}
+                    <div className='grid grid-cols-4 gap-2'>
+                        {state.photos.slice(0, 4).map((photo, index) => (
+                            <div
+                                key={index}
+                                className={`rounded-xl overflow-hidden shadow-lg border-2 cursor-pointer transition-all duration-200 ${
+                                    selectedPhotos.includes(index)
+                                        ? 'border-indigo-600 ring-2 ring-indigo-600 scale-105'
+                                        : 'border-white border-opacity-40'
+                                }`}
+                                onClick={() => togglePhotoSelection(index)}
+                            >
+                                <div className='relative'>
+                                    <img src={photo} alt={`Photo ${index + 1}`} className='w-full h-auto' />
+                                    {selectedPhotos.includes(index) && (
+                                        <div className='absolute top-2 right-2 bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center'>
+                                            ✓
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    {/* Bottom row - next 4 photos */}
+                    <div className='grid grid-cols-4 gap-2'>
+                        {state.photos.slice(4, 8).map((photo, index) => (
+                            <div
+                                key={index + 4}
+                                className={`rounded-xl overflow-hidden shadow-lg border-2 cursor-pointer transition-all duration-200 ${
+                                    selectedPhotos.includes(index + 4)
+                                        ? 'border-indigo-600 ring-2 ring-indigo-600 scale-105'
+                                        : 'border-white border-opacity-40'
+                                }`}
+                                onClick={() => togglePhotoSelection(index + 4)}
+                            >
+                                <div className='relative'>
+                                    <img src={photo} alt={`Photo ${index + 5}`} className='w-full h-auto' />
+                                    {selectedPhotos.includes(index + 4) && (
+                                        <div className='absolute top-2 right-2 bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center'>
+                                            ✓
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
 
             <div className='grid grid-cols-2 gap-6 mb-6'>
                 <button
-                    onClick={() => dispatch({ type: 'SET_VIEW', payload: 'payment' })}
-                    className='bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-6 px-8 rounded-xl text-2xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl'
+                    onClick={continueWithSelected}
+                    disabled={selectedPhotos.length !== 4}
+                    className={`bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-6 px-8 rounded-xl text-2xl shadow-lg transform transition-all duration-300 ${
+                        selectedPhotos.length === 4
+                            ? 'hover:from-indigo-700 hover:to-purple-700 hover:scale-105 hover:shadow-xl'
+                            : 'opacity-50 cursor-not-allowed'
+                    }`}
                 >
-                    Print Photos
+                    Continue with Selected
                 </button>
 
                 <button
@@ -56,7 +122,7 @@ export default function PhotoPreview() {
                         {state.availableFilters.find(f => f.id === state.selectedFilter)?.name || state.selectedFilter}
                     </p>
                 )}
-                <p className='text-lg text-gray-500'>Looking good! Ready to print?</p>
+                <p className='text-lg text-gray-500'>Select your favorite 4 photos to continue</p>
             </div>
         </div>
     );
