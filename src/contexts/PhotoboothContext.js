@@ -8,6 +8,13 @@ const initialState = {
     currentView: 'welcome',
     selectedBackground: null,
     availableBackgrounds: [],
+    selectedFilter: null,
+    availableFilters: [
+        { id: 'normal', name: 'Normal', style: {} },
+        { id: 'grayscale', name: 'Retro', style: { filter: 'grayscale(100%)' } },
+        { id: 'warm', name: 'Warm', style: { filter: 'saturate(130%) hue-rotate(30deg) brightness(105%)' } },
+        { id: 'high-contrast', name: 'High Contrast', style: { filter: 'contrast(150%) brightness(110%)' } },
+    ],
     photos: [],
     photosPerSession: 4,
     price: 5.0,
@@ -26,6 +33,12 @@ function reducer(state, action) {
             return {
                 ...state,
                 selectedBackground: action.payload,
+                lastActivityTime: Date.now(),
+            };
+        case 'SET_FILTER':
+            return {
+                ...state,
+                selectedFilter: action.payload,
                 lastActivityTime: Date.now(),
             };
         case 'SET_BACKGROUNDS':

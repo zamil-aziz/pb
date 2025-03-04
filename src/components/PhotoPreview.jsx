@@ -50,6 +50,12 @@ export default function PhotoPreview() {
 
             <div className='text-center'>
                 <p className='text-xl text-gray-700 mb-2'>Price: RM {state.price.toFixed(2)}</p>
+                {state.selectedFilter && state.selectedFilter !== 'normal' && (
+                    <p className='text-lg text-indigo-600 mb-2'>
+                        Filter:{' '}
+                        {state.availableFilters.find(f => f.id === state.selectedFilter)?.name || state.selectedFilter}
+                    </p>
+                )}
                 <p className='text-lg text-gray-500'>Looking good! Ready to print?</p>
             </div>
         </div>

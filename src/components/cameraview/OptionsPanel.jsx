@@ -1,17 +1,13 @@
 import React from 'react';
 import { BackgroundsPanel } from './BackgroundPanels';
-
 import { FiltersPanel } from './FiltersPanel';
 
-export const OptionsPanel = ({
-    selectedTab,
-    setSelectedTab,
-    state,
-    dispatch,
-    filters,
-    selectedFilter,
-    applyFilter,
-}) => {
+export const OptionsPanel = ({ selectedTab, setSelectedTab, state, dispatch }) => {
+    // Function to handle filter application
+    const applyFilter = filterId => {
+        dispatch({ type: 'SET_FILTER', payload: filterId });
+    };
+
     return (
         <div
             className='mb-3 sm:mb-4 bg-white bg-opacity-80 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-md sm:shadow-lg border border-purple-100 flex-shrink-0 w-full max-w-full'
@@ -46,7 +42,11 @@ export const OptionsPanel = ({
                 {selectedTab === 'backgrounds' && <BackgroundsPanel state={state} dispatch={dispatch} />}
 
                 {selectedTab === 'filters' && (
-                    <FiltersPanel filters={filters} selectedFilter={selectedFilter} applyFilter={applyFilter} />
+                    <FiltersPanel
+                        filters={state.availableFilters}
+                        selectedFilter={state.selectedFilter}
+                        applyFilter={applyFilter}
+                    />
                 )}
             </div>
         </div>

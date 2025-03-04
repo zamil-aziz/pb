@@ -19,21 +19,13 @@ export default function CameraPreview() {
     const animationRef = useRef(null);
     const backgroundImageRef = useRef(null);
     const [error, setError] = useState(null);
-    const [selectedFilter, setSelectedFilter] = useState(null);
     const [selectedTab, setSelectedTab] = useState('backgrounds');
     const [isLoading, setIsLoading] = useState(true);
-
-    // Define available filters
-    const filters = [
-        { id: 'normal', name: 'Normal', style: {} },
-        { id: 'grayscale', name: 'Retro', style: { filter: 'grayscale(100%)' } },
-        { id: 'warm', name: 'Warm', style: { filter: 'saturate(130%) hue-rotate(30deg) brightness(105%)' } },
-        { id: 'high-contrast', name: 'High Contrast', style: { filter: 'contrast(150%) brightness(110%)' } },
-    ];
+    const isMountedRef = useRef(true);
 
     // Initialize camera with simpler approach
     const initializeCamera = async () => {
-        if (!videoRef.current) return;
+        if (!videoRef.current || !isMountedRef.current) return;
 
         try {
             setIsLoading(true);
@@ -43,10 +35,12 @@ export default function CameraPreview() {
                 audio: false,
             });
 
-            if (videoRef.current) {
+            if (videoRef.current && isMountedRef.current) {
                 videoRef.current.srcObject = stream;
                 videoRef.current.onloadedmetadata = () => {
-                    setIsLoading(false);
+                    if (isMountedRef.current) {
+                        setIsLoading(false);
+                    }
                 };
             }
         } catch (err) {
@@ -59,24 +53,29 @@ export default function CameraPreview() {
                     audio: false,
                 });
 
-                if (videoRef.current) {
+                if (videoRef.current && isMountedRef.current) {
                     videoRef.current.srcObject = stream;
                     videoRef.current.onloadedmetadata = () => {
-                        setIsLoading(false);
+                        if (isMountedRef.current) {
+                            setIsLoading(false);
+                        }
                     };
                 }
             } catch (fallbackErr) {
                 console.error('Camera access failed completely:', fallbackErr);
-                setIsLoading(false);
-                setError(
-                    'Could not access camera. Please check your browser permissions and ensure your camera is working.'
-                );
+                if (isMountedRef.current) {
+                    setIsLoading(false);
+                    setError(
+                        'Could not access camera. Please check your browser permissions and ensure your camera is working.'
+                    );
+                }
             }
         }
     };
 
     // Camera and model initialization logic
     useEffect(() => {
+        isMountedRef.current = true;
         initializeCamera();
 
         // Load background image if selected
@@ -86,8 +85,10 @@ export default function CameraPreview() {
 
             // Handle loading errors
             backgroundImageRef.current.onerror = () => {
-                console.warn(`Failed to load background image: ${state.selectedBackground.url}`);
-                backgroundImageRef.current = null;
+                if (isMountedRef.current) {
+                    console.warn(`Failed to load background image: ${state.selectedBackground.url}`);
+                    backgroundImageRef.current = null;
+                }
             };
         } else {
             backgroundImageRef.current = null;
@@ -95,12 +96,14 @@ export default function CameraPreview() {
 
         // Preload the segmentation model (only if a background is selected)
         const loadModel = async () => {
-            if (state.selectedBackground) {
+            if (state.selectedBackground && isMountedRef.current) {
                 try {
                     console.log('Loading BodyPix model...');
                     // Explicitly set preferred backend before loading the model
                     await tf.setBackend('webgl');
                     console.log('Using backend:', tf.getBackend());
+
+                    if (!isMountedRef.current) return;
 
                     const loadedModel = await bodyPix.load({
                         architecture: 'MobileNetV1',
@@ -108,16 +111,23 @@ export default function CameraPreview() {
                         multiplier: 0.75,
                         quantBytes: 2,
                     });
+
+                    if (!isMountedRef.current) return;
+
                     console.log('BodyPix model loaded successfully');
                     setModel(loadedModel);
                     setModelLoaded(true);
                 } catch (error) {
                     console.error('Failed to load BodyPix model:', error);
                     // Try with CPU backend as fallback
+                    if (!isMountedRef.current) return;
+
                     try {
                         console.log('Trying CPU backend as fallback...');
                         await tf.setBackend('cpu');
                         console.log('Using backend:', tf.getBackend());
+
+                        if (!isMountedRef.current) return;
 
                         const loadedModel = await bodyPix.load({
                             architecture: 'MobileNetV1',
@@ -125,10 +135,14 @@ export default function CameraPreview() {
                             multiplier: 0.5, // Lower multiplier for CPU
                             quantBytes: 2,
                         });
+
+                        if (!isMountedRef.current) return;
+
                         console.log('BodyPix model loaded successfully with CPU backend');
                         setModel(loadedModel);
                         setModelLoaded(true);
                     } catch (fallbackError) {
+                        if (!isMountedRef.current) return;
                         console.error('Failed to load BodyPix model with fallback:', fallbackError);
                         setModelLoaded(false);
                         setError('Failed to load the background segmentation model. Please try again later.');
@@ -140,6 +154,8 @@ export default function CameraPreview() {
         loadModel();
 
         return () => {
+            isMountedRef.current = false;
+
             // Clean up camera stream
             if (videoRef.current && videoRef.current.srcObject) {
                 videoRef.current.srcObject.getTracks().forEach(track => track.stop());
@@ -202,8 +218,8 @@ export default function CameraPreview() {
                     canvasRef.current.height = height;
                 }
 
-                // Get canvas context safely
-                const ctx = canvasRef.current.getContext('2d');
+                // Get canvas context safely with willReadFrequently flag
+                const ctx = canvasRef.current.getContext('2d', { willReadFrequently: true });
                 if (!ctx) {
                     console.error('Failed to get canvas context');
                     return;
@@ -217,8 +233,8 @@ export default function CameraPreview() {
                 });
 
                 // Safety check again after async operation
-                if (!canvasRef.current || !ctx) {
-                    console.error('Canvas reference lost during segmentation processing');
+                if (!isMounted || !canvasRef.current || !ctx) {
+                    console.log('Component unmounted during segmentation, aborting');
                     return;
                 }
 
@@ -246,7 +262,7 @@ export default function CameraPreview() {
                 const tempCanvas = document.createElement('canvas');
                 tempCanvas.width = width;
                 tempCanvas.height = height;
-                const tempCtx = tempCanvas.getContext('2d');
+                const tempCtx = tempCanvas.getContext('2d', { willReadFrequently: true });
                 if (!tempCtx) {
                     console.error('Failed to get temporary canvas context');
                     return;
@@ -267,7 +283,7 @@ export default function CameraPreview() {
                 }
 
                 // Final safety check
-                if (!canvasRef.current || !ctx) {
+                if (!isMounted || !canvasRef.current || !ctx) {
                     console.error('Canvas reference lost before putting image data');
                     return;
                 }
@@ -301,17 +317,19 @@ export default function CameraPreview() {
 
     // Apply the selected filter
     useEffect(() => {
-        if (videoRef.current && selectedFilter) {
-            const filter = filters.find(f => f.id === selectedFilter);
-            if (filter) {
-                Object.assign(videoRef.current.style, filter.style);
+        if (videoRef.current && state.selectedFilter) {
+            const filter = state.availableFilters.find(f => f.id === state.selectedFilter);
+            if (filter && filter.style.filter) {
+                videoRef.current.style.filter = filter.style.filter;
+            } else {
+                videoRef.current.style.filter = '';
             }
         }
-    }, [selectedFilter]);
+    }, [state.selectedFilter, state.availableFilters]);
 
     // Apply a filter
     const applyFilter = filterId => {
-        setSelectedFilter(filterId);
+        dispatch({ type: 'SET_FILTER', payload: filterId });
     };
 
     return (
@@ -326,20 +344,10 @@ export default function CameraPreview() {
                 isLoading={isLoading}
                 state={state}
                 modelLoaded={modelLoaded}
-                selectedFilter={selectedFilter}
-                filters={filters}
                 error={error}
             />
 
-            <OptionsPanel
-                selectedTab={selectedTab}
-                setSelectedTab={setSelectedTab}
-                state={state}
-                dispatch={dispatch}
-                filters={filters}
-                selectedFilter={selectedFilter}
-                applyFilter={applyFilter}
-            />
+            <OptionsPanel selectedTab={selectedTab} setSelectedTab={setSelectedTab} state={state} dispatch={dispatch} />
 
             <ControlButtons dispatch={dispatch} />
 
