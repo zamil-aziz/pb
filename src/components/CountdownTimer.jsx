@@ -152,7 +152,7 @@ export default function CountdownTimer() {
                     displayCanvasRef.current.height = height;
                 }
 
-                const ctx = canvasRef.current.getContext('2d', { willReadFrequently: true });
+                const ctx = displayCanvasRef.current.getContext('2d', { willReadFrequently: true });
                 if (!ctx) return;
 
                 // Get segmentation data

@@ -345,6 +345,8 @@ export default function CameraPreview() {
                 state={state}
                 modelLoaded={modelLoaded}
                 error={error}
+                selectedFilter={state.selectedFilter}
+                filters={state.availableFilters}
             />
 
             <OptionsPanel selectedTab={selectedTab} setSelectedTab={setSelectedTab} state={state} dispatch={dispatch} />
