@@ -42,18 +42,22 @@ export default function PhotoPreview() {
             <div className='relative mx-auto overflow-hidden rounded-xl shadow-lg mb-8'>
                 <div className='grid grid-rows-2 gap-4'>
                     {/* Top row - first 4 photos */}
-                    <div className='grid grid-cols-4 gap-2'>
+                    <div className='grid grid-cols-4 gap-4 p-2'>
                         {state.photos.slice(0, 4).map((photo, index) => (
                             <div
                                 key={index}
-                                className={`rounded-xl overflow-hidden shadow-lg border-2 cursor-pointer transition-all duration-200 ${
-                                    selectedPhotos.includes(index)
-                                        ? 'border-indigo-600 ring-2 ring-indigo-600 scale-105'
-                                        : 'border-white border-opacity-40'
+                                className={`rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform relative ${
+                                    selectedPhotos.includes(index) ? 'scale-105 z-10' : ''
                                 }`}
                                 onClick={() => togglePhotoSelection(index)}
                             >
-                                <div className='relative'>
+                                <div
+                                    className={`rounded-xl overflow-hidden border-2 ${
+                                        selectedPhotos.includes(index)
+                                            ? 'border-indigo-600 ring-2 ring-indigo-600'
+                                            : 'border-white border-opacity-40'
+                                    }`}
+                                >
                                     <img src={photo} alt={`Photo ${index + 1}`} className='w-full h-auto' />
                                     {selectedPhotos.includes(index) && (
                                         <div className='absolute top-2 right-2 bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center'>
@@ -65,18 +69,22 @@ export default function PhotoPreview() {
                         ))}
                     </div>
                     {/* Bottom row - next 4 photos */}
-                    <div className='grid grid-cols-4 gap-2'>
+                    <div className='grid grid-cols-4 gap-4 p-2'>
                         {state.photos.slice(4, 8).map((photo, index) => (
                             <div
                                 key={index + 4}
-                                className={`rounded-xl overflow-hidden shadow-lg border-2 cursor-pointer transition-all duration-200 ${
-                                    selectedPhotos.includes(index + 4)
-                                        ? 'border-indigo-600 ring-2 ring-indigo-600 scale-105'
-                                        : 'border-white border-opacity-40'
+                                className={`rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform relative ${
+                                    selectedPhotos.includes(index + 4) ? 'scale-105 z-10' : ''
                                 }`}
                                 onClick={() => togglePhotoSelection(index + 4)}
                             >
-                                <div className='relative'>
+                                <div
+                                    className={`rounded-xl overflow-hidden border-2 ${
+                                        selectedPhotos.includes(index + 4)
+                                            ? 'border-indigo-600 ring-2 ring-indigo-600'
+                                            : 'border-white border-opacity-40'
+                                    }`}
+                                >
                                     <img src={photo} alt={`Photo ${index + 5}`} className='w-full h-auto' />
                                     {selectedPhotos.includes(index + 4) && (
                                         <div className='absolute top-2 right-2 bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center'>
@@ -116,13 +124,26 @@ export default function PhotoPreview() {
 
             <div className='text-center'>
                 <p className='text-xl text-gray-700 mb-2'>Price: RM {state.price.toFixed(2)}</p>
-                {state.selectedFilter && state.selectedFilter !== 'normal' && (
-                    <p className='text-lg text-indigo-600 mb-2'>
-                        Filter:{' '}
-                        {state.availableFilters.find(f => f.id === state.selectedFilter)?.name || state.selectedFilter}
-                    </p>
-                )}
-                <p className='text-lg text-gray-500'>Select your favorite 4 photos to continue</p>
+                <div className='flex space-x-4 items-center justify-center'>
+                    {state.selectedFilter && state.selectedFilter !== 'normal' && (
+                        <p className='text-lg'>
+                            <span className='font-medium text-gray-700'>Filter:</span>{' '}
+                            <span className='text-indigo-600'>
+                                {state.availableFilters.find(f => f.id === state.selectedFilter)?.name ||
+                                    state.selectedFilter}
+                            </span>
+                        </p>
+                    )}
+                    {state.selectedBackground && (
+                        <p className='text-lg'>
+                            <span className='font-medium text-gray-700'>Background:</span>{' '}
+                            <span className='text-indigo-600'>
+                                {state.selectedBackground.name || state.selectedBackground.id}
+                            </span>
+                        </p>
+                    )}
+                </div>
+                <p className='text-lg text-gray-500 mt-2'>Select your favorite 4 photos to continue</p>
             </div>
         </div>
     );
