@@ -9,7 +9,7 @@ export default function FrameSelector() {
         {
             id: 'classic',
             name: 'Classic White',
-            class: 'bg-white border-8 border-white shadow-xl',
+            class: 'bg-white border-8 border-white shadow-2xl',
             previewClass: 'bg-gradient-to-r from-white to-gray-100',
             description: 'Timeless white frame that complements any photo style',
         },
