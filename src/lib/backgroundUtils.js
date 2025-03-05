@@ -7,22 +7,22 @@ export async function getBackgrounds() {
         return [
             {
                 id: '1',
-                name: 'Beach',
-                url: '/backgrounds/beach.jpg',
+                name: 'Hari Raya',
+                url: '/backgrounds/raya.jpg',
                 // Fallback to a color if image doesn't exist
-                fallbackColor: '#87CEEB',
+                fallbackColor: '#0D8A3E', // Rich green, a common color for Hari Raya
             },
             {
                 id: '2',
-                name: 'City',
-                url: '/backgrounds/city.jpg',
-                fallbackColor: '#1E3A8A',
+                name: 'Christmas',
+                url: '/backgrounds/christmas.jpg',
+                fallbackColor: '#B22222', // Festive red for Christmas
             },
             {
                 id: '3',
                 name: 'Space',
                 url: '/backgrounds/space.jpg',
-                fallbackColor: '#000000',
+                fallbackColor: '#0A0A2A',
             },
         ];
     } catch (error) {
