@@ -4,6 +4,19 @@ import { getBackgrounds } from '../lib/backgroundUtils';
 
 export const PhotoboothContext = createContext();
 
+// Action types as constants to avoid typos
+export const ActionTypes = {
+    SET_VIEW: 'SET_VIEW',
+    SET_BACKGROUND: 'SET_BACKGROUND',
+    SET_FILTER: 'SET_FILTER',
+    SET_BACKGROUNDS: 'SET_BACKGROUNDS',
+    ADD_PHOTO: 'ADD_PHOTO',
+    CLEAR_PHOTOS: 'CLEAR_PHOTOS',
+    RESET_APP: 'RESET_APP',
+    SET_SELECTED_PHOTOS: 'SET_SELECTED_PHOTOS',
+    SET_FRAME: 'SET_FRAME',
+};
+
 const initialState = {
     currentView: 'welcome',
     selectedBackground: null,
@@ -23,54 +36,54 @@ const initialState = {
 
 function reducer(state, action) {
     switch (action.type) {
-        case 'SET_VIEW':
+        case ActionTypes.SET_VIEW:
             return {
                 ...state,
                 currentView: action.payload,
                 lastActivityTime: Date.now(),
             };
-        case 'SET_BACKGROUND':
+        case ActionTypes.SET_BACKGROUND:
             return {
                 ...state,
                 selectedBackground: action.payload,
                 lastActivityTime: Date.now(),
             };
-        case 'SET_FILTER':
+        case ActionTypes.SET_FILTER:
             return {
                 ...state,
                 selectedFilter: action.payload,
                 lastActivityTime: Date.now(),
             };
-        case 'SET_BACKGROUNDS':
+        case ActionTypes.SET_BACKGROUNDS:
             return {
                 ...state,
                 availableBackgrounds: action.payload,
             };
-        case 'ADD_PHOTO':
+        case ActionTypes.ADD_PHOTO:
             return {
                 ...state,
                 photos: [...state.photos, action.payload],
                 lastActivityTime: Date.now(),
             };
-        case 'CLEAR_PHOTOS':
+        case ActionTypes.CLEAR_PHOTOS:
             return {
                 ...state,
                 photos: [],
                 lastActivityTime: Date.now(),
             };
-        case 'RESET_APP':
+        case ActionTypes.RESET_APP:
             return {
                 ...initialState,
                 availableBackgrounds: state.availableBackgrounds,
                 lastActivityTime: Date.now(),
             };
-        case 'SET_SELECTED_PHOTOS':
+        case ActionTypes.SET_SELECTED_PHOTOS:
             return {
                 ...state,
                 selectedPhotos: action.payload,
                 lastActivityTime: Date.now(),
             };
-        case 'SET_FRAME':
+        case ActionTypes.SET_FRAME:
             return {
                 ...state,
                 selectedFrame: action.payload,
@@ -88,7 +101,7 @@ export function PhotoboothProvider({ children }) {
         // Load available backgrounds on mount
         const loadBackgrounds = async () => {
             const backgrounds = await getBackgrounds();
-            dispatch({ type: 'SET_BACKGROUNDS', payload: backgrounds });
+            dispatch({ type: ActionTypes.SET_BACKGROUNDS, payload: backgrounds });
         };
 
         loadBackgrounds();

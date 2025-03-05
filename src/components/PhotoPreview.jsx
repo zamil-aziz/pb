@@ -1,5 +1,6 @@
+'use client';
 import { useContext, useState } from 'react';
-import { PhotoboothContext } from '../contexts/PhotoboothContext';
+import { PhotoboothContext, ActionTypes } from '../contexts/PhotoboothContext';
 
 export default function PhotoPreview() {
     const { state, dispatch } = useContext(PhotoboothContext);
@@ -18,8 +19,8 @@ export default function PhotoPreview() {
     const continueWithSelected = () => {
         if (selectedPhotos.length === 4) {
             const selectedPhotoData = selectedPhotos.map(index => state.photos[index]);
-            dispatch({ type: 'SET_SELECTED_PHOTOS', payload: selectedPhotoData });
-            dispatch({ type: 'SET_VIEW', payload: 'frame' });
+            dispatch({ type: ActionTypes.SET_SELECTED_PHOTOS, payload: selectedPhotoData });
+            dispatch({ type: ActionTypes.SET_VIEW, payload: 'frame' });
         }
     };
 
@@ -113,8 +114,8 @@ export default function PhotoPreview() {
 
                 <button
                     onClick={() => {
-                        dispatch({ type: 'CLEAR_PHOTOS' });
-                        dispatch({ type: 'SET_VIEW', payload: 'camera' });
+                        dispatch({ type: ActionTypes.CLEAR_PHOTOS });
+                        dispatch({ type: ActionTypes.SET_VIEW, payload: 'camera' });
                     }}
                     className='bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-6 px-8 rounded-xl text-2xl shadow-lg transform transition-all duration-300 hover:scale-105'
                 >

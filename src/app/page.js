@@ -148,7 +148,7 @@ export default function Photobooth() {
                 <div className='relative z-10 flex items-center justify-center'>
                     <Image className='h-8 w-8 mr-3 text-yellow-300' />
                     <h1 className='text-3xl md:text-4xl font-bold text-center tracking-wider group'>
-                        Photo Booth
+                        ASDFGHJKL
                         <span className='absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-yellow-300 rounded-full group-hover:animate-pulse'></span>
                     </h1>
                 </div>
