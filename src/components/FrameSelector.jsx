@@ -123,7 +123,7 @@ export default function FrameSelector() {
                                         <div
                                             className={`w-4 h-4 rounded-full ${frame.previewClass} border border-gray-300 flex-shrink-0`}
                                         ></div>
-                                        <p className='font-medium text-sm text-gray-700 truncate'>{frame.name}</p>
+                                        <p className='font-semibold text-sm text-gray-800 truncate'>{frame.name}</p>
                                     </div>
                                 </div>
                             </div>

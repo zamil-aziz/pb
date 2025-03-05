@@ -15,10 +15,10 @@ export const OptionsPanel = ({ selectedTab, setSelectedTab, state, dispatch }) =
         >
             <div className='flex text-center border-b border-purple-100'>
                 <button
-                    className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 font-medium text-sm sm:text-base md:text-lg ${
+                    className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 font-semibold text-sm sm:text-base md:text-lg ${
                         selectedTab === 'backgrounds'
-                            ? 'text-purple-700 border-b-2 border-purple-600'
-                            : 'text-gray-600 hover:text-purple-600'
+                            ? 'text-purple-800 border-b-2 border-purple-600'
+                            : 'text-gray-700 hover:text-purple-700'
                     }`}
                     onClick={() => setSelectedTab('backgrounds')}
                     aria-label='Select backgrounds tab'
@@ -26,10 +26,10 @@ export const OptionsPanel = ({ selectedTab, setSelectedTab, state, dispatch }) =
                     Backgrounds
                 </button>
                 <button
-                    className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 font-medium text-sm sm:text-base md:text-lg ${
+                    className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 font-semibold text-sm sm:text-base md:text-lg ${
                         selectedTab === 'filters'
-                            ? 'text-purple-700 border-b-2 border-purple-600'
-                            : 'text-gray-600 hover:text-purple-600'
+                            ? 'text-purple-800 border-b-2 border-purple-600'
+                            : 'text-gray-700 hover:text-purple-700'
                     }`}
                     onClick={() => setSelectedTab('filters')}
                     aria-label='Select filters tab'

@@ -36,7 +36,7 @@ export default function PhotoPreview() {
                 Your Photos
             </h2>
 
-            <p className='text-center text-gray-700 mb-4'>
+            <p className='text-center text-gray-800 font-medium mb-4'>
                 Select 4 photos to continue ({selectedPhotos.length}/4 selected)
             </p>
 
@@ -144,7 +144,7 @@ export default function PhotoPreview() {
                         </p>
                     )}
                 </div>
-                <p className='text-lg text-gray-500 mt-2'>Select your favorite 4 photos to continue</p>
+                <p className='text-lg text-gray-700 font-medium mt-2'>Select your favorite 4 photos to continue</p>
             </div>
         </div>
     );

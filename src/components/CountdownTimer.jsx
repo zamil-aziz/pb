@@ -283,13 +283,13 @@ export default function CountdownTimer() {
                 </div>
 
                 <div className='p-4 text-center bg-gradient-to-r from-purple-100 to-blue-100 mt-6 rounded-xl'>
-                    <p className='text-2xl font-semibold text-gray-700'>
-                        Photo <span className='text-purple-600'>{photosTaken + 1}</span> of{' '}
-                        <span className='text-blue-600'>{state.photosPerSession}</span>
+                    <p className='text-2xl font-bold text-gray-800'>
+                        Photo <span className='text-purple-700'>{photosTaken + 1}</span> of{' '}
+                        <span className='text-blue-700'>{state.photosPerSession}</span>
                     </p>
 
                     {!state.selectedBackground && (
-                        <p className='mt-2 text-amber-600 font-medium'>
+                        <p className='mt-2 text-amber-800 font-semibold'>
                             Using natural background (no virtual background selected)
                         </p>
                     )}

@@ -44,7 +44,7 @@ export default function PaymentProcessor() {
             <div className='flex flex-col gap-4 mb-6 items-center'>
                 {/* Total price display - Now above QR code */}
                 <div className='w-full max-w-lg bg-white rounded-xl shadow-sm overflow-hidden mb-2'>
-                    <div className='p-3 bg-indigo-500'>
+                    <div className='p-3 bg-indigo-600'>
                         <div className='flex items-center text-white'>
                             <svg
                                 xmlns='http://www.w3.org/2000/svg'
@@ -60,11 +60,11 @@ export default function PaymentProcessor() {
                                     d='M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
                                 />
                             </svg>
-                            <h3 className='text-base font-medium'>Total</h3>
+                            <h3 className='text-base font-semibold'>Total</h3>
                         </div>
                     </div>
                     <div className='p-4 flex justify-center items-center'>
-                        <p className='text-xl font-bold text-gray-800'>RM {state.price.toFixed(2)}</p>
+                        <p className='text-2xl font-bold text-gray-900'>RM {state.price.toFixed(2)}</p>
                     </div>
                 </div>
 

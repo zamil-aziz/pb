@@ -177,7 +177,7 @@ export default function Photobooth() {
                             </h2>
                         </div>
 
-                        <p className='text-2xl md:text-xl mb-8 text-gray-700 max-w-lg mx-auto'>
+                        <p className='text-2xl md:text-xl mb-8 text-gray-800 max-w-lg mx-auto'>
                             Capture unforgettable memories with our photo booth. Choose your props, strike a pose, and
                             take home a print to remember the moment.
                         </p>
@@ -188,13 +188,13 @@ export default function Photobooth() {
                                 <div className='bg-indigo-100 p-2 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2'>
                                     <Image size={24} className='text-indigo-600' />
                                 </div>
-                                <p className='text-indigo-700 font-medium'>Amazing Filters</p>
+                                <p className='text-indigo-800 font-semibold'>Amazing Filters</p>
                             </div>
                             <div className='p-3 bg-purple-50 rounded-xl'>
                                 <div className='bg-purple-100 p-2 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2'>
                                     <PartyPopper size={24} className='text-purple-600' />
                                 </div>
-                                <p className='text-purple-700 font-medium'>Fun Props</p>
+                                <p className='text-purple-800 font-semibold'>Fun Props</p>
                             </div>
                             <div className='p-3 bg-pink-50 rounded-xl'>
                                 <div className='bg-pink-100 p-2 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2'>
@@ -214,7 +214,7 @@ export default function Photobooth() {
                                         <line x1='12' y1='7' x2='12' y2='7' />
                                     </svg>
                                 </div>
-                                <p className='text-pink-700 font-medium'>Instant Prints</p>
+                                <p className='text-pink-800 font-semibold'>Instant Prints</p>
                             </div>
                         </div>
 
