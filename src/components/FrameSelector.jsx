@@ -6,7 +6,6 @@ export default function FrameSelector() {
     const { state, dispatch } = useContext(PhotoboothContext);
     const [selectedFrame, setSelectedFrame] = useState(state.selectedFrame || 'classic');
 
-    // Create a separate file for this in a real application
     const frames = [
         {
             id: 'classic',
@@ -36,7 +35,34 @@ export default function FrameSelector() {
             previewClass: 'bg-gradient-to-r from-amber-600 to-amber-800',
             description: 'Warm wooden texture for a rustic, organic feel',
         },
-        // Other frames...
+        {
+            id: 'marbleWhite',
+            name: 'Marble White',
+            class: "bg-white border-8 border-gray-300 shadow-xl relative overflow-hidden before:absolute before:inset-0 before:content-[''] before:bg-[url(\"data:image/svg+xml,%3Csvg width='56' height='28' viewBox='0 0 56 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M56 26v2h-7.75c2.3-1.27 4.94-2 7.75-2zm-26 2a2 2 0 1 0-4 0h-4.09A25.98 25.98 0 0 0 0 16v-2c.67 0 1.34.02 2 .07V14a2 2 0 0 0-2-2v-2a4 4 0 0 1 3.98 3.6 28.09 28.09 0 0 1 2.8-3.86A8 8 0 0 0 0 6V4a9.99 9.99 0 0 1 8.17 4.23c.94-.95 1.96-1.83 3.03-2.63A13.98 13.98 0 0 0 0 0h7.75c2 1.1 3.73 2.63 5.1 4.45 1.12-.72 2.3-1.37 3.53-1.93A20.1 20.1 0 0 0 14.28 0h2.7c.45.56.88 1.14 1.29 1.74 1.3-.48 2.63-.87 4-1.15-.11-.2-.23-.4-.36-.59H26v.07a28.4 28.4 0 0 1 4 0V0h4.09l-.37.59c1.38.28 2.72.67 4.01 1.15.4-.6.84-1.18 1.3-1.74h2.69a20.1 20.1 0 0 0-2.1 2.52c1.23.56 2.41 1.2 3.54 1.93A16.08 16.08 0 0 1 48.25 0H56c-4.58 0-8.65 2.2-11.2 5.6 1.07.8 2.09 1.68 3.03 2.63A9.99 9.99 0 0 1 56 4v2a8 8 0 0 0-6.77 3.74c1.03 1.2 1.97 2.5 2.79 3.86A4 4 0 0 1 56 10v2a2 2 0 0 0-2 2.07 28.4 28.4 0 0 1 2-.07v2c-9.2 0-17.3 4.78-21.91 12H30zM7.75 28H0v-2c2.81 0 5.46.73 7.75 2zM56 20v2c-.67 0-1.34-.02-2-.07V22a2 2 0 0 0 2 2v2a4 4 0 0 1-3.98-3.6 28.09 28.09 0 0 1-2.8 3.86A8 8 0 0 0 56 30v-2a8 8 0 0 1-6.77-3.74c-1.03 1.2-1.97 2.5-2.79 3.86A4 4 0 0 0 52 32v-2a2 2 0 0 1-2-2.07 28.4 28.4 0 0 0-2 .07v-2c9.2 0 17.3-4.78 21.91-12H56zM30 7V5h2v2h-2zm-4-2h2v2h-2V5zm8 0h2v2h-2V5zm-8 8v-2h2v2h-2zm4 0v-2h2v2h-2zm-8-6v-2h2v2h-2zm8 2V7h2v2h-2zM22 5v2h-2V5h2zm4 8v-2h2v2h-2zm-8-2v-2h2v2h-2zm8-6h2v2h-2V5zm-8 6V7h2v2h-2zm-4-2V7h2v2h-2zm8-6h-2V5h2v2zm-4 10v-2h2v2h-2zm0-6v-2h2v2h-2z' fill='%23a3a3a3' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E\")] before:opacity-70 after:absolute after:inset-0 after:content-[''] after:bg-gradient-to-tr after:from-gray-100 after:to-white after:opacity-60",
+            previewClass: 'bg-gradient-to-r from-gray-200 to-white',
+            description: 'Elegant marble texture with subtle veining',
+        },
+        {
+            id: 'watercolor',
+            name: 'Watercolor',
+            class: "bg-white border-8 border-t-blue-300 border-r-purple-300 border-b-pink-300 border-l-blue-300 shadow-xl relative overflow-hidden before:absolute before:inset-0 before:content-[''] before:bg-gradient-to-br before:from-blue-100 before:via-purple-100 before:to-pink-100 before:opacity-80 after:absolute after:inset-0 after:content-[''] after:bg-[url(\"data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='watercolor' width='200' height='200' patternUnits='userSpaceOnUse'%3E%3Cpath fill='%23a78bfa' fill-opacity='0.1' d='M31.5,35.5 C48,35.5 60,24.5 60,11.5 S48,-13.5 31.5,-13.5 S3,-2.5 3,11.5 S15,35.5 31.5,35.5z M31.5,35.5 C15,35.5 3,46.5 3,59.5 S15,83.5 31.5,83.5 S60,72.5 60,59.5 S48,35.5 31.5,35.5z'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23watercolor)'/%3E%3C/svg%3E\")] after:opacity-60",
+            previewClass: 'bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200',
+            description: 'Soft, artistic wash of pastel colors',
+        },
+        {
+            id: 'cosmicDark',
+            name: 'Cosmic Dark',
+            class: "bg-slate-900 border-8 border-indigo-600 shadow-xl relative overflow-hidden before:absolute before:inset-0 before:content-[''] before:bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.15),rgba(15,23,42,0)_70%)] after:absolute after:inset-0 after:content-[''] after:bg-[url(\"data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23818cf8' fill-opacity='0.15' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3Ccircle cx='13' cy='13' r='1'/%3E%3Ccircle cx='17' cy='5' r='1'/%3E%3Ccircle cx='5' cy='17' r='1'/%3E%3C/g%3E%3C/svg%3E\")] after:opacity-100",
+            previewClass: 'bg-gradient-to-r from-slate-900 to-indigo-900',
+            description: 'Dramatic deep space theme with subtle stars',
+        },
+        {
+            id: 'silverBrushed',
+            name: 'Brushed Silver',
+            class: "bg-gray-100 border-8 border-gray-400 shadow-xl relative overflow-hidden before:absolute before:inset-0 before:content-[''] before:bg-gradient-to-r before:from-gray-300 before:to-gray-200 before:opacity-50 after:absolute after:inset-0 after:content-[''] after:bg-[url(\"data:image/svg+xml,%3Csvg width='100' height='20' viewBox='0 0 100 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21.184 20c.357-.13.72-.264 1.088-.402l1.768-.661C33.64 15.347 39.647 14 50 14c10.271 0 15.362 1.222 24.629 4.928C84.112 12.722 89.438 14 100 14v-2c-10.271 0-15.362-1.222-24.629-4.928C65.888 3.278 60.562 2 50 2 39.374 2 33.145 3.397 23.34 7.063l-1.767.662C13.223 10.84 8.163 12 0 12v2c8.44 0 13.718-1.21 22.272-4.402l1.768-.661C33.64 5.347 39.647 4 50 4c10.271 0 15.362 1.222 24.629 4.928C84.112 12.722 89.438 14 100 14v-2c-10.271 0-15.362-1.222-24.629-4.928C65.888 3.278 60.562 2 50 2 39.374 2 33.145 3.397 23.34 7.063l-1.767.662C13.223 10.84 8.163 12 0 12v2z' fill='%23737373' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E\")] after:opacity-80",
+            previewClass: 'bg-gradient-to-r from-gray-300 to-gray-400',
+            description: 'Modern metallic finish with horizontal brushed texture',
+        },
     ];
 
     const handleFrameSelect = frameId => {
