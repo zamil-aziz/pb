@@ -16,6 +16,7 @@ export const ActionTypes = {
     RESET_APP: 'RESET_APP',
     SET_SELECTED_PHOTOS: 'SET_SELECTED_PHOTOS',
     SET_FRAME: 'SET_FRAME',
+    SET_PRINT_QUANTITY: 'SET_PRINT_QUANTITY', // New action type for print quantity
 };
 
 const initialState = {
@@ -32,9 +33,25 @@ const initialState = {
     ],
     photos: [],
     photosPerSession: 8, // Default for strips mode
+    printQuantity: 2, // Default print quantity
     price: 10.0,
     lastActivityTime: Date.now(),
 };
+
+// Base prices per mode
+const BASE_PRICES = {
+    strips: 10.0,
+    single: 15.0,
+};
+
+// Calculate price based on mode and quantity
+function calculatePrice(mode, quantity) {
+    const basePrice = BASE_PRICES[mode];
+    // Apply volume discount for higher quantities
+    const multiplier = quantity === 2 ? 1 : quantity === 4 ? 1.8 : quantity === 6 ? 2.5 : quantity === 8 ? 3.0 : 1;
+
+    return (basePrice * multiplier).toFixed(2) * 1; // Convert back to number
+}
 
 function reducer(state, action) {
     switch (action.type) {
@@ -50,7 +67,15 @@ function reducer(state, action) {
                 ...state,
                 photoMode: action.payload,
                 photosPerSession: action.payload === 'single' ? 1 : 8, // 1 photo for single mode, 8 for strips
-                price: action.payload === 'single' ? 15.0 : 10.0, // Adjust price based on mode
+                price: calculatePrice(action.payload, state.printQuantity), // Adjust price based on mode and quantity
+                lastActivityTime: Date.now(),
+            };
+        case ActionTypes.SET_PRINT_QUANTITY:
+            // Update print quantity and recalculate price
+            return {
+                ...state,
+                printQuantity: action.payload,
+                price: calculatePrice(state.photoMode, action.payload),
                 lastActivityTime: Date.now(),
             };
         case ActionTypes.SET_BACKGROUND:
