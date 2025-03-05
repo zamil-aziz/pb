@@ -143,17 +143,16 @@ export default function FrameSelector() {
 
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6'>
                 <button
-                    onClick={continueToPayment}
-                    className='bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 md:py-6 px-6 md:px-8 rounded-xl text-lg md:text-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl'
-                >
-                    Continue with Selected Frame
-                </button>
-
-                <button
                     onClick={() => dispatch({ type: ActionTypes.SET_VIEW, payload: 'preview' })}
                     className='bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-4 md:py-6 px-6 md:px-8 rounded-xl text-lg md:text-xl shadow-lg transform transition-all duration-300 hover:scale-105'
                 >
                     Back to Photos
+                </button>
+                <button
+                    onClick={continueToPayment}
+                    className='bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 md:py-6 px-6 md:px-8 rounded-xl text-lg md:text-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl'
+                >
+                    Continue with Selected Frame
                 </button>
             </div>
         </div>
