@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useContext } from 'react';
 import { PhotoboothContext } from '../contexts/PhotoboothContext';
+import PhotoModeSelector from '@/components/PhotoModeSelector';
 import CameraPreview from '../components/CameraPreview';
 import CountdownTimer from '../components/CountdownTimer';
 import PhotoPreview from '../components/PhotoPreview';
@@ -157,7 +158,6 @@ export default function Photobooth() {
             {/* Content area with enhanced visual elements */}
             <main className='flex-grow flex items-center justify-center p-4 relative overflow-hidden'>
                 <BackgroundElements />
-
                 {state.currentView === 'welcome' && (
                     <div className='text-center p-6 md:p-10 w-full max-w-4xl mx-auto bg-white bg-opacity-80 backdrop-blur-md rounded-3xl shadow-2xl border border-white border-opacity-60 relative overflow-hidden transform transition-all duration-500 hover:scale-102 hover:shadow-2xl'>
                         {/* Decorative top corner accents */}
@@ -219,7 +219,7 @@ export default function Photobooth() {
                         </div>
 
                         <button
-                            onClick={() => dispatch({ type: 'SET_VIEW', payload: 'camera' })}
+                            onClick={() => dispatch({ type: 'SET_VIEW', payload: 'photoMode' })}
                             className='bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-5 px-10 rounded-full text-2xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-purple-300 relative overflow-hidden group'
                         >
                             <span className='relative z-10 flex items-center justify-center gap-2'>
@@ -245,7 +245,7 @@ export default function Photobooth() {
                         </button>
                     </div>
                 )}
-
+                {state.currentView === 'photoMode' && <PhotoModeSelector />}{' '}
                 {state.currentView === 'camera' && <CameraPreview />}
                 {state.currentView === 'countdown' && <CountdownTimer />}
                 {state.currentView === 'preview' && <PhotoPreview />}

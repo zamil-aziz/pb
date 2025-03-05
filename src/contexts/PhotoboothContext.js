@@ -7,6 +7,7 @@ export const PhotoboothContext = createContext();
 // Action types as constants to avoid typos
 export const ActionTypes = {
     SET_VIEW: 'SET_VIEW',
+    SET_PHOTO_MODE: 'SET_PHOTO_MODE', // New action type
     SET_BACKGROUND: 'SET_BACKGROUND',
     SET_FILTER: 'SET_FILTER',
     SET_BACKGROUNDS: 'SET_BACKGROUNDS',
@@ -19,6 +20,7 @@ export const ActionTypes = {
 
 const initialState = {
     currentView: 'welcome',
+    photoMode: 'strips', // New property for photo mode (strips or single)
     selectedBackground: null,
     availableBackgrounds: [],
     selectedFilter: null,
@@ -29,7 +31,7 @@ const initialState = {
         { id: 'high-contrast', name: 'High Contrast', style: { filter: 'contrast(150%) brightness(110%)' } },
     ],
     photos: [],
-    photosPerSession: 8,
+    photosPerSession: 8, // Default for strips mode
     price: 10.0,
     lastActivityTime: Date.now(),
 };
@@ -40,6 +42,15 @@ function reducer(state, action) {
             return {
                 ...state,
                 currentView: action.payload,
+                lastActivityTime: Date.now(),
+            };
+        case ActionTypes.SET_PHOTO_MODE:
+            // Handle photo mode selection and adjust related settings
+            return {
+                ...state,
+                photoMode: action.payload,
+                photosPerSession: action.payload === 'single' ? 1 : 8, // 1 photo for single mode, 8 for strips
+                price: action.payload === 'single' ? 15.0 : 10.0, // Adjust price based on mode
                 lastActivityTime: Date.now(),
             };
         case ActionTypes.SET_BACKGROUND:

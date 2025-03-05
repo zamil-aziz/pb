@@ -12,7 +12,7 @@ export const ControlButtons = ({ dispatch }) => {
             </button>
 
             <button
-                onClick={() => dispatch({ type: 'SET_VIEW', payload: 'welcome' })}
+                onClick={() => dispatch({ type: 'SET_VIEW', payload: 'photoMode' })}
                 className='bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 sm:py-3 md:py-4 px-4 sm:px-5 md:px-6 rounded-lg sm:rounded-xl text-sm sm:text-base md:text-xl shadow-lg transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50'
                 aria-label='Go back to welcome screen'
             >
