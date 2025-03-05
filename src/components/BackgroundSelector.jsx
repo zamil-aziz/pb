@@ -53,9 +53,15 @@ export default function BackgroundSelector() {
                                 className='absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110'
                                 loading='lazy'
                             />
-                            <div className='absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
-                            <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white p-1 sm:p-2 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300'>
-                                <span className='text-xs sm:text-sm font-medium truncate block'>{bg.name}</span>
+
+                            {/* Gradient overlay on hover */}
+                            <div className='absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-70 transition-opacity duration-300'></div>
+
+                            {/* Background name label at bottom */}
+                            <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white p-1 sm:p-1.5 z-10'>
+                                <span className='text-xs sm:text-sm font-medium truncate block text-center'>
+                                    {bg.name}
+                                </span>
                             </div>
                         </div>
                     </div>

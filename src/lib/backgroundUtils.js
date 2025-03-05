@@ -14,15 +14,15 @@ export async function getBackgrounds() {
             },
             {
                 id: '2',
-                name: 'Christmas',
-                url: '/backgrounds/christmas.jpg',
-                fallbackColor: '#B22222', // Festive red for Christmas
+                name: 'Chinese New Year',
+                url: '/backgrounds/cny.jpg',
+                fallbackColor: '#0A0A2A',
             },
             {
                 id: '3',
-                name: 'Space',
-                url: '/backgrounds/space.jpg',
-                fallbackColor: '#0A0A2A',
+                name: 'Christmas',
+                url: '/backgrounds/christmas.jpg',
+                fallbackColor: '#B22222', // Festive red for Christmas
             },
         ];
     } catch (error) {
