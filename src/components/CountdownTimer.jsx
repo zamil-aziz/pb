@@ -204,21 +204,20 @@ export default function CountdownTimer() {
                 {showCountdown && (
                     <div className='absolute z-20 inset-0 flex flex-col items-center justify-center'>
                         <div
-                            className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-full w-48 h-48 flex items-center justify-center shadow-2xl border-4 border-${getCountdownColor().replace(
-                                'text-',
-                                ''
-                            )} transform ${
-                                countdown > 0 ? 'scale-100 animate-pulse' : 'scale-110'
-                            } transition-all duration-300`}
+                            className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-full w-48 h-48 flex items-center justify-center shadow-2xl border-4 ${
+                                countdown > 0
+                                    ? `border-${getCountdownColor().replace('text-', '')} scale-100 animate-pulse`
+                                    : 'border-white scale-110'
+                            } transform transition-all duration-300 overflow-hidden`}
                         >
                             {countdown > 0 ? (
                                 <span className={`text-9xl font-bold ${getCountdownColor()} drop-shadow-lg`}>
                                     {countdown}
                                 </span>
                             ) : (
-                                <div className='relative w-full h-full'>
-                                    {/* Main flash effect */}
-                                    <div className='absolute inset-0 bg-white opacity-70 animate-pulse'></div>
+                                <div className='relative w-full h-full flex items-center justify-center'>
+                                    {/* Flash effect with circular mask */}
+                                    <div className='absolute inset-0 rounded-full bg-white opacity-70 animate-pulse'></div>
 
                                     {/* Center light source */}
                                     <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'>
@@ -227,11 +226,11 @@ export default function CountdownTimer() {
                                         <div className='absolute inset-0 rounded-full bg-white shadow-[0_0_15px_12px_rgba(255,255,255,0.7)]'></div>
                                     </div>
 
-                                    {/* Light rays */}
+                                    {/* Light rays (contained within the circle) */}
                                     <div className='absolute left-0 top-1/2 h-1 w-full bg-gradient-to-r from-white via-yellow-50 to-transparent -translate-y-1/2'></div>
                                     <div className='absolute left-1/2 top-0 w-1 h-full bg-gradient-to-b from-white via-yellow-50 to-transparent -translate-x-1/2'></div>
-                                    <div className='absolute left-0 top-0 w-full h-full'>
-                                        <div className='absolute top-0 left-0 right-0 bottom-0 bg-gradient-radial from-white via-transparent to-transparent opacity-60'></div>
+                                    <div className='absolute inset-0 rounded-full overflow-hidden'>
+                                        <div className='absolute inset-0 bg-gradient-radial from-white via-transparent to-transparent opacity-60'></div>
                                     </div>
                                 </div>
                             )}
