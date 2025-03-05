@@ -178,7 +178,7 @@ export default function CountdownTimer() {
     return (
         <div className='flex items-stretch w-full max-w-7xl mx-auto relative'>
             {/* Left photos column */}
-            <div className='w-40 flex-none flex flex-col justify-start space-y-6 mr-6 pt-4'>
+            <div className='w-32 flex-none flex flex-col justify-start space-y-6 mr-4 pt-4'>
                 {Array(4)
                     .fill(null)
                     .map((_, index) => {
@@ -187,7 +187,7 @@ export default function CountdownTimer() {
                         return (
                             <div
                                 key={`left-${index}`}
-                                className='w-40 h-40 rounded-lg overflow-hidden border-2 border-white shadow-lg transition-all duration-500'
+                                className='w-32 h-32 rounded-lg overflow-hidden border-2 border-white shadow-lg transition-all duration-500'
                                 style={{
                                     opacity: photo ? 1 : 0,
                                     transform: `scale(${photo ? 1 : 0.8})`,
@@ -303,7 +303,7 @@ export default function CountdownTimer() {
             </div>
 
             {/* Right photos column */}
-            <div className='w-40 flex-none flex flex-col justify-start space-y-6 ml-6 pt-4'>
+            <div className='w-32 flex-none flex flex-col justify-start space-y-6 ml-4 pt-4'>
                 {Array(4)
                     .fill(null)
                     .map((_, index) => {
@@ -313,7 +313,7 @@ export default function CountdownTimer() {
                         return (
                             <div
                                 key={`right-${index}`}
-                                className='w-40 h-40 rounded-lg overflow-hidden border-2 border-white shadow-lg transition-all duration-500'
+                                className='w-32 h-32 rounded-lg overflow-hidden border-2 border-white shadow-lg transition-all duration-500'
                                 style={{
                                     opacity: photo ? 1 : 0,
                                     transform: `scale(${photo ? 1 : 0.8})`,
