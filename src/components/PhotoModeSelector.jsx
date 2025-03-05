@@ -1,7 +1,6 @@
 'use client';
 import { useContext, useState } from 'react';
 import { PhotoboothContext } from '../contexts/PhotoboothContext';
-import { Grid2X2, Maximize2 } from 'lucide-react';
 
 export default function PhotoModeSelector() {
     const { state, dispatch } = useContext(PhotoboothContext);
@@ -24,119 +23,109 @@ export default function PhotoModeSelector() {
     };
 
     return (
-        <div className='p-8 max-w-4xl mx-auto bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white border-opacity-40 relative overflow-hidden'>
-            {/* Decorative elements */}
-            <div className='absolute top-0 right-0 w-32 h-32 -mt-10 -mr-10 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full opacity-10'></div>
-            <div className='absolute bottom-0 left-0 w-40 h-40 -mb-16 -ml-16 bg-gradient-to-tr from-blue-400 to-indigo-400 rounded-full opacity-10'></div>
-            <div className='absolute top-10 left-10 w-24 h-24 rounded-full bg-gradient-to-r from-pink-300 to-purple-300 opacity-30 blur-xl'></div>
-            <div className='absolute bottom-20 right-10 w-32 h-32 rounded-full bg-gradient-to-r from-blue-300 to-indigo-300 opacity-30 blur-xl'></div>
+        <div className='p-10 pt-5 max-w-4xl mx-auto bg-white bg-opacity-95 backdrop-blur-md rounded-3xl shadow-2xl border border-white border-opacity-40 relative overflow-hidden'>
+            {/* Enhanced decorative elements */}
+            <div className='absolute top-0 right-0 w-40 h-40 -mt-12 -mr-12 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full opacity-20 animate-pulse'></div>
+            <div className='absolute bottom-0 left-0 w-48 h-48 -mb-16 -ml-16 bg-gradient-to-tr from-blue-400 to-indigo-500 rounded-full opacity-20 animate-pulse'></div>
+            <div className='absolute top-10 left-10 w-32 h-32 rounded-full bg-gradient-to-r from-pink-300 to-purple-400 opacity-30 blur-xl'></div>
+            <div className='absolute bottom-20 right-10 w-40 h-40 rounded-full bg-gradient-to-r from-blue-300 to-indigo-400 opacity-30 blur-xl'></div>
 
-            <h2 className='text-4xl font-bold mb-6 text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600'>
+            <h2 className='text-4xl font-extrabold mb-6 text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600 tracking-tight leading-tight'>
                 Choose Your Photo Style
             </h2>
 
-            <p className='text-center text-gray-700 text-lg mb-8'>
+            <p className='text-center text-gray-700 text-lg mb-10 max-w-2xl mx-auto leading-relaxed'>
                 Select how you want your photos to be captured and arranged
             </p>
 
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-8 mb-12'>
-                {/* Photo Strips Option */}
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-8 mb-14'>
+                {/* Photo Strips Option - Enhanced */}
                 <div
-                    className={`bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 cursor-pointer transform transition-all duration-300 hover:shadow-xl ${
-                        mode === 'strips' ? 'ring-4 ring-indigo-500 shadow-lg scale-105' : 'hover:scale-102'
+                    className={`bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-8 cursor-pointer transform transition-all duration-300 hover:shadow-xl ${
+                        mode === 'strips' ? 'ring-4 ring-indigo-500 shadow-lg scale-105' : 'hover:scale-105'
                     }`}
                     onClick={() => handleModeSelect('strips')}
                 >
-                    <div className='flex justify-center mb-6'>
-                        <div className='bg-indigo-100 p-4 rounded-full'>
-                            <Grid2X2 size={48} className='text-indigo-600' />
-                        </div>
-                    </div>
-                    <h3 className='text-2xl font-bold text-center text-indigo-700 mb-4'>Photo Strips</h3>
-                    <div className='bg-white rounded-xl p-3 shadow-md mx-auto w-48 mb-4'>
+                    <h3 className='text-2xl font-bold text-center text-indigo-700 mb-5'>Photo Strips</h3>
+                    <div className='bg-white p-2.5 shadow-md mx-auto w-30 mb-5'>
                         <div className='flex flex-col space-y-2'>
                             {[1, 2, 3, 4].map(item => (
-                                <div key={item} className='bg-gray-200 h-12 rounded-md'></div>
+                                <div key={item} className='bg-gray-800 h-16'></div>
                             ))}
                         </div>
                     </div>
-                    <p className='text-gray-700 text-center'>
+                    <p className='text-center text-gray-700 font-semibold mb-4 leading-relaxed'>
                         Classic photo booth style with 4 separate photos arranged in a strip
                     </p>
-                    <ul className='mt-4 space-y-2'>
+                    <ul className='mt-5 space-y-3 max-w-xs mx-auto'>
                         <li className='flex items-center text-sm text-gray-600'>
-                            <span className='h-5 w-5 mr-2 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600'>
+                            <span className='h-6 w-6 mr-3 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 flex-shrink-0'>
                                 ✓
                             </span>
-                            Take 4 photos in sequence
+                            <span>Take 4 photos in sequence</span>
                         </li>
                         <li className='flex items-center text-sm text-gray-600'>
-                            <span className='h-5 w-5 mr-2 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600'>
+                            <span className='h-6 w-6 mr-3 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 flex-shrink-0'>
                                 ✓
                             </span>
-                            Perfect for showing different poses
+                            <span>Perfect for showing different poses</span>
                         </li>
                         <li className='flex items-center text-sm text-gray-600'>
-                            <span className='h-5 w-5 mr-2 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600'>
+                            <span className='h-6 w-6 mr-3 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 flex-shrink-0'>
                                 ✓
                             </span>
-                            Traditional photo booth experience
+                            <span>Traditional photo booth experience</span>
                         </li>
                     </ul>
                 </div>
 
-                {/* Single Photo Option */}
+                {/* Single Photo Option - Enhanced */}
                 <div
-                    className={`bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-6 cursor-pointer transform transition-all duration-300 hover:shadow-xl ${
-                        mode === 'single' ? 'ring-4 ring-pink-500 shadow-lg scale-105' : 'hover:scale-102'
+                    className={`bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-8 cursor-pointer transform transition-all duration-300 hover:shadow-xl ${
+                        mode === 'single' ? 'ring-4 ring-pink-500 shadow-lg scale-105' : 'hover:scale-105'
                     }`}
                     onClick={() => handleModeSelect('single')}
                 >
-                    <div className='flex justify-center mb-6'>
-                        <div className='bg-pink-100 p-4 rounded-full'>
-                            <Maximize2 size={48} className='text-pink-600' />
-                        </div>
+                    <h3 className='text-2xl font-bold text-center text-pink-700 mb-5'>Single Photo</h3>
+                    <div className='bg-white p-3 shadow-md mx-auto w-48 h-52 mb-5'>
+                        <div className='bg-gray-800 h-full w-full'></div>
                     </div>
-                    <h3 className='text-2xl font-bold text-center text-pink-700 mb-4'>Single Photo</h3>
-                    <div className='bg-white rounded-xl p-3 shadow-md mx-auto w-48 h-52 mb-4'>
-                        <div className='bg-gray-200 h-full w-full rounded-md'></div>
-                    </div>
-                    <p className='text-gray-700 text-center'>
+                    <p className='text-center text-gray-700 font-semibold mb-4 leading-relaxed'>
                         One large, high-quality photo for the perfect memorable moment
                     </p>
-                    <ul className='mt-4 space-y-2'>
+                    <ul className='mt-5 space-y-3 max-w-xs mx-auto'>
                         <li className='flex items-center text-sm text-gray-600'>
-                            <span className='h-5 w-5 mr-2 rounded-full bg-pink-100 flex items-center justify-center text-pink-600'>
+                            <span className='h-6 w-6 mr-3 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 flex-shrink-0'>
                                 ✓
                             </span>
-                            Capture one perfect moment
+                            <span>Capture one perfect moment</span>
                         </li>
                         <li className='flex items-center text-sm text-gray-600'>
-                            <span className='h-5 w-5 mr-2 rounded-full bg-pink-100 flex items-center justify-center text-pink-600'>
+                            <span className='h-6 w-6 mr-3 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 flex-shrink-0'>
                                 ✓
                             </span>
-                            Larger print size
+                            <span>Larger print size</span>
                         </li>
                         <li className='flex items-center text-sm text-gray-600'>
-                            <span className='h-5 w-5 mr-2 rounded-full bg-pink-100 flex items-center justify-center text-pink-600'>
+                            <span className='h-6 w-6 mr-3 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 flex-shrink-0'>
                                 ✓
                             </span>
-                            Great for group photos
+                            <span>Great for group photos</span>
                         </li>
                     </ul>
                 </div>
             </div>
 
-            <div className='grid grid-cols-2 gap-6'>
+            <div className='grid grid-cols-2 gap-6 max-w-2xl mx-auto'>
                 <button
                     onClick={goBack}
-                    className='bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-4 px-6 rounded-xl text-xl shadow-lg transform transition-all duration-300 hover:scale-105'
+                    className='bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-lg transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2'
                 >
                     Back
                 </button>
                 <button
                     onClick={continueToCamera}
-                    className='bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl text-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl'
+                    className='bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-lg transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2'
                 >
                     Continue
                 </button>

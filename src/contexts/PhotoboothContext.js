@@ -7,7 +7,7 @@ export const PhotoboothContext = createContext();
 // Action types as constants to avoid typos
 export const ActionTypes = {
     SET_VIEW: 'SET_VIEW',
-    SET_PHOTO_MODE: 'SET_PHOTO_MODE', // New action type
+    SET_PHOTO_MODE: 'SET_PHOTO_MODE',
     SET_BACKGROUND: 'SET_BACKGROUND',
     SET_FILTER: 'SET_FILTER',
     SET_BACKGROUNDS: 'SET_BACKGROUNDS',
