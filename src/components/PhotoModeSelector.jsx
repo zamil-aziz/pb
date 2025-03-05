@@ -214,7 +214,7 @@ export default function PhotoModeSelector() {
                         {/* Photo style preview */}
                         <div className='flex justify-center items-center mb-5 relative z-10'>
                             {mode === 'strips' ? (
-                                <div className='bg-white p-2 shadow-md mx-auto w-20 mb-2'>
+                                <div className='bg-white p-1.5 shadow-md mx-auto w-16 mb-2'>
                                     <div className='flex flex-col space-y-1'>
                                         {[1, 2, 3, 4].map(item => (
                                             <div key={item} className='bg-gray-800 h-8'></div>
