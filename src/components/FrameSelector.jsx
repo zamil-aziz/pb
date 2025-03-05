@@ -75,9 +75,9 @@ export default function FrameSelector() {
 
             <div className='flex flex-col md:flex-row gap-8 mb-8'>
                 {/* Preview of photos in selected frame */}
-                <div className='md:w-1/3 flex flex-col justify-center items-center'>
+                <div className='md:w-3/7 flex flex-col justify-center items-center'>
                     <div
-                        className={`relative w-full max-w-[220px] mx-auto ${
+                        className={`relative w-full ${isSingleMode ? 'max-w-[320px]' : 'max-w-[220px]'} mx-auto ${
                             frames.find(f => f.id === selectedFrame)?.class
                         }`}
                     >
