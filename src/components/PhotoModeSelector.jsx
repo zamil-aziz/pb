@@ -98,10 +98,10 @@ export default function PhotoModeSelector() {
                     ) : (
                         <h3 className='text-2xl font-bold text-center text-indigo-700 mb-5'>Photo Strips</h3>
                     )}
-                    <div className='bg-white p-2.5 shadow-md mx-auto w-30 mb-5'>
+                    <div className='bg-white p-2 shadow-md mx-auto w-24 mb-5'>
                         <div className='flex flex-col space-y-2'>
                             {[1, 2, 3, 4].map(item => (
-                                <div key={item} className='bg-gray-800 h-16'></div>
+                                <div key={item} className='bg-gray-800 h-14'></div>
                             ))}
                         </div>
                     </div>
@@ -214,7 +214,7 @@ export default function PhotoModeSelector() {
                         {/* Photo style preview */}
                         <div className='flex justify-center items-center mb-5 relative z-10'>
                             {mode === 'strips' ? (
-                                <div className='bg-white p-1.5 shadow-md mx-auto w-16 mb-2'>
+                                <div className='bg-white p-1 shadow-md mx-auto w-13 mb-2'>
                                     <div className='flex flex-col space-y-1'>
                                         {[1, 2, 3, 4].map(item => (
                                             <div key={item} className='bg-gray-800 h-8'></div>
@@ -258,7 +258,6 @@ export default function PhotoModeSelector() {
 
                         <div className='mb-8 p-5 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-xl shadow-inner relative z-10'>
                             <div className='text-center'>
-                                <span className='text-gray-700'>Estimated Total:</span>
                                 <span className='ml-2 text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600'>
                                     RM{calculateEstimatedPrice()}
                                 </span>

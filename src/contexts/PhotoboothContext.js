@@ -66,7 +66,7 @@ function reducer(state, action) {
             return {
                 ...state,
                 photoMode: action.payload,
-                photosPerSession: action.payload === 'single' ? 1 : 8, // 1 photo for single mode, 8 for strips
+                photosPerSession: action.payload === 'single' ? 4 : 8, // 4 photo for single mode, 8 for strips
                 price: calculatePrice(action.payload, state.printQuantity), // Adjust price based on mode and quantity
                 lastActivityTime: Date.now(),
             };
