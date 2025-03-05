@@ -6,18 +6,27 @@ export default function PhotoPreview() {
     const { state, dispatch } = useContext(PhotoboothContext);
     const [selectedPhotos, setSelectedPhotos] = useState([]);
 
+    // Check if we're in single or strips mode
+    const isSingleMode = state.photoMode === 'single';
+    // Number of photos required to continue
+    const requiredPhotos = isSingleMode ? 1 : 4;
+
     const togglePhotoSelection = photoIndex => {
         if (selectedPhotos.includes(photoIndex)) {
             setSelectedPhotos(selectedPhotos.filter(index => index !== photoIndex));
         } else {
-            if (selectedPhotos.length < 4) {
+            // In single mode, replace the selection. In strips mode, add to selection (up to 4)
+            if (isSingleMode) {
+                setSelectedPhotos([photoIndex]);
+            } else if (selectedPhotos.length < requiredPhotos) {
                 setSelectedPhotos([...selectedPhotos, photoIndex]);
             }
         }
     };
 
     const continueWithSelected = () => {
-        if (selectedPhotos.length === 4) {
+        // Check if we have the required number of photos based on mode
+        if (selectedPhotos.length === requiredPhotos) {
             const selectedPhotoData = selectedPhotos.map(index => state.photos[index]);
             dispatch({ type: ActionTypes.SET_SELECTED_PHOTOS, payload: selectedPhotoData });
             dispatch({ type: ActionTypes.SET_VIEW, payload: 'frame' });
@@ -37,7 +46,8 @@ export default function PhotoPreview() {
             </h2>
 
             <p className='text-center text-gray-800 font-medium mb-4'>
-                Select 4 photos to continue ({selectedPhotos.length}/4 selected)
+                Select {isSingleMode ? 'your favorite photo' : '4 photos'} to continue ({selectedPhotos.length}/
+                {requiredPhotos} selected)
             </p>
 
             <div className='relative mx-auto overflow-hidden rounded-xl shadow-lg mb-8'>
@@ -102,9 +112,9 @@ export default function PhotoPreview() {
             <div className='grid grid-cols-2 gap-6 mb-6'>
                 <button
                     onClick={continueWithSelected}
-                    disabled={selectedPhotos.length !== 4}
+                    disabled={selectedPhotos.length !== requiredPhotos}
                     className={`bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-6 px-8 rounded-xl text-2xl shadow-lg transform transition-all duration-300 ${
-                        selectedPhotos.length === 4
+                        selectedPhotos.length === requiredPhotos
                             ? 'hover:from-indigo-700 hover:to-purple-700 hover:scale-105 hover:shadow-xl'
                             : 'opacity-50 cursor-not-allowed'
                     }`}
@@ -144,7 +154,9 @@ export default function PhotoPreview() {
                         </p>
                     )}
                 </div>
-                <p className='text-lg text-gray-700 font-medium mt-2'>Select your favorite 4 photos to continue</p>
+                <p className='text-lg text-gray-700 font-medium mt-2'>
+                    Select {isSingleMode ? 'your favorite photo' : 'your favorite 4 photos'} to continue
+                </p>
             </div>
         </div>
     );

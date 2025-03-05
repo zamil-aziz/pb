@@ -6,6 +6,9 @@ export default function FrameSelector() {
     const { state, dispatch } = useContext(PhotoboothContext);
     const [selectedFrame, setSelectedFrame] = useState(state.selectedFrame || 'classic');
 
+    // Check if we're in single mode
+    const isSingleMode = state.photoMode === 'single';
+
     const frames = [
         {
             id: 'classic',
@@ -81,11 +84,11 @@ export default function FrameSelector() {
                         <div className='flex flex-col gap-1 p-2'>
                             {state.selectedPhotos &&
                                 state.selectedPhotos.map((photo, index) => (
-                                    <div key={index} className='relative'>
+                                    <div key={index} className={`relative ${isSingleMode ? 'h-48' : ''}`}>
                                         <img
                                             src={photo}
                                             alt={`Selected photo ${index + 1}`}
-                                            className='w-full h-auto'
+                                            className={`w-full ${isSingleMode ? 'h-full object-cover' : 'h-auto'}`}
                                         />
                                     </div>
                                 ))}
@@ -111,10 +114,16 @@ export default function FrameSelector() {
                                 <div className='h-20 mb-2 overflow-hidden rounded-lg'>
                                     <div className={`h-full w-full ${frame.class}`}>
                                         <div className='h-full flex flex-col p-1 relative'>
-                                            {/* Mini representation of photo strips */}
-                                            <div className='h-5 w-11/12 bg-gray-300 mt-1 mx-auto rounded-sm'></div>
-                                            <div className='h-5 w-11/12 bg-gray-300 mt-1 mx-auto rounded-sm'></div>
-                                            <div className='h-5 w-11/12 bg-gray-300 mt-1 mx-auto rounded-sm'></div>
+                                            {/* Mini representation of photos based on mode */}
+                                            {isSingleMode ? (
+                                                <div className='h-full w-full bg-gray-300 mx-auto rounded-sm'></div>
+                                            ) : (
+                                                <>
+                                                    <div className='h-5 w-11/12 bg-gray-300 mt-1 mx-auto rounded-sm'></div>
+                                                    <div className='h-5 w-11/12 bg-gray-300 mt-1 mx-auto rounded-sm'></div>
+                                                    <div className='h-5 w-11/12 bg-gray-300 mt-1 mx-auto rounded-sm'></div>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
