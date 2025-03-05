@@ -207,12 +207,30 @@ export default function PhotoModeSelector() {
                         <div className='absolute bottom-0 right-0 w-36 h-36 -mb-12 -mr-12 bg-gradient-to-tr from-blue-400 to-indigo-500 rounded-full opacity-20 animate-pulse'></div>
                         <div className='absolute top-16 right-10 w-24 h-24 rounded-full bg-gradient-to-r from-pink-300 to-purple-400 opacity-30 blur-xl'></div>
 
-                        <h3 className='text-3xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600 mb-6 relative z-10'>
+                        <h3 className='text-3xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600 mb-5 relative z-10'>
                             Select Print Quantity
                         </h3>
 
-                        <p className='text-center text-gray-700 mb-8 relative z-10'>
-                            How many copies would you like to print?
+                        {/* Photo style preview */}
+                        <div className='flex justify-center items-center mb-5 relative z-10'>
+                            {mode === 'strips' ? (
+                                <div className='bg-white p-2 shadow-md mx-auto w-20 mb-2'>
+                                    <div className='flex flex-col space-y-1'>
+                                        {[1, 2, 3, 4].map(item => (
+                                            <div key={item} className='bg-gray-800 h-8'></div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className='bg-white p-2 shadow-md mx-auto w-24 h-28 mb-2'>
+                                    <div className='bg-gray-800 h-full w-full'></div>
+                                </div>
+                            )}
+                        </div>
+
+                        <p className='text-center text-gray-700 mb-6 relative z-10'>
+                            How many copies of {mode === 'strips' ? 'photo strips' : 'single photos'} would you like to
+                            print?
                         </p>
 
                         <div className='grid grid-cols-2 gap-4 mb-8 relative z-10'>
