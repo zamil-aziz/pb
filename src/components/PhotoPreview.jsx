@@ -34,22 +34,19 @@ export default function PhotoPreview() {
     };
 
     return (
-        <div className='p-8 max-w-4xl mx-auto bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white border-opacity-40 relative overflow-hidden'>
+        <div className='p-8 py-5 max-w-4xl mx-auto bg-white bg-opacity-90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white border-opacity-40 relative overflow-hidden'>
             {/* Decorative elements - matching CameraView */}
             <div className='absolute top-0 right-0 w-32 h-32 -mt-10 -mr-10 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full opacity-10'></div>
             <div className='absolute bottom-0 left-0 w-40 h-40 -mb-16 -ml-16 bg-gradient-to-tr from-blue-400 to-indigo-400 rounded-full opacity-10'></div>
             <div className='absolute top-10 left-10 w-24 h-24 rounded-full bg-gradient-to-r from-pink-300 to-purple-300 opacity-30 blur-xl'></div>
             <div className='absolute bottom-20 right-10 w-32 h-32 rounded-full bg-gradient-to-r from-blue-300 to-indigo-300 opacity-30 blur-xl'></div>
-
             <h2 className='text-4xl font-bold mb-6 text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600'>
                 Your Photos
             </h2>
-
             <p className='text-center text-gray-800 font-medium mb-4'>
                 Select {isSingleMode ? 'your favorite photo' : '4 photos'} to continue ({selectedPhotos.length}/
                 {requiredPhotos} selected)
             </p>
-
             <div className='relative mx-auto overflow-hidden rounded-xl shadow-lg mb-8'>
                 {isSingleMode ? (
                     /* Single mode - show only top row with 2x2 grid */
@@ -139,33 +136,7 @@ export default function PhotoPreview() {
                     </div>
                 )}
             </div>
-
-            <div className='grid grid-cols-2 gap-6 mb-6'>
-                <button
-                    onClick={continueWithSelected}
-                    disabled={selectedPhotos.length !== requiredPhotos}
-                    className={`bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-6 px-8 rounded-xl text-2xl shadow-lg transform transition-all duration-300 ${
-                        selectedPhotos.length === requiredPhotos
-                            ? 'hover:from-indigo-700 hover:to-purple-700 hover:scale-105 hover:shadow-xl'
-                            : 'opacity-50 cursor-not-allowed'
-                    }`}
-                >
-                    Continue with Selected
-                </button>
-
-                <button
-                    onClick={() => {
-                        dispatch({ type: ActionTypes.CLEAR_PHOTOS });
-                        dispatch({ type: ActionTypes.SET_VIEW, payload: 'camera' });
-                    }}
-                    className='bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-6 px-8 rounded-xl text-2xl shadow-lg transform transition-all duration-300 hover:scale-105'
-                >
-                    Retake Photos
-                </button>
-            </div>
-
             <div className='text-center'>
-                <p className='text-xl text-gray-700 mb-2'>Price: RM {state.price.toFixed(2)}</p>
                 <div className='flex space-x-4 items-center justify-center'>
                     {state.selectedFilter && state.selectedFilter !== 'normal' && (
                         <p className='text-lg'>
@@ -188,6 +159,32 @@ export default function PhotoPreview() {
                 <p className='text-lg text-gray-700 font-medium mt-2'>
                     Select {isSingleMode ? 'your favorite photo' : 'your favorite 4 photos'} to continue
                 </p>
+            </div>
+
+            {/* Updated buttons to match ControlButtons style */}
+            <div className='grid grid-cols-2 gap-2 sm:gap-4 mt-4'>
+                <button
+                    onClick={() => {
+                        dispatch({ type: ActionTypes.CLEAR_PHOTOS });
+                        dispatch({ type: ActionTypes.SET_VIEW, payload: 'camera' });
+                    }}
+                    className='bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 sm:py-3 md:py-4 px-4 sm:px-5 md:px-6 rounded-lg sm:rounded-xl text-sm sm:text-base md:text-xl shadow-lg transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50'
+                    aria-label='Retake photos'
+                >
+                    Retake Photos
+                </button>
+                <button
+                    onClick={continueWithSelected}
+                    disabled={selectedPhotos.length !== requiredPhotos}
+                    className={`bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-2 sm:py-3 md:py-4 px-4 sm:px-5 md:px-6 rounded-lg sm:rounded-xl text-sm sm:text-base md:text-xl shadow-lg transform transition-all duration-300 ${
+                        selectedPhotos.length === requiredPhotos
+                            ? 'hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50'
+                            : 'opacity-50 cursor-not-allowed'
+                    }`}
+                    aria-label='Continue with selected photos'
+                >
+                    Continue with Selected
+                </button>
             </div>
         </div>
     );
