@@ -98,7 +98,7 @@ export default function PhotoModeSelector() {
                     ) : (
                         <h3 className='text-2xl font-bold text-center text-indigo-700 mb-5'>Photo Strips</h3>
                     )}
-                    <div className='bg-white p-2 shadow-md mx-auto w-24 mb-5'>
+                    <div className='bg-white p-2 shadow-md mx-auto w-20 mb-5'>
                         <div className='flex flex-col space-y-2'>
                             {[1, 2, 3, 4].map(item => (
                                 <div key={item} className='bg-gray-800 h-14'></div>
@@ -198,9 +198,9 @@ export default function PhotoModeSelector() {
                 </button>
             </div>
 
-            {/* Print Quantity Popup */}
+            {/* Print Quantity Popup - Updated to blur background instead of black overlay */}
             {showQuantityPopup && (
-                <div className='fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50'>
+                <div className='fixed inset-0 backdrop-blur-md bg-white/30 flex items-center justify-center z-50'>
                     <div className='bg-white bg-opacity-95 rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-white border-opacity-40 relative overflow-hidden animate-fade-in-up'>
                         {/* Decorative elements */}
                         <div className='absolute top-0 left-0 w-32 h-32 -mt-10 -ml-10 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full opacity-20 animate-pulse'></div>
@@ -214,7 +214,7 @@ export default function PhotoModeSelector() {
                         {/* Photo style preview */}
                         <div className='flex justify-center items-center mb-5 relative z-10'>
                             {mode === 'strips' ? (
-                                <div className='bg-white p-1 shadow-md mx-auto w-13 mb-2'>
+                                <div className='bg-white p-1 shadow-md mx-auto w-12 mb-2'>
                                     <div className='flex flex-col space-y-1'>
                                         {[1, 2, 3, 4].map(item => (
                                             <div key={item} className='bg-gray-800 h-8'></div>
