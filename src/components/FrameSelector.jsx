@@ -81,7 +81,7 @@ export default function FrameSelector() {
                             frames.find(f => f.id === selectedFrame)?.class
                         }`}
                     >
-                        <div className='flex flex-col gap-1 p-2 pb-12'>
+                        <div className='flex flex-col gap-1 p-2 pb-10'>
                             {state.selectedPhotos &&
                                 state.selectedPhotos.map((photo, index) => (
                                     <div key={index} className={`relative ${isSingleMode ? 'h-48' : ''}`}>
