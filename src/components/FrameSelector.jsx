@@ -81,7 +81,7 @@ export default function FrameSelector() {
                             frames.find(f => f.id === selectedFrame)?.class
                         }`}
                     >
-                        <div className='flex flex-col gap-1 p-2'>
+                        <div className='flex flex-col gap-1 p-2 pb-12'>
                             {state.selectedPhotos &&
                                 state.selectedPhotos.map((photo, index) => (
                                     <div key={index} className={`relative ${isSingleMode ? 'h-48' : ''}`}>
@@ -98,7 +98,7 @@ export default function FrameSelector() {
 
                 {/* Frame options - Fixed grid and scrolling */}
                 <div className='md:w-2/3'>
-                    <h3 className='text-xl font-semibold mb-4 text-gray-700'>Premium Frame Styles</h3>
+                    <h3 className='text-xl font-semibold mb-4 text-gray-700'>Frame Styles</h3>
                     <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-2'>
                         {frames.map(frame => (
                             <div
