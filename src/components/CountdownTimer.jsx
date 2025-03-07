@@ -282,17 +282,31 @@ export default function CountdownTimer() {
                         <span className='text-blue-700'>{state.photosPerSession}</span>
                     </p>
 
-                    {!state.selectedBackground && (
-                        <p className='mt-2 text-amber-800 font-semibold'>
-                            Using natural background (no virtual background selected)
-                        </p>
-                    )}
-
-                    {state.selectedFilter && state.selectedFilter !== 'normal' && (
-                        <p className='mt-2 text-indigo-600 font-medium'>
-                            Filter applied: {state.availableFilters.find(f => f.id === state.selectedFilter)?.name}
-                        </p>
-                    )}
+                    <div className='flex space-x-4 items-center justify-center mt-2'>
+                        {state.selectedFilter && state.selectedFilter !== 'normal' && (
+                            <p className='text-lg'>
+                                <span className='font-medium text-gray-700'>Filter:</span>{' '}
+                                <span className='text-indigo-600'>
+                                    {state.availableFilters.find(f => f.id === state.selectedFilter)?.name ||
+                                        state.selectedFilter}
+                                </span>
+                            </p>
+                        )}
+                        {state.selectedBackground && (
+                            <p className='text-lg'>
+                                <span className='font-medium text-gray-700'>Background:</span>{' '}
+                                <span className='text-indigo-600'>
+                                    {state.selectedBackground.name || state.selectedBackground.id}
+                                </span>
+                            </p>
+                        )}
+                        {!state.selectedBackground && (
+                            <p className='text-lg'>
+                                <span className='font-medium text-gray-700'>Background:</span>{' '}
+                                <span className='text-amber-600'>Natural (no virtual background)</span>
+                            </p>
+                        )}
+                    </div>
                 </div>
             </div>
 
