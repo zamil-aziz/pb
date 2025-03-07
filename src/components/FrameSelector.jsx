@@ -39,14 +39,14 @@ export default function FrameSelector() {
                 {/* Preview of photos in selected frame */}
                 <div className='md:w-3/7 flex flex-col justify-center items-center'>
                     <div
-                        className={`relative w-full ${isSingleMode ? 'max-w-[320px]' : 'max-w-[220px]'} mx-auto ${
+                        className={`relative w-full ${isSingleMode ? 'max-w-[400px]' : 'max-w-[220px]'} mx-auto ${
                             frames.find(f => f.id === selectedFrame)?.class
                         }`}
                     >
-                        <div className='flex flex-col gap-1 p-2 pb-10'>
+                        <div className={`flex flex-col gap-1 p-2 ${isSingleMode ? 'pb-10' : ''}`}>
                             {state.selectedPhotos &&
                                 state.selectedPhotos.map((photo, index) => (
-                                    <div key={index} className={`relative ${isSingleMode ? 'h-48' : ''}`}>
+                                    <div key={index} className={`relative ${isSingleMode ? 'h-60' : ''}`}>
                                         <img
                                             src={photo}
                                             alt={`Selected photo ${index + 1}`}
@@ -68,7 +68,7 @@ export default function FrameSelector() {
                 <div className='md:w-2/3'>
                     {/* Frame Styles Section */}
                     <div className='mb-6'>
-                        <h3 className='text-xl font-semibold mb-4 text-gray-700'>Frame Styles</h3>
+                        <h3 className='text-xl font-semibold mb-4 text-gray-700 text-left'>Frame Styles</h3>
                         <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-2'>
                             {frames.map(frame => (
                                 <div
@@ -98,7 +98,7 @@ export default function FrameSelector() {
                                         </div>
                                     </div>
                                     <div className='flex items-center justify-between'>
-                                        <div className='flex items-center gap-2'>
+                                        <div className='flex items-center gap-0.5'>
                                             <div
                                                 className={`w-4 h-4 rounded-full ${frame.previewClass} border border-gray-300 flex-shrink-0`}
                                             ></div>
