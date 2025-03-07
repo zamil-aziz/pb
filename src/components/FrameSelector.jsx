@@ -7,7 +7,6 @@ import { FiltersPanel } from './frame-selector/FiltersPanel';
 export default function FrameSelector() {
     const { state, dispatch } = useContext(PhotoboothContext);
     const [selectedFrame, setSelectedFrame] = useState(state.selectedFrame || 'classic');
-    const [selectedTab, setSelectedTab] = useState('frames'); // Default to frames tab
 
     // Check if we're in single mode
     const isSingleMode = state.photoMode === 'single';
@@ -33,7 +32,7 @@ export default function FrameSelector() {
             <div className='absolute bottom-0 left-0 w-40 h-40 -mb-16 -ml-16 bg-gradient-to-tr from-blue-400 to-indigo-400 rounded-full opacity-10'></div>
 
             <h2 className='text-4xl font-bold mb-6 text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600'>
-                {selectedTab === 'frames' ? 'Choose Your Frame' : 'Select a Filter'}
+                Customize Your Photos
             </h2>
 
             <div className='flex flex-col md:flex-row gap-8 mb-6'>
@@ -65,92 +64,63 @@ export default function FrameSelector() {
                     </div>
                 </div>
 
-                {/* Options Panel with Tabs */}
+                {/* Options Panel with vertical arrangement */}
                 <div className='md:w-2/3'>
-                    {/* Tab Navigation */}
-                    <div className='flex text-center border-b border-purple-100 mb-4'>
-                        <button
-                            className={`flex-1 py-2 font-semibold text-base ${
-                                selectedTab === 'frames'
-                                    ? 'text-indigo-700 border-b-2 border-indigo-500'
-                                    : 'text-gray-700 hover:text-indigo-600'
-                            }`}
-                            onClick={() => setSelectedTab('frames')}
-                            aria-label='Select frame styles tab'
-                        >
-                            Frame Styles
-                        </button>
-                        <button
-                            className={`flex-1 py-2 font-semibold text-base ${
-                                selectedTab === 'filters'
-                                    ? 'text-indigo-700 border-b-2 border-indigo-500'
-                                    : 'text-gray-700 hover:text-indigo-600'
-                            }`}
-                            onClick={() => setSelectedTab('filters')}
-                            aria-label='Select filters tab'
-                        >
-                            Photo Filters
-                        </button>
-                    </div>
-
-                    {/* Frame Styles Panel */}
-                    {selectedTab === 'frames' && (
-                        <>
-                            <h3 className='text-xl font-semibold mb-4 text-gray-700'>Frame Styles</h3>
-                            <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-2'>
-                                {frames.map(frame => (
-                                    <div
-                                        key={frame.id}
-                                        className={`p-3 rounded-lg cursor-pointer transition-all duration-200 transform hover:scale-105 ${
-                                            selectedFrame === frame.id
-                                                ? 'bg-indigo-100 ring-2 ring-indigo-500 shadow-lg'
-                                                : 'bg-gray-100 hover:bg-gray-200 hover:shadow-md'
-                                        }`}
-                                        onClick={() => handleFrameSelect(frame.id)}
-                                    >
-                                        {/* Fixed height preview for mini frame examples */}
-                                        <div className='h-20 mb-2 overflow-hidden rounded-lg'>
-                                            <div className={`h-full w-full ${frame.class}`}>
-                                                <div className='h-full flex flex-col p-1 relative'>
-                                                    {/* Mini representation of photos based on mode */}
-                                                    {isSingleMode ? (
-                                                        <div className='h-full w-full bg-gray-300 mx-auto rounded-sm'></div>
-                                                    ) : (
-                                                        <>
-                                                            <div className='h-5 w-11/12 bg-gray-300 mt-1 mx-auto rounded-sm'></div>
-                                                            <div className='h-5 w-11/12 bg-gray-300 mt-1 mx-auto rounded-sm'></div>
-                                                            <div className='h-5 w-11/12 bg-gray-300 mt-1 mx-auto rounded-sm'></div>
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className='flex items-center justify-between'>
-                                            <div className='flex items-center gap-2'>
-                                                <div
-                                                    className={`w-4 h-4 rounded-full ${frame.previewClass} border border-gray-300 flex-shrink-0`}
-                                                ></div>
-                                                <p className='font-semibold text-sm text-gray-800 truncate'>
-                                                    {frame.name}
-                                                </p>
+                    {/* Frame Styles Section */}
+                    <div className='mb-6'>
+                        <h3 className='text-xl font-semibold mb-4 text-gray-700'>Frame Styles</h3>
+                        <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-2'>
+                            {frames.map(frame => (
+                                <div
+                                    key={frame.id}
+                                    className={`p-3 rounded-lg cursor-pointer transition-all duration-200 transform hover:scale-105 ${
+                                        selectedFrame === frame.id
+                                            ? 'bg-indigo-100 ring-2 ring-indigo-500 shadow-lg'
+                                            : 'bg-gray-100 hover:bg-gray-200 hover:shadow-md'
+                                    }`}
+                                    onClick={() => handleFrameSelect(frame.id)}
+                                >
+                                    {/* Fixed height preview for mini frame examples */}
+                                    <div className='h-20 mb-2 overflow-hidden rounded-lg'>
+                                        <div className={`h-full w-full ${frame.class}`}>
+                                            <div className='h-full flex flex-col p-1 relative'>
+                                                {/* Mini representation of photos based on mode */}
+                                                {isSingleMode ? (
+                                                    <div className='h-full w-full bg-gray-300 mx-auto rounded-sm'></div>
+                                                ) : (
+                                                    <>
+                                                        <div className='h-5 w-11/12 bg-gray-300 mt-1 mx-auto rounded-sm'></div>
+                                                        <div className='h-5 w-11/12 bg-gray-300 mt-1 mx-auto rounded-sm'></div>
+                                                        <div className='h-5 w-11/12 bg-gray-300 mt-1 mx-auto rounded-sm'></div>
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                        </>
-                    )}
-
-                    {/* Filters Panel */}
-                    {selectedTab === 'filters' && (
-                        <div className='w-full' style={{ minHeight: '253px' }}>
-                            <FiltersPanel
-                                filters={state.availableFilters}
-                                selectedFilter={state.selectedFilter}
-                                applyFilter={applyFilter}
-                            />
+                                    <div className='flex items-center justify-between'>
+                                        <div className='flex items-center gap-2'>
+                                            <div
+                                                className={`w-4 h-4 rounded-full ${frame.previewClass} border border-gray-300 flex-shrink-0`}
+                                            ></div>
+                                            <p className='font-semibold text-sm text-gray-800 truncate'>{frame.name}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                    )}
+                    </div>
+
+                    {/* Separator line */}
+                    <div className='border-t border-gray-200 my-4'></div>
+
+                    {/* Filters Section */}
+                    <div>
+                        <FiltersPanel
+                            filters={state.availableFilters}
+                            selectedFilter={state.selectedFilter}
+                            applyFilter={applyFilter}
+                        />
+                    </div>
                 </div>
             </div>
 

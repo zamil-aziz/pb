@@ -29,7 +29,6 @@ const initialState = {
         { id: 'normal', name: 'Normal', style: {} },
         { id: 'grayscale', name: 'Retro', style: { filter: 'grayscale(100%)' } },
         { id: 'warm', name: 'Warm', style: { filter: 'saturate(130%) hue-rotate(30deg) brightness(105%)' } },
-        { id: 'high-contrast', name: 'High Contrast', style: { filter: 'contrast(150%) brightness(110%)' } },
     ],
     photos: [],
     photosPerSession: 8, // Default for strips mode

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Camera, Film, Sun, Moon } from 'lucide-react';
+import { Camera, Film, Sun } from 'lucide-react';
 
 export const FiltersPanel = ({ filters, selectedFilter, applyFilter }) => {
     // Map filter IDs to appropriate icons with colors
@@ -11,48 +11,23 @@ export const FiltersPanel = ({ filters, selectedFilter, applyFilter }) => {
                 return <Film size={24} className='text-gray-600' />;
             case 'warm':
                 return <Sun size={24} className='text-amber-500' />;
-            case 'high-contrast':
-                return <Moon size={24} className='text-indigo-600' />;
             default:
                 return <Camera size={24} className='text-purple-600' />;
         }
     };
 
     return (
-        <div className='space-y-2 sm:space-y-4'>
-            <div className='flex justify-between items-center'>
-                <h3 className='text-base sm:text-lg font-semibold text-purple-700'>Choose Filter</h3>
-                {selectedFilter && selectedFilter !== 'normal' && (
-                    <button
-                        onClick={() => applyFilter('normal')}
-                        className='text-xs sm:text-sm text-purple-600 hover:text-purple-800 flex items-center'
-                        aria-label='Reset filter'
-                    >
-                        <span className='mr-1'>Reset</span>
-                        <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='h-3 w-3 sm:h-4 sm:w-4'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            stroke='currentColor'
-                        >
-                            <path
-                                strokeLinecap='round'
-                                strokeLinejoin='round'
-                                strokeWidth={2}
-                                d='M6 18L18 6M6 6l12 12'
-                            />
-                        </svg>
-                    </button>
-                )}
-            </div>
-            <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3'>
+        <>
+            <h3 className='text-xl font-semibold mb-4 text-gray-700'>Photo Filters</h3>
+            <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-2'>
                 {filters.map(filter => (
                     <div
                         key={filter.id}
                         onClick={() => applyFilter(filter.id)}
-                        className={`relative rounded-lg overflow-hidden cursor-pointer transition-all transform hover:scale-105 ${
-                            selectedFilter === filter.id ? 'ring-2 ring-purple-600 scale-105' : ''
+                        className={`p-3 rounded-lg cursor-pointer transition-all duration-200 transform hover:scale-105 ${
+                            selectedFilter === filter.id
+                                ? 'bg-indigo-100 ring-2 ring-indigo-500 shadow-lg'
+                                : 'bg-gray-100 hover:bg-gray-200 hover:shadow-md'
                         }`}
                         role='button'
                         aria-label={`Apply ${filter.name} filter`}
@@ -63,43 +38,47 @@ export const FiltersPanel = ({ filters, selectedFilter, applyFilter }) => {
                             }
                         }}
                     >
-                        <div
-                            className={`w-full flex items-center justify-center py-3 ${
-                                selectedFilter === filter.id ? 'bg-purple-100' : 'bg-gray-50'
-                            }`}
-                            style={{ aspectRatio: '5/3', maxHeight: '80px' }}
-                        >
-                            {/* Display the filter icon */}
+                        {/* Fixed height preview area to match frame styles */}
+                        <div className='h-20 mb-2 overflow-hidden rounded-lg flex items-center justify-center bg-gray-50'>
                             {getFilterIcon(filter.id)}
                         </div>
-                        <div
-                            className={`text-center py-1 text-xs sm:text-sm ${
-                                selectedFilter === filter.id ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-800'
-                            }`}
-                        >
-                            {filter.name}
-                        </div>
-                        {selectedFilter === filter.id && (
-                            <div className='absolute top-1 right-1'>
-                                <svg
-                                    xmlns='http://www.w3.org/2000/svg'
-                                    className='h-4 w-4 sm:h-5 sm:w-5 text-white bg-purple-600 rounded-full p-0.5 sm:p-1'
-                                    fill='none'
-                                    viewBox='0 0 24 24'
-                                    stroke='currentColor'
-                                >
-                                    <path
-                                        strokeLinecap='round'
-                                        strokeLinejoin='round'
-                                        strokeWidth={2}
-                                        d='M5 13l4 4L19 7'
-                                    />
-                                </svg>
+                        <div className='flex items-center justify-between'>
+                            <div className='flex items-center gap-2'>
+                                <div
+                                    className={`w-4 h-4 rounded-full ${
+                                        filter.id === 'normal'
+                                            ? 'bg-purple-200'
+                                            : filter.id === 'grayscale'
+                                            ? 'bg-gray-400'
+                                            : filter.id === 'warm'
+                                            ? 'bg-amber-300'
+                                            : 'bg-purple-200'
+                                    } border border-gray-300 flex-shrink-0`}
+                                ></div>
+                                <p className='font-semibold text-sm text-gray-800 truncate'>{filter.name}</p>
                             </div>
-                        )}
+                            {selectedFilter === filter.id && (
+                                <div className='flex-shrink-0'>
+                                    <svg
+                                        xmlns='http://www.w3.org/2000/svg'
+                                        className='h-4 w-4 text-indigo-600'
+                                        fill='none'
+                                        viewBox='0 0 24 24'
+                                        stroke='currentColor'
+                                    >
+                                        <path
+                                            strokeLinecap='round'
+                                            strokeLinejoin='round'
+                                            strokeWidth={2}
+                                            d='M5 13l4 4L19 7'
+                                        />
+                                    </svg>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 ))}
             </div>
-        </div>
+        </>
     );
 };
