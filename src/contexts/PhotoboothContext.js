@@ -16,7 +16,7 @@ export const ActionTypes = {
     RESET_APP: 'RESET_APP',
     SET_SELECTED_PHOTOS: 'SET_SELECTED_PHOTOS',
     SET_FRAME: 'SET_FRAME',
-    SET_PRINT_QUANTITY: 'SET_PRINT_QUANTITY', // New action type for print quantity
+    SET_PRINT_QUANTITY: 'SET_PRINT_QUANTITY',
 };
 
 const initialState = {

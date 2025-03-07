@@ -4,10 +4,10 @@ import { PhotoboothContext } from '../contexts/PhotoboothContext';
 import { useCamera } from '../hooks/useCamera';
 import { useSegmentation } from '../hooks/useSegmentation';
 import { applyVideoFilter, applyCanvasFilter } from '../lib/filterUtils';
-import { Camera } from './cameraview/Camera';
-import { OptionsPanel } from './cameraview/OptionsPanel';
-import { ControlButtons } from './cameraview/ControlButtons';
-import { Footer } from './cameraview/Footer';
+import { Camera } from './cameraPreview/Camera';
+import { OptionsPanel } from './cameraPreview/OptionsPanel';
+import { ControlButtons } from './cameraPreview/ControlButtons';
+import { Footer } from './cameraPreview/Footer';
 
 export default function CameraPreview() {
     const canvasRef = useRef(null);
