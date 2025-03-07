@@ -98,7 +98,7 @@ export default function FrameSelector() {
                                         </div>
                                     </div>
                                     <div className='flex items-center justify-between'>
-                                        <div className='flex items-center gap-0.5'>
+                                        <div className='flex items-center gap-2'>
                                             <div
                                                 className={`w-4 h-4 rounded-full ${frame.previewClass} border border-gray-300 flex-shrink-0`}
                                             ></div>
