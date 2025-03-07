@@ -1,6 +1,6 @@
 import React from 'react';
 import { BackgroundsPanel } from './BackgroundPanels';
-import { FiltersPanel } from './FiltersPanel';
+import { FiltersPanel } from '../frame-selector/FiltersPanel';
 
 export const OptionsPanel = ({ selectedTab, setSelectedTab, state, dispatch }) => {
     // Function to handle filter application

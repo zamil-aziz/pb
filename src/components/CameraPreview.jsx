@@ -1,17 +1,15 @@
 'use client';
-import { useRef, useEffect, useContext, useState } from 'react';
+import { useRef, useEffect, useContext } from 'react';
 import { PhotoboothContext } from '../contexts/PhotoboothContext';
 import { useCamera } from '../hooks/useCamera';
 import { useSegmentation } from '../hooks/useSegmentation';
-import { applyVideoFilter, applyCanvasFilter } from '../lib/filterUtils';
-import { Camera } from './cameraPreview/Camera';
-import { OptionsPanel } from './cameraPreview/OptionsPanel';
-import { ControlButtons } from './cameraPreview/ControlButtons';
-import { Footer } from './cameraPreview/Footer';
+import { Camera } from './camera-preview/Camera';
+import { BackgroundsPanel } from './camera-preview/BackgroundPanels';
+import { ControlButtons } from './camera-preview/ControlButtons';
+import { Footer } from './camera-preview/Footer';
 
 export default function CameraPreview() {
     const canvasRef = useRef(null);
-    const [selectedTab, setSelectedTab] = useState('backgrounds');
     const { state, dispatch } = useContext(PhotoboothContext);
 
     // Use our custom hooks
@@ -34,17 +32,6 @@ export default function CameraPreview() {
             return stopSegmentation;
         }
     }, [videoRef.current, canvasRef.current, state.selectedBackground, startSegmentation]);
-
-    // Apply filter to video
-    useEffect(() => {
-        if (videoRef.current && state.selectedFilter) {
-            applyVideoFilter(videoRef.current, state.selectedFilter, state.availableFilters);
-        }
-
-        if (canvasRef.current && state.selectedFilter) {
-            applyCanvasFilter(canvasRef.current, state.selectedFilter, state.availableFilters);
-        }
-    }, [state.selectedFilter, state.availableFilters]);
 
     // Simple renderVideoToCanvas function for when segmentation is not used
     useEffect(() => {
@@ -69,14 +56,13 @@ export default function CameraPreview() {
                 const ctx = canvasRef.current.getContext('2d');
                 if (ctx) {
                     ctx.drawImage(videoRef.current, 0, 0, width, height);
-                    applyCanvasFilter(canvasRef.current, state.selectedFilter, state.availableFilters);
                 }
             };
 
             const interval = setInterval(renderVideoToCanvas, 33); // ~30fps
             return () => clearInterval(interval);
         }
-    }, [state.selectedBackground, videoRef.current, canvasRef.current, state.selectedFilter, state.availableFilters]);
+    }, [state.selectedBackground, videoRef.current, canvasRef.current]);
 
     return (
         <div className='p-4 max-w-full w-full sm:max-w-2xl md:max-w-4xl mx-auto bg-white bg-opacity-90 backdrop-blur-sm rounded-xl sm:rounded-2xl md:rounded-3xl shadow-xl sm:shadow-2xl border border-white border-opacity-40 relative h-full flex flex-col overflow-hidden'>
@@ -91,11 +77,16 @@ export default function CameraPreview() {
                 state={state}
                 modelLoaded={modelLoaded}
                 error={error || segmentationError}
-                selectedFilter={state.selectedFilter}
-                filters={state.availableFilters}
             />
 
-            <OptionsPanel selectedTab={selectedTab} setSelectedTab={setSelectedTab} state={state} dispatch={dispatch} />
+            <div
+                className='mb-3 sm:mb-4 bg-white bg-opacity-80 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-md sm:shadow-lg border border-purple-100 flex-shrink-0 w-full max-w-full'
+                style={{ height: '25vh', maxHeight: '25vh' }}
+            >
+                <div className='p-2 sm:p-4 overflow-y-auto' style={{ height: 'calc(25vh)' }}>
+                    <BackgroundsPanel state={state} dispatch={dispatch} />
+                </div>
+            </div>
 
             <ControlButtons dispatch={dispatch} />
 

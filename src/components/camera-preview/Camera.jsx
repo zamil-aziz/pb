@@ -1,4 +1,4 @@
-export const Camera = ({ videoRef, canvasRef, isLoading, state, modelLoaded, selectedFilter, filters, error }) => {
+export const Camera = ({ videoRef, canvasRef, isLoading, state, modelLoaded, error }) => {
     return (
         <div
             className='relative mx-auto overflow-hidden rounded-lg sm:rounded-xl shadow-md sm:shadow-lg mb-3 sm:mb-4 flex-1 w-full'
@@ -21,14 +21,18 @@ export const Camera = ({ videoRef, canvasRef, isLoading, state, modelLoaded, sel
                 className={
                     !state.selectedBackground || !modelLoaded ? 'w-full h-full object-cover rounded-xl' : 'hidden'
                 }
-                style={selectedFilter ? filters.find(f => f.id === selectedFilter)?.style : {}}
+                style={
+                    state.selectedFilter ? state.availableFilters.find(f => f.id === state.selectedFilter)?.style : {}
+                }
             />
 
             {/* Canvas for segmentation when background is selected */}
             <canvas
                 ref={canvasRef}
                 className={state.selectedBackground && modelLoaded ? 'w-full h-full object-cover rounded-xl' : 'hidden'}
-                style={selectedFilter ? filters.find(f => f.id === selectedFilter)?.style : {}}
+                style={
+                    state.selectedFilter ? state.availableFilters.find(f => f.id === state.selectedFilter)?.style : {}
+                }
             />
 
             {!modelLoaded && state.selectedBackground && (
