@@ -211,21 +211,26 @@ export default function PhotoModeSelector() {
                             Select Print Quantity
                         </h3>
 
-                        {/* Photo style preview */}
+                        {/* Photo style preview with quantity indicator */}
                         <div className='flex justify-center items-center mb-5 relative z-10'>
-                            {mode === 'strips' ? (
-                                <div className='bg-white p-1 shadow-md mx-auto w-12 mb-2'>
-                                    <div className='flex flex-col space-y-1'>
-                                        {[1, 2, 3, 4].map(item => (
-                                            <div key={item} className='bg-gray-800 h-8'></div>
-                                        ))}
+                            <div className='relative'>
+                                {mode === 'strips' ? (
+                                    <div className='bg-white p-1 shadow-md mx-auto w-12 mb-2'>
+                                        <div className='flex flex-col space-y-1'>
+                                            {[1, 2, 3, 4].map(item => (
+                                                <div key={item} className='bg-gray-800 h-8'></div>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                            ) : (
-                                <div className='bg-white p-2 shadow-md mx-auto w-24 h-28 mb-2'>
-                                    <div className='bg-gray-800 h-full w-full'></div>
-                                </div>
-                            )}
+                                ) : (
+                                    <div className='bg-white p-2 shadow-md mx-auto w-24 h-28 mb-2'>
+                                        <div className='bg-gray-800 h-full w-full'></div>
+                                    </div>
+                                )}
+                                <span className='absolute top-1/2 -right-8 transform -translate-y-1/2 text-lg font-bold text-gray-700'>
+                                    x{selectedQuantity}
+                                </span>
+                            </div>
                         </div>
 
                         <p className='text-center text-gray-700 mb-6 relative z-10'>
