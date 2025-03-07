@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { PhotoboothContext } from '../contexts/PhotoboothContext';
+import { PhotoboothContext } from '../../contexts/PhotoboothContext';
 
 export default function BackgroundSelector() {
     const { state, dispatch } = useContext(PhotoboothContext);

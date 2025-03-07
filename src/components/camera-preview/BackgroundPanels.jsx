@@ -1,5 +1,5 @@
 import React from 'react';
-import BackgroundSelector from '../BackgroundSelector';
+import BackgroundSelector from './BackgroundSelector';
 
 export const BackgroundsPanel = ({ state, dispatch }) => {
     return (
