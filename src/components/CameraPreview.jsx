@@ -3,7 +3,7 @@ import { useRef, useEffect, useContext, useState } from 'react';
 import { PhotoboothContext } from '../contexts/PhotoboothContext';
 import { useCamera } from '../hooks/useCamera';
 import { useSegmentation } from '../hooks/useSegmentation';
-import { useFaceDetection } from '../hooks/useFaceDetection';
+import { useFaceMesh } from '../hooks/useFaceMesh';
 import { Camera } from './camera-preview/Camera';
 import { BackgroundsPanel } from './camera-preview/BackgroundPanels';
 import { AccessoriesPanel } from './camera-preview/AccessoriesPanel';
@@ -23,7 +23,7 @@ export default function CameraPreview() {
         error: segmentationError,
         startSegmentation,
     } = useSegmentation(videoRef, state.selectedBackground);
-    const { faceLoaded, error: faceError, startFaceDetection } = useFaceDetection(videoRef);
+    const { faceLoaded, error: faceError, startFaceDetection } = useFaceMesh(videoRef);
 
     // Initialize camera on component mount
     useEffect(() => {
