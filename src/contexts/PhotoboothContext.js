@@ -10,6 +10,7 @@ export const ActionTypes = {
     SET_PHOTO_MODE: 'SET_PHOTO_MODE',
     SET_BACKGROUND: 'SET_BACKGROUND',
     SET_FILTER: 'SET_FILTER',
+    SET_ACCESSORY: 'SET_ACCESSORY', // New action type for accessories
     SET_BACKGROUNDS: 'SET_BACKGROUNDS',
     ADD_PHOTO: 'ADD_PHOTO',
     CLEAR_PHOTOS: 'CLEAR_PHOTOS',
@@ -25,10 +26,18 @@ const initialState = {
     selectedBackground: null,
     availableBackgrounds: [],
     selectedFilter: null,
+    selectedAccessory: null, // New property for selected accessory
     availableFilters: [
         { id: 'normal', name: 'Normal', style: {} },
         { id: 'grayscale', name: 'Retro', style: { filter: 'grayscale(100%)' } },
         { id: 'warm', name: 'Warm', style: { filter: 'saturate(130%) hue-rotate(30deg) brightness(105%)' } },
+    ],
+    availableAccessories: [
+        // New property for available accessories
+        { id: 'cat-ears', name: 'Cat Ears', url: '/accessories/cat-ears.png' },
+        { id: 'glasses', name: 'Glasses', url: '/accessories/glasses.png' },
+        { id: 'hat', name: 'Party Hat', url: '/accessories/party-hat.png' },
+        { id: 'mustache', name: 'Mustache', url: '/accessories/mustache.png' },
     ],
     photos: [],
     photosPerSession: 8, // Default for strips mode
@@ -87,6 +96,12 @@ function reducer(state, action) {
             return {
                 ...state,
                 selectedFilter: action.payload,
+                lastActivityTime: Date.now(),
+            };
+        case ActionTypes.SET_ACCESSORY: // New case for accessory selection
+            return {
+                ...state,
+                selectedAccessory: action.payload,
                 lastActivityTime: Date.now(),
             };
         case ActionTypes.SET_BACKGROUNDS:

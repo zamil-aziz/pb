@@ -1,16 +1,20 @@
 'use client';
-import { useRef, useEffect, useContext } from 'react';
+import { useRef, useEffect, useContext, useState } from 'react';
 import { PhotoboothContext } from '../contexts/PhotoboothContext';
 import { useCamera } from '../hooks/useCamera';
 import { useSegmentation } from '../hooks/useSegmentation';
+import { useFaceDetection } from '../hooks/useFaceDetection';
 import { Camera } from './camera-preview/Camera';
 import { BackgroundsPanel } from './camera-preview/BackgroundPanels';
+import { AccessoriesPanel } from './camera-preview/AccessoriesPanel';
 import { ControlButtons } from './camera-preview/ControlButtons';
 import { Footer } from './camera-preview/Footer';
 
 export default function CameraPreview() {
     const canvasRef = useRef(null);
     const { state, dispatch } = useContext(PhotoboothContext);
+    const [activeTab, setActiveTab] = useState('backgrounds'); // 'backgrounds' or 'accessories'
+    const [faceLandmarks, setFaceLandmarks] = useState(null);
 
     // Use our custom hooks
     const { videoRef, isLoading, error, initializeCamera } = useCamera();
@@ -19,6 +23,7 @@ export default function CameraPreview() {
         error: segmentationError,
         startSegmentation,
     } = useSegmentation(videoRef, state.selectedBackground);
+    const { faceLoaded, error: faceError, startFaceDetection } = useFaceDetection(videoRef);
 
     // Initialize camera on component mount
     useEffect(() => {
@@ -33,10 +38,20 @@ export default function CameraPreview() {
         }
     }, [videoRef.current, canvasRef.current, state.selectedBackground, startSegmentation]);
 
-    // Simple renderVideoToCanvas function for when segmentation is not used
+    // Start face detection when needed for accessories
     useEffect(() => {
-        // Only run this effect if we're not doing segmentation
-        if (!state.selectedBackground && videoRef.current && canvasRef.current) {
+        if (videoRef.current && canvasRef.current && state.selectedAccessory && faceLoaded) {
+            const stopFaceDetection = startFaceDetection(landmarks => {
+                setFaceLandmarks(landmarks);
+            });
+            return stopFaceDetection;
+        }
+    }, [videoRef.current, canvasRef.current, state.selectedAccessory, faceLoaded, startFaceDetection]);
+
+    // Render video to canvas when no segmentation is used but we need canvas for accessories
+    useEffect(() => {
+        // Only run this effect if we're not doing segmentation but have accessories
+        if (!state.selectedBackground && state.selectedAccessory && videoRef.current && canvasRef.current) {
             const renderVideoToCanvas = () => {
                 if (!videoRef.current || !canvasRef.current) return;
 
@@ -62,7 +77,7 @@ export default function CameraPreview() {
             const interval = setInterval(renderVideoToCanvas, 33); // ~30fps
             return () => clearInterval(interval);
         }
-    }, [state.selectedBackground, videoRef.current, canvasRef.current]);
+    }, [state.selectedBackground, state.selectedAccessory, videoRef.current, canvasRef.current]);
 
     return (
         <div className='p-4 max-w-full w-full sm:max-w-2xl md:max-w-4xl mx-auto bg-white bg-opacity-90 backdrop-blur-sm rounded-xl sm:rounded-2xl md:rounded-3xl shadow-xl sm:shadow-2xl border border-white border-opacity-40 relative h-full flex flex-col overflow-hidden'>
@@ -76,15 +91,45 @@ export default function CameraPreview() {
                 isLoading={isLoading}
                 state={state}
                 modelLoaded={modelLoaded}
-                error={error || segmentationError}
+                faceLoaded={faceLoaded}
+                faceLandmarks={faceLandmarks}
+                error={error || segmentationError || faceError}
             />
 
             <div
                 className='mb-3 sm:mb-4 bg-white bg-opacity-80 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-md sm:shadow-lg border border-purple-100 flex-shrink-0 w-full max-w-full'
                 style={{ height: '25vh', maxHeight: '25vh' }}
             >
-                <div className='p-2 sm:p-4 overflow-y-auto' style={{ height: 'calc(25vh)' }}>
-                    <BackgroundsPanel state={state} dispatch={dispatch} />
+                {/* Tab Navigation */}
+                <div className='flex border-b border-gray-200'>
+                    <button
+                        className={`px-4 py-2 text-sm font-medium ${
+                            activeTab === 'backgrounds'
+                                ? 'text-purple-700 border-b-2 border-purple-500'
+                                : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                        onClick={() => setActiveTab('backgrounds')}
+                    >
+                        Backgrounds
+                    </button>
+                    <button
+                        className={`px-4 py-2 text-sm font-medium ${
+                            activeTab === 'accessories'
+                                ? 'text-purple-700 border-b-2 border-purple-500'
+                                : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                        onClick={() => setActiveTab('accessories')}
+                    >
+                        Accessories
+                    </button>
+                </div>
+
+                <div className='p-2 sm:p-4 overflow-y-auto' style={{ height: 'calc(25vh - 41px)' }}>
+                    {activeTab === 'backgrounds' ? (
+                        <BackgroundsPanel state={state} dispatch={dispatch} />
+                    ) : (
+                        <AccessoriesPanel state={state} dispatch={dispatch} />
+                    )}
                 </div>
             </div>
 
