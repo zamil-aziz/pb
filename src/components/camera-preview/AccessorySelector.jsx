@@ -1,0 +1,72 @@
+import { useContext } from 'react';
+import { PhotoboothContext } from '../../contexts/PhotoboothContext';
+
+export default function AccessorySelector() {
+    const { state, dispatch } = useContext(PhotoboothContext);
+
+    return (
+        <div className='w-full'>
+            <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4'>
+                {/* No accessory option */}
+                <div
+                    className={`cursor-pointer overflow-hidden rounded-lg sm:rounded-xl border-2 sm:border-4 ${
+                        !state.selectedAccessory ? 'border-blue-500' : 'border-gray-200'
+                    } shadow-md sm:shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl`}
+                    onClick={() => dispatch({ type: 'SET_ACCESSORY', payload: null })}
+                    role='button'
+                    aria-label='Select no accessory'
+                    tabIndex={0}
+                    onKeyDown={e => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            dispatch({ type: 'SET_ACCESSORY', payload: null });
+                        }
+                    }}
+                >
+                    <div
+                        className='bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center w-full h-full'
+                        style={{ aspectRatio: '5/3', maxHeight: '100px' }}
+                    >
+                        <span className='text-sm sm:text-base md:text-lg font-medium text-gray-600'>No Accessory</span>
+                    </div>
+                </div>
+
+                {state.availableAccessories.map(accessory => (
+                    <div
+                        key={accessory.id}
+                        className={`cursor-pointer overflow-hidden rounded-lg sm:rounded-xl border-2 sm:border-4 ${
+                            state.selectedAccessory?.id === accessory.id ? 'border-blue-500' : 'border-gray-200'
+                        } shadow-md sm:shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl group`}
+                        onClick={() => dispatch({ type: 'SET_ACCESSORY', payload: accessory })}
+                        role='button'
+                        aria-label={`Select ${accessory.name} accessory`}
+                        tabIndex={0}
+                        onKeyDown={e => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                dispatch({ type: 'SET_ACCESSORY', payload: accessory });
+                            }
+                        }}
+                    >
+                        <div className='relative w-full h-full' style={{ aspectRatio: '5/3', maxHeight: '100px' }}>
+                            <img
+                                src={accessory.url}
+                                alt={accessory.name}
+                                className='absolute inset-0 w-full h-full object-contain transition-transform duration-500 group-hover:scale-110'
+                                loading='lazy'
+                            />
+
+                            {/* Gradient overlay on hover */}
+                            <div className='absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-70 transition-opacity duration-300'></div>
+
+                            {/* Accessory name label at bottom */}
+                            <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white p-1 sm:p-1.5 z-10'>
+                                <span className='text-xs sm:text-sm font-medium truncate block text-center'>
+                                    {accessory.name}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
