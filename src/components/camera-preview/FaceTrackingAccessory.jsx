@@ -43,9 +43,9 @@ export const FaceTrackingAccessory = ({ accessory, facePoints, videoRef }) => {
 
                     // Position above head
                     newPosition = {
-                        top: `${topHead[1] * scaleY - faceWidth * scaleY * 0.7}px`,
+                        top: `${topHead[1] * scaleY - faceWidth * scaleY * 1.3}px`,
                         left: `${topHead[0] * scaleX}px`,
-                        width: `${faceWidth * 2.5 * scaleX}px`,
+                        width: `${faceWidth * 1.8 * scaleX}px`,
                         transform: 'translate(-50%, 0)', // Center horizontally
                     };
                 }
@@ -68,9 +68,9 @@ export const FaceTrackingAccessory = ({ accessory, facePoints, videoRef }) => {
                     ];
 
                     newPosition = {
-                        top: `${eyeMidpoint[1] * scaleY - eyeDistance * scaleY * 0.2}px`,
+                        top: `${eyeMidpoint[1] * scaleY - eyeDistance * scaleY * 0.4}px`,
                         left: `${eyeMidpoint[0] * scaleX}px`,
-                        width: `${eyeDistance * 2 * scaleX}px`,
+                        width: `${eyeDistance * 1.7 * scaleX}px`,
                         transform: 'translate(-50%, 0)',
                     };
                 }
@@ -88,32 +88,9 @@ export const FaceTrackingAccessory = ({ accessory, facePoints, videoRef }) => {
                     );
 
                     newPosition = {
-                        top: `${forehead[1] * scaleY - faceWidth * scaleY}px`,
+                        top: `${forehead[1] * scaleY - faceWidth * scaleY * 1.7}px`,
                         left: `${forehead[0] * scaleX}px`,
-                        width: `${faceWidth * 1.2 * scaleX}px`,
-                        transform: 'translate(-50%, 0)',
-                    };
-                }
-                break;
-
-            case 'mustache':
-                // Position mustache between nose and mouth
-                const nose = keypoints[2]; // Nose tip
-                const mouth = keypoints[13]; // Upper lip
-                const leftMouth = keypoints[61]; // Left corner of mouth
-                const rightMouth = keypoints[291]; // Right corner of mouth
-
-                if (nose && mouth && leftMouth && rightMouth) {
-                    const mouthWidth = Math.sqrt(
-                        Math.pow(leftMouth[0] - rightMouth[0], 2) + Math.pow(leftMouth[1] - rightMouth[1], 2)
-                    );
-
-                    const midpoint = [(nose[0] + mouth[0]) / 2, (nose[1] + mouth[1]) / 2 + 5];
-
-                    newPosition = {
-                        top: `${midpoint[1] * scaleY}px`,
-                        left: `${midpoint[0] * scaleX}px`,
-                        width: `${mouthWidth * 1.5 * scaleX}px`,
+                        width: `${faceWidth * 2.5 * scaleX}px`,
                         transform: 'translate(-50%, 0)',
                     };
                 }

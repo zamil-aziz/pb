@@ -36,8 +36,7 @@ const initialState = {
         // New property for available accessories
         { id: 'cat-ears', name: 'Cat Ears', url: '/accessories/cat-ears.png' },
         { id: 'glasses', name: 'Glasses', url: '/accessories/glasses.png' },
-        { id: 'hat', name: 'Party Hat', url: '/accessories/party-hat.png' },
-        { id: 'mustache', name: 'Mustache', url: '/accessories/mustache.png' },
+        { id: 'hat', name: 'Cowboy Hat', url: '/accessories/cowboy-hat.png' },
     ],
     photos: [],
     photosPerSession: 8, // Default for strips mode
