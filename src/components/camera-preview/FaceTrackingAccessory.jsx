@@ -68,9 +68,9 @@ export const FaceTrackingAccessory = ({ accessory, facePoints, videoRef }) => {
                     ];
 
                     newPosition = {
-                        top: `${eyeMidpoint[1] * scaleY - eyeDistance * scaleY * 0.4}px`,
+                        top: `${eyeMidpoint[1] * scaleY - eyeDistance * scaleY * 0.25}px`,
                         left: `${eyeMidpoint[0] * scaleX}px`,
-                        width: `${eyeDistance * 1.7 * scaleX}px`,
+                        width: `${eyeDistance * 1.8 * scaleX}px`,
                         transform: 'translate(-50%, 0)',
                     };
                 }

@@ -14,7 +14,7 @@ import { ImageIcon, Sparkles } from 'lucide-react'; // Added icon imports
 export default function CameraPreview() {
     const canvasRef = useRef(null);
     const { state, dispatch } = useContext(PhotoboothContext);
-    const [activeTab, setActiveTab] = useState('backgrounds'); // 'backgrounds' or 'accessories'
+    const [activeTab, setActiveTab] = useState('accessories'); // Changed from 'backgrounds' to 'accessories'
     const [faceLandmarks, setFaceLandmarks] = useState(null);
 
     // Use our custom hooks
@@ -101,28 +101,15 @@ export default function CameraPreview() {
                 className='mb-3 sm:mb-4 bg-white bg-opacity-80 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-md sm:shadow-lg border border-purple-100 flex-shrink-0 w-full max-w-full overflow-hidden'
                 style={{ height: '25vh', maxHeight: '25vh' }}
             >
-                {/* Enhanced Tab Navigation */}
+                {/* Enhanced Tab Navigation - removed max-w-md */}
                 <div className='flex items-center justify-center px-4 pt-3 pb-1 bg-gradient-to-r from-purple-50 via-white to-purple-50'>
-                    <div className='flex w-full max-w-md bg-gray-100 rounded-lg p-1 shadow-inner'>
+                    <div className='flex w-full bg-gray-100 rounded-lg p-1 shadow-inner'>
+                        {/* Accessories tab first */}
                         <button
-                            className={`flex items-center justify-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 space-x-2 flex-1 ${
-                                activeTab === 'backgrounds'
-                                    ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-md transform scale-105'
-                                    : 'text-gray-600 hover:bg-white hover:shadow-sm'
-                            }`}
-                            onClick={() => setActiveTab('backgrounds')}
-                        >
-                            <ImageIcon
-                                size={18}
-                                className={activeTab === 'backgrounds' ? 'text-white' : 'text-purple-400'}
-                            />
-                            <span>Backgrounds</span>
-                        </button>
-                        <button
-                            className={`flex items-center justify-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 space-x-2 flex-1 ${
+                            className={`flex items-center justify-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 space-x-2 flex-1 w-full cursor-pointer hover:bg-opacity-90 ${
                                 activeTab === 'accessories'
                                     ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-md transform scale-105'
-                                    : 'text-gray-600 hover:bg-white hover:shadow-sm'
+                                    : 'text-gray-600 hover:bg-white hover:shadow-sm hover:text-purple-500'
                             }`}
                             onClick={() => setActiveTab('accessories')}
                         >
@@ -131,6 +118,22 @@ export default function CameraPreview() {
                                 className={activeTab === 'accessories' ? 'text-white' : 'text-purple-400'}
                             />
                             <span>Accessories (Beta)</span>
+                        </button>
+
+                        {/* Backgrounds tab second */}
+                        <button
+                            className={`flex items-center justify-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 space-x-2 flex-1 w-full cursor-pointer hover:bg-opacity-90 ${
+                                activeTab === 'backgrounds'
+                                    ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-md transform scale-105'
+                                    : 'text-gray-600 hover:bg-white hover:shadow-sm hover:text-purple-500'
+                            }`}
+                            onClick={() => setActiveTab('backgrounds')}
+                        >
+                            <ImageIcon
+                                size={18}
+                                className={activeTab === 'backgrounds' ? 'text-white' : 'text-purple-400'}
+                            />
+                            <span>Backgrounds</span>
                         </button>
                     </div>
                 </div>
