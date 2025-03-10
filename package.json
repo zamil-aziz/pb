@@ -9,8 +9,9 @@
         "lint": "next lint"
     },
     "dependencies": {
-        "@tensorflow-models/body-pix": "^2.2.0",
+        "@tensorflow-models/body-pix": "^2.0.5",
         "@tensorflow-models/facemesh": "^0.0.5",
+        "@tensorflow/tfjs": "^2.8.6",
         "@tensorflow/tfjs-backend-cpu": "^2.8.6",
         "@tensorflow/tfjs-backend-webgl": "^2.8.6",
         "@tensorflow/tfjs-converter": "^2.8.6",
