@@ -9,6 +9,7 @@ import { BackgroundsPanel } from './camera-preview/BackgroundPanels';
 import { AccessoriesPanel } from './camera-preview/AccessoriesPanel';
 import { ControlButtons } from './camera-preview/ControlButtons';
 import { Footer } from './camera-preview/Footer';
+import { ImageIcon, Sparkles } from 'lucide-react'; // Added icon imports
 
 export default function CameraPreview() {
     const canvasRef = useRef(null);
@@ -97,34 +98,44 @@ export default function CameraPreview() {
             />
 
             <div
-                className='mb-3 sm:mb-4 bg-white bg-opacity-80 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-md sm:shadow-lg border border-purple-100 flex-shrink-0 w-full max-w-full'
+                className='mb-3 sm:mb-4 bg-white bg-opacity-80 backdrop-blur-sm rounded-lg sm:rounded-xl shadow-md sm:shadow-lg border border-purple-100 flex-shrink-0 w-full max-w-full overflow-hidden'
                 style={{ height: '25vh', maxHeight: '25vh' }}
             >
-                {/* Tab Navigation */}
-                <div className='flex border-b border-gray-200'>
-                    <button
-                        className={`px-4 py-2 text-sm font-medium ${
-                            activeTab === 'backgrounds'
-                                ? 'text-purple-700 border-b-2 border-purple-500'
-                                : 'text-gray-500 hover:text-gray-700'
-                        }`}
-                        onClick={() => setActiveTab('backgrounds')}
-                    >
-                        Backgrounds
-                    </button>
-                    <button
-                        className={`px-4 py-2 text-sm font-medium ${
-                            activeTab === 'accessories'
-                                ? 'text-purple-700 border-b-2 border-purple-500'
-                                : 'text-gray-500 hover:text-gray-700'
-                        }`}
-                        onClick={() => setActiveTab('accessories')}
-                    >
-                        Accessories
-                    </button>
+                {/* Enhanced Tab Navigation */}
+                <div className='flex items-center justify-center px-4 pt-3 pb-1 bg-gradient-to-r from-purple-50 via-white to-purple-50'>
+                    <div className='flex w-full max-w-md bg-gray-100 rounded-lg p-1 shadow-inner'>
+                        <button
+                            className={`flex items-center justify-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 space-x-2 flex-1 ${
+                                activeTab === 'backgrounds'
+                                    ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-md transform scale-105'
+                                    : 'text-gray-600 hover:bg-white hover:shadow-sm'
+                            }`}
+                            onClick={() => setActiveTab('backgrounds')}
+                        >
+                            <ImageIcon
+                                size={18}
+                                className={activeTab === 'backgrounds' ? 'text-white' : 'text-purple-400'}
+                            />
+                            <span>Backgrounds</span>
+                        </button>
+                        <button
+                            className={`flex items-center justify-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 space-x-2 flex-1 ${
+                                activeTab === 'accessories'
+                                    ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-md transform scale-105'
+                                    : 'text-gray-600 hover:bg-white hover:shadow-sm'
+                            }`}
+                            onClick={() => setActiveTab('accessories')}
+                        >
+                            <Sparkles
+                                size={18}
+                                className={activeTab === 'accessories' ? 'text-white' : 'text-purple-400'}
+                            />
+                            <span>Accessories (Beta)</span>
+                        </button>
+                    </div>
                 </div>
 
-                <div className='p-2 sm:p-4 overflow-y-auto' style={{ height: 'calc(25vh - 41px)' }}>
+                <div className='p-2 sm:p-4 overflow-y-auto' style={{ height: 'calc(25vh - 64px)' }}>
                     {activeTab === 'backgrounds' ? (
                         <BackgroundsPanel state={state} dispatch={dispatch} />
                     ) : (
