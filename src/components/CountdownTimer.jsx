@@ -4,7 +4,6 @@ import { PhotoboothContext } from '../contexts/PhotoboothContext';
 import { useCamera } from '../hooks/useCamera';
 import { useSegmentation } from '../hooks/useSegmentation';
 import { usePhotoCapture } from '../hooks/usePhotoCapture';
-import { applyCanvasFilter, applyVideoFilter } from '../lib/filterUtils';
 
 export default function CountdownTimer() {
     const displayCanvasRef = useRef(null);
@@ -23,7 +22,7 @@ export default function CountdownTimer() {
         error: segmentationError,
         startSegmentation,
     } = useSegmentation(videoRef, state.selectedBackground);
-    const { capturePhoto } = usePhotoCapture(videoRef, state.selectedFilter, state.availableFilters);
+    const { capturePhoto } = usePhotoCapture(videoRef);
 
     // Use refs to track actions that should happen after render
     const photoTakenRef = useRef(false);
@@ -33,17 +32,6 @@ export default function CountdownTimer() {
     useEffect(() => {
         initializeCamera();
     }, []);
-
-    // Apply filter to video
-    useEffect(() => {
-        if (videoRef.current && state.selectedFilter) {
-            applyVideoFilter(videoRef.current, state.selectedFilter, state.availableFilters);
-        }
-
-        if (displayCanvasRef.current && state.selectedFilter) {
-            applyCanvasFilter(displayCanvasRef.current, state.selectedFilter, state.availableFilters);
-        }
-    }, [state.selectedFilter, state.availableFilters]);
 
     // Start segmentation when canvas and video are ready
     useEffect(() => {
@@ -76,20 +64,13 @@ export default function CountdownTimer() {
                 const ctx = displayCanvasRef.current.getContext('2d');
                 if (ctx) {
                     ctx.drawImage(videoRef.current, 0, 0, width, height);
-                    applyCanvasFilter(displayCanvasRef.current, state.selectedFilter, state.availableFilters);
                 }
             };
 
             const interval = setInterval(renderVideoToCanvas, 33); // ~30fps
             return () => clearInterval(interval);
         }
-    }, [
-        state.selectedBackground,
-        videoRef.current,
-        displayCanvasRef.current,
-        state.selectedFilter,
-        state.availableFilters,
-    ]);
+    }, [state.selectedBackground, videoRef.current, displayCanvasRef.current]);
 
     // Handle when a photo is taken
     useEffect(() => {
@@ -283,15 +264,6 @@ export default function CountdownTimer() {
                     </p>
 
                     <div className='flex space-x-4 items-center justify-center mt-2'>
-                        {state.selectedFilter && state.selectedFilter !== 'normal' && (
-                            <p className='text-lg'>
-                                <span className='font-medium text-gray-700'>Filter:</span>{' '}
-                                <span className='text-indigo-600'>
-                                    {state.availableFilters.find(f => f.id === state.selectedFilter)?.name ||
-                                        state.selectedFilter}
-                                </span>
-                            </p>
-                        )}
                         {state.selectedBackground && (
                             <p className='text-lg'>
                                 <span className='font-medium text-gray-700'>Background:</span>{' '}

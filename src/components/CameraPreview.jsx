@@ -9,7 +9,7 @@ import { BackgroundsPanel } from './camera-preview/BackgroundPanels';
 import { AccessoriesPanel } from './camera-preview/AccessoriesPanel';
 import { ControlButtons } from './camera-preview/ControlButtons';
 import { Footer } from './camera-preview/Footer';
-import { ImageIcon, Sparkles } from 'lucide-react'; // Added icon imports
+import { ImageIcon, Sparkles } from 'lucide-react';
 
 export default function CameraPreview() {
     const canvasRef = useRef(null);
