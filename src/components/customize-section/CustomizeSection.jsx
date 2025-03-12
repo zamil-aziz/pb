@@ -36,7 +36,7 @@ export default function CustomizeSection() {
 
             {/* Header section with glowing effect */}
             <div className='p-5'>
-                <h2 className='text-4xl font-bold mt-1 text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600'>
+                <h2 className='text-3xl font-bold mt-0 text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600'>
                     Customize Your Photos
                 </h2>
             </div>
