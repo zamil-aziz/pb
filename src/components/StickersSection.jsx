@@ -1,72 +1,152 @@
 'use client';
-import { useContext, useState, useRef, useEffect } from 'react';
+import React, { useContext, useState, useRef, useEffect } from 'react';
 import { PhotoboothContext, ActionTypes } from '../contexts/PhotoboothContext';
-// Note: You'll need to install react-draggable for this component to work
-// npm install react-draggable
 import { ChevronLeft, ChevronRight, Sticker, X, Move } from 'lucide-react';
-import Draggable from 'react-draggable';
 
+// Simpler implementation without dnd-kit
 export default function StickersSection() {
     const { state, dispatch } = useContext(PhotoboothContext);
-    const [appliedStickers, setAppliedStickers] = useState(state.appliedStickers || []);
+    const [appliedStickers, setAppliedStickers] = useState([]);
     const [selectedStickerIndex, setSelectedStickerIndex] = useState(null);
+    const [draggingIndex, setDraggingIndex] = useState(null);
+    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
     const previewContainerRef = useRef(null);
-
-    // Sample stickers - in a real app, you might load these from a database or API
-    const stickers = [
-        { id: 'heart', name: 'Heart', url: '/stickers/heart.png' },
-        { id: 'star', name: 'Star', url: '/stickers/star.png' },
-        { id: 'balloon', name: 'Balloon', url: '/stickers/balloon.png' },
-        { id: 'smile', name: 'Smile', url: '/stickers/smile.png' },
-        { id: 'cake', name: 'Cake', url: '/stickers/cake.png' },
-        { id: 'gift', name: 'Gift', url: '/stickers/gift.png' },
-        { id: 'confetti', name: 'Confetti', url: '/stickers/confetti.png' },
-        { id: 'crown', name: 'Crown', url: '/stickers/crown.png' },
-    ];
 
     // Check if we're in single mode
     const isSingleMode = state.photoMode === 'single';
 
+    // Load stickers from context on mount
+    useEffect(() => {
+        if (state.appliedStickers && state.appliedStickers.length > 0) {
+            setAppliedStickers(state.appliedStickers);
+        }
+    }, [state.appliedStickers]);
+
     // Add a sticker to the preview
     const addSticker = sticker => {
+        const previewRect = previewContainerRef.current?.getBoundingClientRect();
+
+        // Default to center position
+        let posX = previewRect ? previewRect.width / 2 - 25 : 0;
+        let posY = previewRect ? previewRect.height / 2 - 25 : 0;
+
         const newSticker = {
             id: `${sticker.id}-${Date.now()}`,
             url: sticker.url,
-            x: 0,
-            y: 0,
+            x: posX,
+            y: posY,
             width: 50,
             height: 50,
             zIndex: appliedStickers.length + 1,
         };
 
-        setAppliedStickers([...appliedStickers, newSticker]);
+        const updatedStickers = [...appliedStickers, newSticker];
+
+        // Update local state
+        setAppliedStickers(updatedStickers);
+        setSelectedStickerIndex(updatedStickers.length - 1);
+
+        // Update context
+        dispatch({
+            type: ActionTypes.SET_APPLIED_STICKERS,
+            payload: updatedStickers,
+        });
     };
 
-    // Handle sticker drag stop
-    const handleDragStop = (e, data, index) => {
+    // Handle sticker drag start
+    const handleDragStart = (e, index) => {
+        e.preventDefault();
+
+        // Get sticker position
+        const sticker = appliedStickers[index];
+
+        // Calculate drag offset (cursor position relative to sticker top-left)
+        const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+        const containerRect = previewContainerRef.current.getBoundingClientRect();
+        const offsetX = clientX - (containerRect.left + sticker.x);
+        const offsetY = clientY - (containerRect.top + sticker.y);
+
+        // Set dragging state
+        setDraggingIndex(index);
+        setDragOffset({ x: offsetX, y: offsetY });
+        setSelectedStickerIndex(index);
+    };
+
+    // Handle drag movement
+    const handleDragMove = e => {
+        if (draggingIndex === null) return;
+
+        e.preventDefault();
+
+        // Get cursor position
+        const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+        // Get container bounds
+        const containerRect = previewContainerRef.current.getBoundingClientRect();
+
+        // Calculate new position
+        const newX = clientX - containerRect.left - dragOffset.x;
+        const newY = clientY - containerRect.top - dragOffset.y;
+
+        // Update sticker position
         const updatedStickers = [...appliedStickers];
-        updatedStickers[index] = {
-            ...updatedStickers[index],
-            x: data.x,
-            y: data.y,
+        const sticker = updatedStickers[draggingIndex];
+
+        // Add boundary checks
+        const maxX = containerRect.width - sticker.width;
+        const maxY = containerRect.height - sticker.height;
+
+        updatedStickers[draggingIndex] = {
+            ...sticker,
+            x: Math.max(0, Math.min(newX, maxX)),
+            y: Math.max(0, Math.min(newY, maxY)),
         };
+
+        // Update local state only during drag
         setAppliedStickers(updatedStickers);
+    };
+
+    // Handle drag end
+    const handleDragEnd = () => {
+        if (draggingIndex !== null) {
+            // Save final position to context
+            dispatch({
+                type: ActionTypes.SET_APPLIED_STICKERS,
+                payload: appliedStickers,
+            });
+
+            // Reset drag state
+            setDraggingIndex(null);
+        }
     };
 
     // Remove a sticker
     const removeSticker = index => {
-        const updatedStickers = [...appliedStickers];
-        updatedStickers.splice(index, 1);
+        if (index < 0 || index >= appliedStickers.length) return;
+
+        const updatedStickers = appliedStickers.filter((_, i) => i !== index);
+
+        // Update local state
         setAppliedStickers(updatedStickers);
         setSelectedStickerIndex(null);
+
+        // Update context
+        dispatch({
+            type: ActionTypes.SET_APPLIED_STICKERS,
+            payload: updatedStickers,
+        });
     };
 
-    // Handle sticker selection for editing
-    const selectSticker = index => {
+    // Handle sticker selection
+    const selectSticker = (index, e) => {
+        e.stopPropagation(); // Prevent click from bubbling to container
         setSelectedStickerIndex(index === selectedStickerIndex ? null : index);
     };
 
-    // Change sticker size
+    // Resize sticker
     const resizeSticker = (index, sizeDelta) => {
         const updatedStickers = [...appliedStickers];
         const sticker = updatedStickers[index];
@@ -80,14 +160,44 @@ export default function StickersSection() {
             height: newHeight,
         };
 
+        // Update local state
         setAppliedStickers(updatedStickers);
+
+        // Update context
+        dispatch({
+            type: ActionTypes.SET_APPLIED_STICKERS,
+            payload: updatedStickers,
+        });
     };
 
-    // Continue to payment and save stickers
+    // Continue to payment
     const continueToPayment = () => {
-        dispatch({ type: ActionTypes.SET_APPLIED_STICKERS, payload: appliedStickers });
         dispatch({ type: ActionTypes.SET_VIEW, payload: 'payment' });
     };
+
+    // Set up event listeners for drag operations
+    useEffect(() => {
+        const handleMouseMove = e => handleDragMove(e);
+        const handleTouchMove = e => handleDragMove(e);
+        const handleMouseUp = () => handleDragEnd();
+        const handleTouchEnd = () => handleDragEnd();
+
+        if (draggingIndex !== null) {
+            // Add global event listeners
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('touchmove', handleTouchMove, { passive: false });
+            document.addEventListener('mouseup', handleMouseUp);
+            document.addEventListener('touchend', handleTouchEnd);
+        }
+
+        return () => {
+            // Clean up listeners
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('touchmove', handleTouchMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+            document.removeEventListener('touchend', handleTouchEnd);
+        };
+    }, [draggingIndex, dragOffset, appliedStickers]);
 
     return (
         <div className='w-full max-w-5xl mx-auto bg-white bg-opacity-90 backdrop-blur-lg rounded-3xl shadow-2xl border border-white border-opacity-40 relative overflow-hidden p-0'>
@@ -109,72 +219,70 @@ export default function StickersSection() {
                         <div className='w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 shadow-lg border border-gray-100 mb-6'>
                             <h3 className='text-xl font-semibold mb-6 text-gray-700 text-center'>Preview</h3>
                             <div className='flex justify-center mb-4'>
-                                <div
-                                    ref={previewContainerRef}
-                                    className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[260px]'} mx-auto ${
-                                        state.selectedFrame ? state.selectedFrame : 'classic'
-                                    } transform transition-all duration-500 hover:scale-105`}
-                                >
-                                    <div className={`flex flex-col gap-2 p-3 ${isSingleMode ? 'pb-16' : ''}`}>
-                                        {state.selectedPhotos &&
-                                            state.selectedPhotos.map((photo, photoIndex) => (
-                                                <div
-                                                    key={photoIndex}
-                                                    className={`relative ${
-                                                        isSingleMode ? 'h-80' : 'h-auto'
-                                                    } overflow-hidden rounded-sm`}
-                                                >
-                                                    <img
-                                                        src={photo}
-                                                        alt={`Selected photo ${photoIndex + 1}`}
-                                                        className={`w-full ${
-                                                            isSingleMode ? 'h-full object-cover' : 'h-auto'
-                                                        } transition-transform duration-300`}
-                                                        style={
-                                                            state.selectedFilter
-                                                                ? state.availableFilters.find(
-                                                                      f => f.id === state.selectedFilter
-                                                                  )?.style
-                                                                : {}
-                                                        }
-                                                    />
+                                <div onClick={() => setSelectedStickerIndex(null)} className='relative'>
+                                    <div
+                                        ref={previewContainerRef}
+                                        className={`relative ${
+                                            isSingleMode ? 'max-w-[340px]' : 'max-w-[260px]'
+                                        } mx-auto ${
+                                            state.selectedFrame ? state.selectedFrame : 'classic'
+                                        } transform transition-all duration-500 hover:scale-105`}
+                                    >
+                                        <div className={`flex flex-col gap-2 p-3 ${isSingleMode ? 'pb-16' : ''}`}>
+                                            {state.selectedPhotos &&
+                                                state.selectedPhotos.map((photo, photoIndex) => (
+                                                    <div
+                                                        key={photoIndex}
+                                                        className={`relative ${
+                                                            isSingleMode ? 'h-80' : 'h-auto'
+                                                        } overflow-hidden rounded-sm`}
+                                                    >
+                                                        <img
+                                                            src={photo}
+                                                            alt={`Selected photo ${photoIndex + 1}`}
+                                                            className={`w-full ${
+                                                                isSingleMode ? 'h-full object-cover' : 'h-auto'
+                                                            } transition-transform duration-300`}
+                                                            style={
+                                                                state.selectedFilter
+                                                                    ? state.availableFilters.find(
+                                                                          f => f.id === state.selectedFilter
+                                                                      )?.style
+                                                                    : {}
+                                                            }
+                                                        />
+                                                    </div>
+                                                ))}
+                                        </div>
 
-                                                    {/* Stickers overlay */}
-                                                    {appliedStickers
-                                                        .filter(sticker => photoIndex === 0 || isSingleMode)
-                                                        .map((sticker, index) => (
-                                                            <Draggable
-                                                                key={sticker.id}
-                                                                position={{ x: sticker.x, y: sticker.y }}
-                                                                onStop={(e, data) => handleDragStop(e, data, index)}
-                                                                bounds='parent'
-                                                            >
-                                                                <div
-                                                                    className={`absolute cursor-move ${
-                                                                        selectedStickerIndex === index
-                                                                            ? 'ring-2 ring-indigo-500 ring-offset-2'
-                                                                            : ''
-                                                                    }`}
-                                                                    style={{
-                                                                        width: `${sticker.width}px`,
-                                                                        height: `${sticker.height}px`,
-                                                                        zIndex: sticker.zIndex,
-                                                                    }}
-                                                                    onClick={e => {
-                                                                        e.stopPropagation();
-                                                                        selectSticker(index);
-                                                                    }}
-                                                                >
-                                                                    <img
-                                                                        src={sticker.url}
-                                                                        alt={`Sticker ${index + 1}`}
-                                                                        className='w-full h-full object-contain pointer-events-none'
-                                                                    />
-                                                                </div>
-                                                            </Draggable>
-                                                        ))}
-                                                </div>
-                                            ))}
+                                        {/* Stickers overlay */}
+                                        {appliedStickers.map((sticker, index) => (
+                                            <div
+                                                key={sticker.id}
+                                                className={`absolute cursor-move ${
+                                                    selectedStickerIndex === index
+                                                        ? 'ring-2 ring-indigo-500 ring-offset-2'
+                                                        : ''
+                                                }`}
+                                                style={{
+                                                    width: `${sticker.width}px`,
+                                                    height: `${sticker.height}px`,
+                                                    left: `${sticker.x}px`,
+                                                    top: `${sticker.y}px`,
+                                                    zIndex: 100 + index,
+                                                }}
+                                                onMouseDown={e => handleDragStart(e, index)}
+                                                onTouchStart={e => handleDragStart(e, index)}
+                                                onClick={e => selectSticker(index, e)}
+                                            >
+                                                <img
+                                                    src={sticker.url}
+                                                    alt={`Sticker ${index + 1}`}
+                                                    className='w-full h-full object-contain pointer-events-none'
+                                                    draggable='false'
+                                                />
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -246,7 +354,12 @@ export default function StickersSection() {
                             </p>
 
                             <div className='grid grid-cols-4 gap-4'>
-                                {stickers.map(sticker => (
+                                {[
+                                    { id: 'heart', name: 'Heart', url: '/stickers/heart.png' },
+                                    // Uncomment when more stickers are available
+                                    // { id: 'star', name: 'Star', url: '/stickers/star.png' },
+                                    // { id: 'balloon', name: 'Balloon', url: '/stickers/balloon.png' },
+                                ].map(sticker => (
                                     <div
                                         key={sticker.id}
                                         className='p-2 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer flex flex-col items-center'
@@ -257,6 +370,7 @@ export default function StickersSection() {
                                                 src={sticker.url}
                                                 alt={sticker.name}
                                                 className='max-h-full max-w-full object-contain'
+                                                draggable='false'
                                             />
                                         </div>
                                         <span className='text-sm font-medium text-gray-700 mt-1'>{sticker.name}</span>
@@ -284,7 +398,7 @@ export default function StickersSection() {
                 {/* Navigation buttons */}
                 <div className='grid grid-cols-2 gap-4 mt-6'>
                     <button
-                        onClick={() => dispatch({ type: ActionTypes.SET_VIEW, payload: 'frame' })}
+                        onClick={() => dispatch({ type: ActionTypes.SET_VIEW, payload: 'customize' })}
                         className='group bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white font-bold py-4 px-6 rounded-xl text-base md:text-lg shadow-lg transition-all duration-300 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 relative overflow-hidden'
                     >
                         <span className='relative z-10 flex items-center justify-center gap-2'>
@@ -292,7 +406,7 @@ export default function StickersSection() {
                                 size={20}
                                 className='group-hover:-translate-x-1 transition-transform duration-300'
                             />
-                            <span>Back to Frames</span>
+                            <span>Back to Customize</span>
                         </span>
                         <span className='absolute inset-0 bg-gradient-to-r from-gray-600 to-gray-700 opacity-0 group-hover:opacity-30 transition-opacity duration-300'></span>
                     </button>
