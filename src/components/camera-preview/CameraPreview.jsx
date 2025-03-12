@@ -1,14 +1,14 @@
 'use client';
 import { useRef, useEffect, useContext, useState } from 'react';
-import { PhotoboothContext } from '../contexts/PhotoboothContext';
-import { useCamera } from '../hooks/useCamera';
-import { useSegmentation } from '../hooks/useSegmentation';
-import { useFaceMesh } from '../hooks/useFaceMesh';
-import { Camera } from './camera-preview/Camera';
-import { BackgroundsPanel } from './camera-preview/BackgroundPanels';
-import { AccessoriesPanel } from './camera-preview/AccessoriesPanel';
-import { ControlButtons } from './camera-preview/ControlButtons';
-import { Footer } from './camera-preview/Footer';
+import { PhotoboothContext } from '../../contexts/PhotoboothContext';
+import { useCamera } from '../../hooks/useCamera';
+import { useSegmentation } from '../../hooks/useSegmentation';
+import { useFaceMesh } from '../../hooks/useFaceMesh';
+import { Camera } from './Camera';
+import { BackgroundsPanel } from './BackgroundPanels';
+import { AccessoriesPanel } from './AccessoriesPanel';
+import { ControlButtons } from './ControlButtons';
+import { Footer } from './Footer';
 import { ImageIcon, Sparkles } from 'lucide-react';
 
 export default function CameraPreview() {

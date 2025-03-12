@@ -2,10 +2,10 @@
 import { useEffect, useContext } from 'react';
 import { PhotoboothContext } from '../contexts/PhotoboothContext';
 import PhotoModeSelector from '@/components/PhotoModeSelector';
-import CameraPreview from '../components/CameraPreview';
+import CameraPreview from '../components/camera-preview/CameraPreview';
 import CountdownTimer from '../components/CountdownTimer';
 import PhotoPreview from '../components/PhotoPreview';
-import FrameSelector from '../components/FrameSelector';
+import CustomizeSection from '../components/customize-section/CustomizeSection';
 import PaymentProcessor from '../components/PaymentProcessor';
 import PrintManager from '../components/PrintManager';
 import ThankYou from '../components/ThankYou';
@@ -249,7 +249,7 @@ export default function Photobooth() {
                 {state.currentView === 'camera' && <CameraPreview />}
                 {state.currentView === 'countdown' && <CountdownTimer />}
                 {state.currentView === 'preview' && <PhotoPreview />}
-                {state.currentView === 'frame' && <FrameSelector />}
+                {state.currentView === 'frame' && <CustomizeSection />}
                 {state.currentView === 'payment' && <PaymentProcessor />}
                 {state.currentView === 'printing' && <PrintManager />}
                 {state.currentView === 'thankyou' && <ThankYou />}
