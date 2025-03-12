@@ -14,7 +14,7 @@ import { ImageIcon, Sparkles } from 'lucide-react';
 export default function CameraPreview() {
     const canvasRef = useRef(null);
     const { state, dispatch } = useContext(PhotoboothContext);
-    const [activeTab, setActiveTab] = useState('accessories'); // Changed from 'backgrounds' to 'accessories'
+    const [activeTab, setActiveTab] = useState('backgrounds');
     const [faceLandmarks, setFaceLandmarks] = useState(null);
 
     // Use our custom hooks
@@ -104,23 +104,7 @@ export default function CameraPreview() {
                 {/* Enhanced Tab Navigation - removed max-w-md */}
                 <div className='flex items-center justify-center px-4 pt-3 pb-1 bg-gradient-to-r from-purple-50 via-white to-purple-50'>
                     <div className='flex w-full bg-gray-100 rounded-lg p-1 shadow-inner'>
-                        {/* Accessories tab first */}
-                        <button
-                            className={`flex items-center justify-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 space-x-2 flex-1 w-full cursor-pointer hover:bg-opacity-90 ${
-                                activeTab === 'accessories'
-                                    ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-md transform scale-105'
-                                    : 'text-gray-600 hover:bg-white hover:shadow-sm hover:text-purple-500'
-                            }`}
-                            onClick={() => setActiveTab('accessories')}
-                        >
-                            <Sparkles
-                                size={18}
-                                className={activeTab === 'accessories' ? 'text-white' : 'text-purple-400'}
-                            />
-                            <span>Accessories (Beta)</span>
-                        </button>
-
-                        {/* Backgrounds tab second */}
+                        {/* Backgrounds tab */}
                         <button
                             className={`flex items-center justify-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 space-x-2 flex-1 w-full cursor-pointer hover:bg-opacity-90 ${
                                 activeTab === 'backgrounds'
@@ -134,6 +118,21 @@ export default function CameraPreview() {
                                 className={activeTab === 'backgrounds' ? 'text-white' : 'text-purple-400'}
                             />
                             <span>Backgrounds</span>
+                        </button>
+                        {/* Accessories tab */}
+                        <button
+                            className={`flex items-center justify-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 space-x-2 flex-1 w-full cursor-pointer hover:bg-opacity-90 ${
+                                activeTab === 'accessories'
+                                    ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-md transform scale-105'
+                                    : 'text-gray-600 hover:bg-white hover:shadow-sm hover:text-purple-500'
+                            }`}
+                            onClick={() => setActiveTab('accessories')}
+                        >
+                            <Sparkles
+                                size={18}
+                                className={activeTab === 'accessories' ? 'text-white' : 'text-purple-400'}
+                            />
+                            <span>Accessories (Beta)</span>
                         </button>
                     </div>
                 </div>
