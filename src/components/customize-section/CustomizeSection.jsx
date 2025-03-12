@@ -38,7 +38,7 @@ export default function CustomizeSection() {
 
             <div className='flex flex-col md:flex-row gap-8 mb-6'>
                 {/* Preview of photos in selected frame */}
-                <div className='md:w-3/7 flex flex-col justify-center items-center'>
+                <div className='md:w-4/7 flex flex-col justify-center items-center'>
                     <div
                         className={`relative w-full ${isSingleMode ? 'max-w-[400px]' : 'max-w-[220px]'} mx-auto ${
                             frames.find(f => f.id === selectedFrame)?.class
@@ -47,7 +47,7 @@ export default function CustomizeSection() {
                         <div className={`flex flex-col gap-1 p-2 ${isSingleMode ? 'pb-10' : ''}`}>
                             {state.selectedPhotos &&
                                 state.selectedPhotos.map((photo, index) => (
-                                    <div key={index} className={`relative ${isSingleMode ? 'h-60' : ''}`}>
+                                    <div key={index} className={`relative ${isSingleMode ? 'h-80' : ''}`}>
                                         <img
                                             src={photo}
                                             alt={`Selected photo ${index + 1}`}
@@ -66,7 +66,7 @@ export default function CustomizeSection() {
                 </div>
 
                 {/* Options Panel with vertical arrangement */}
-                <div className='md:w-2/3'>
+                <div className='w-[600px]'>
                     {/* Frame Styles Section - Now using FramesPanel component */}
                     <FramesPanel
                         frames={frames}
