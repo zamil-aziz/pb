@@ -44,7 +44,7 @@ export default function CustomizeSection() {
                             frames.find(f => f.id === selectedFrame)?.class
                         }`}
                     >
-                        <div className={`flex flex-col gap-1 p-2 ${isSingleMode ? 'pb-10' : ''}`}>
+                        <div className={`flex flex-col gap-1 p-2 ${isSingleMode ? 'pb-16' : ''}`}>
                             {state.selectedPhotos &&
                                 state.selectedPhotos.map((photo, index) => (
                                     <div key={index} className={`relative ${isSingleMode ? 'h-80' : ''}`}>
