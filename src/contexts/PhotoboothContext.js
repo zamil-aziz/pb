@@ -18,6 +18,7 @@ export const ActionTypes = {
     SET_SELECTED_PHOTOS: 'SET_SELECTED_PHOTOS',
     SET_FRAME: 'SET_FRAME',
     SET_PRINT_QUANTITY: 'SET_PRINT_QUANTITY',
+    SET_APPLIED_STICKERS: 'SET_APPLIED_STICKERS',
 };
 
 const initialState = {
@@ -42,6 +43,7 @@ const initialState = {
     photosPerSession: 8, // Default for strips mode
     printQuantity: 2, // Default print quantity
     price: 10.0,
+    appliedStickers: [],
     lastActivityTime: Date.now(),
 };
 
@@ -136,6 +138,12 @@ function reducer(state, action) {
             return {
                 ...state,
                 selectedFrame: action.payload,
+                lastActivityTime: Date.now(),
+            };
+        case ActionTypes.SET_APPLIED_STICKERS:
+            return {
+                ...state,
+                appliedStickers: action.payload,
                 lastActivityTime: Date.now(),
             };
         default:

@@ -25,7 +25,7 @@ export default function CustomizeSection() {
 
     const continueToPayment = () => {
         dispatch({ type: ActionTypes.SET_FRAME, payload: selectedFrame });
-        dispatch({ type: ActionTypes.SET_VIEW, payload: 'payment' });
+        dispatch({ type: ActionTypes.SET_VIEW, payload: 'stickers' });
     };
 
     return (
@@ -156,7 +156,7 @@ export default function CustomizeSection() {
                         className='group bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl text-base md:text-lg shadow-lg transition-all duration-300 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 relative overflow-hidden'
                     >
                         <span className='relative z-10 flex items-center justify-center gap-2'>
-                            <span>Continue to Payment</span>
+                            <span>Continue to Stickers</span>
                             <ChevronRight
                                 size={20}
                                 className='group-hover:translate-x-1 transition-transform duration-300'

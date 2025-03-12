@@ -29,7 +29,7 @@ export default function PhotoPreview() {
         if (selectedPhotos.length === requiredPhotos) {
             const selectedPhotoData = selectedPhotos.map(index => state.photos[index]);
             dispatch({ type: ActionTypes.SET_SELECTED_PHOTOS, payload: selectedPhotoData });
-            dispatch({ type: ActionTypes.SET_VIEW, payload: 'frame' });
+            dispatch({ type: ActionTypes.SET_VIEW, payload: 'customize' });
         }
     };
 
