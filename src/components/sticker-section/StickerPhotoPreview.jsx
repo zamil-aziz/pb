@@ -23,7 +23,7 @@ export default function StickerPhotoPreview({
                     setSelectedStickerIndex(null);
                 }
             }}
-            className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[170px]'} mx-auto ${
+            className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[200px]'} mx-auto ${
                 state.selectedFrame ? state.selectedFrame : 'classic'
             } transform transition-all duration-500 hover:scale-105 overflow-hidden`}
         >

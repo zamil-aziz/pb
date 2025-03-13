@@ -80,15 +80,10 @@ export default function CustomizeSection() {
                 <div className='flex flex-col lg:flex-row gap-8 mb-6'>
                     {/* Preview section - Enhanced with card effect */}
                     <div className='lg:w-2/5 flex flex-col justify-start items-center'>
-                        <div className='w-full bg-white bg-opacity-70 backdrop-blur-sm rounded-2xl shadow-lg border border-white border-opacity-60 p-4 mb-4 transition-all duration-300 hover:shadow-xl'>
-                            <div className='flex items-center mb-3'>
-                                <Sparkles size={18} className='text-indigo-500 mr-2' />
-                                <h3 className='text-lg font-semibold text-indigo-700'>Photo Preview</h3>
-                            </div>
-
+                        <div>
                             <div className='flex justify-center mb-4'>
                                 <div
-                                    className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[170px]'} mx-auto ${
+                                    className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[200px]'} mx-auto ${
                                         frames.find(f => f.id === selectedFrame)?.class
                                     } transform transition-all duration-500 hover:scale-105`}
                                 >
