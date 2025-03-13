@@ -1,54 +1,28 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 
 export default function StickerPhotoPreview({
     previewContainerRef,
     state,
     appliedStickers,
     selectedStickerIndex,
-    handleDragStart,
+    draggingIndex,
+    handleMouseDown,
+    handleTouchStart,
     selectSticker,
     setSelectedStickerIndex,
 }) {
     // Check if we're in single mode
     const isSingleMode = state.photoMode === 'single';
 
-    // Refs for sticker elements to attach non-passive touch listeners
-    const stickerRefs = useRef(new Map());
-
-    // Set up non-passive touch event listeners for stickers
-    useEffect(() => {
-        // Clean up previous listeners
-        stickerRefs.current.forEach((element, index) => {
-            if (element) {
-                element.removeEventListener('touchstart', element._touchStartHandler);
-            }
-        });
-
-        // Set up new listeners
-        stickerRefs.current.forEach((element, index) => {
-            if (element) {
-                // Create the handler and store it on the element for cleanup
-                element._touchStartHandler = e => handleDragStart(e, index);
-
-                // Add the non-passive event listener
-                element.addEventListener('touchstart', element._touchStartHandler, { passive: false });
-            }
-        });
-
-        // Cleanup on unmount
-        return () => {
-            stickerRefs.current.forEach(element => {
-                if (element) {
-                    element.removeEventListener('touchstart', element._touchStartHandler);
-                }
-            });
-        };
-    }, [appliedStickers, handleDragStart]);
-
     return (
         <div
             ref={previewContainerRef}
-            onClick={() => setSelectedStickerIndex(null)}
+            onClick={e => {
+                // Only clear selection if clicking directly on the container (not on stickers)
+                if (e.target === e.currentTarget) {
+                    setSelectedStickerIndex(null);
+                }
+            }}
             className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[200px]'} mx-auto ${
                 state.selectedFrame ? state.selectedFrame : 'classic'
             } transform transition-all duration-500 hover:scale-105 overflow-hidden`}
@@ -90,27 +64,35 @@ export default function StickerPhotoPreview({
                 // Only render stickers that are at least partially inside the container
                 if (isOutside) return null;
 
+                // Determine if this sticker is being dragged or selected
+                const isDragging = draggingIndex === index;
+                const isSelected = selectedStickerIndex === index;
+
                 return (
                     <div
                         key={sticker.id}
                         className={`absolute cursor-move ${
-                            selectedStickerIndex === index ? 'ring-2 ring-indigo-500 ring-offset-2' : ''
-                        }`}
+                            isSelected ? 'ring-2 ring-indigo-500 ring-offset-2' : ''
+                        } touch-none`} // touch-none is crucial for mobile
                         style={{
                             width: `${sticker.width}px`,
                             height: `${sticker.height}px`,
                             left: `${sticker.x}px`,
                             top: `${sticker.y}px`,
-                            zIndex: 100 + index,
+                            zIndex: 100 + (sticker.zIndex || index),
+                            transform: `${isDragging ? 'scale(1.05)' : 'scale(1)'} rotate(${sticker.rotation || 0}deg)`,
+                            boxShadow: isDragging ? '0 8px 20px rgba(0,0,0,0.2)' : 'none',
+                            transition: isDragging ? 'none' : 'all 0.2s ease',
+                            touchAction: 'none', // This is crucial for mobile
                         }}
-                        ref={el => {
-                            if (el) stickerRefs.current.set(index, el);
-                            else stickerRefs.current.delete(index);
+                        onMouseDown={e => {
+                            handleMouseDown(e, index);
+                            // We'll handle selection in mouseDown to avoid conflicts
+                            selectSticker(index, e);
                         }}
-                        onMouseDown={e => handleDragStart(e, index)}
-                        // Remove the inline touch handler as we're handling it with addEventListener
-                        // onTouchStart={e => handleDragStart(e, index)}
-                        onClick={e => selectSticker(index, e)}
+                        onTouchStart={e => handleTouchStart(e, index)}
+                        // Remove onClick handler as it conflicts with drag operations
+                        // onClick is handled in mouseDown instead
                     >
                         <img
                             src={sticker.url}

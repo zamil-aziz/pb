@@ -37,6 +37,7 @@ export default function StickerSection() {
             width: 50,
             height: 50,
             zIndex: appliedStickers.length + 1,
+            rotation: 0,
         };
 
         const updatedStickers = [...appliedStickers, newSticker];
@@ -52,18 +53,28 @@ export default function StickerSection() {
         });
     };
 
-    // Handle sticker drag start - UPDATED
-    const handleDragStart = (e, index) => {
-        if (e.cancelable) {
-            e.preventDefault();
-        }
+    // Begin sticker drag
+    const handleMouseDown = (e, index) => {
+        // Prevent default behavior for mouse events
+        e.preventDefault();
+        startDrag(e, index, false);
+    };
 
+    // For touch events, we'll use a separate handler
+    const handleTouchStart = (e, index) => {
+        // Note: we are NOT calling preventDefault() here
+        // as it would cause the "Unable to preventDefault inside passive event listener" error
+        startDrag(e, index, true);
+    };
+
+    // Shared logic for starting a drag operation
+    const startDrag = (e, index, isTouch) => {
         // Get sticker position
         const sticker = appliedStickers[index];
 
         // Calculate drag offset (cursor position relative to sticker top-left)
-        const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-        const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+        const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+        const clientY = isTouch ? e.touches[0].clientY : e.clientY;
 
         const containerRect = previewContainerRef.current.getBoundingClientRect();
         const offsetX = clientX - (containerRect.left + sticker.x);
@@ -75,15 +86,25 @@ export default function StickerSection() {
         setSelectedStickerIndex(index);
     };
 
-    // Handle drag movement
-    const handleDragMove = e => {
+    // Handle drag move
+    const handleMouseMove = e => {
         if (draggingIndex === null) return;
-
         e.preventDefault();
+        moveDrag(e, false);
+    };
 
+    // Handle touch move
+    const handleTouchMove = e => {
+        if (draggingIndex === null) return;
+        // Don't call preventDefault() for touch events in passive listeners
+        moveDrag(e, true);
+    };
+
+    // Shared logic for dragging
+    const moveDrag = (e, isTouch) => {
         // Get cursor position
-        const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-        const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+        const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+        const clientY = isTouch ? e.touches[0].clientY : e.clientY;
 
         // Get container bounds
         const containerRect = previewContainerRef.current.getBoundingClientRect();
@@ -96,12 +117,9 @@ export default function StickerSection() {
         const updatedStickers = [...appliedStickers];
         const sticker = updatedStickers[draggingIndex];
 
-        // Set even boundaries on all sides (50% outside on any edge)
-        // For left and top edges
+        // Set boundaries (50% outside on any edge)
         const minX = -(sticker.width / 2);
         const minY = -(sticker.height / 2);
-
-        // For right and bottom edges
         const maxX = containerRect.width - sticker.width / 2;
         const maxY = containerRect.height - sticker.height / 2;
 
@@ -111,11 +129,11 @@ export default function StickerSection() {
             y: Math.max(minY, Math.min(newY, maxY)),
         };
 
-        // Update local state only during drag
+        // Update local state
         setAppliedStickers(updatedStickers);
     };
 
-    // Handle drag end
+    // Handle end of drag
     const handleDragEnd = () => {
         if (draggingIndex !== null) {
             // Save final position to context
@@ -124,7 +142,12 @@ export default function StickerSection() {
                 payload: appliedStickers,
             });
 
-            // Reset drag state
+            // Explicitly set the selected index to the dragging index before clearing dragging state
+            // This ensures the selection persists after drag ends
+            const currentDraggingIndex = draggingIndex;
+            setSelectedStickerIndex(currentDraggingIndex);
+
+            // Then reset drag state
             setDraggingIndex(null);
         }
     };
@@ -148,8 +171,17 @@ export default function StickerSection() {
 
     // Handle sticker selection
     const selectSticker = (index, e) => {
-        e.stopPropagation(); // Prevent click from bubbling to container
-        setSelectedStickerIndex(index === selectedStickerIndex ? null : index);
+        // Stop propagation to prevent bubbling up to container which would deselect
+        if (e) {
+            e.stopPropagation();
+        }
+
+        // Toggle selection if clicking the same sticker, otherwise select the new one
+        if (index === selectedStickerIndex) {
+            setSelectedStickerIndex(null);
+        } else {
+            setSelectedStickerIndex(index);
+        }
     };
 
     // Resize sticker
@@ -176,29 +208,54 @@ export default function StickerSection() {
         });
     };
 
-    // Set up event listeners for drag operations
+    // Rotate sticker
+    const rotateSticker = (index, angleDelta) => {
+        const updatedStickers = [...appliedStickers];
+        const sticker = updatedStickers[index];
+
+        // Calculate new rotation angle and normalize to 0-360
+        const newRotation = (sticker.rotation + angleDelta) % 360;
+
+        updatedStickers[index] = {
+            ...sticker,
+            rotation: newRotation,
+        };
+
+        // Update local state
+        setAppliedStickers(updatedStickers);
+
+        // Update context
+        dispatch({
+            type: ActionTypes.SET_APPLIED_STICKERS,
+            payload: updatedStickers,
+        });
+    };
+
+    // Set up global event listeners for drag operations
     useEffect(() => {
-        const handleMouseMove = e => handleDragMove(e);
-        const handleTouchMove = e => handleDragMove(e);
-        const handleMouseUp = () => handleDragEnd();
-        const handleTouchEnd = () => handleDragEnd();
+        const handleDocumentMouseMove = e => handleMouseMove(e);
+        const handleDocumentTouchMove = e => handleTouchMove(e);
+        const handleDocumentMouseUp = () => handleDragEnd();
+        const handleDocumentTouchEnd = () => handleDragEnd();
 
         if (draggingIndex !== null) {
-            // Add global event listeners
-            document.addEventListener('mousemove', handleMouseMove);
-            document.addEventListener('touchmove', handleTouchMove, { passive: false });
-            document.addEventListener('mouseup', handleMouseUp);
-            document.addEventListener('touchend', handleTouchEnd);
+            // Add mouse event listeners
+            document.addEventListener('mousemove', handleDocumentMouseMove);
+            document.addEventListener('mouseup', handleDocumentMouseUp);
+
+            // For touch events, we need a different approach
+            // We'll add these listeners to specific elements in StickerPhotoPreview
+            document.addEventListener('touchmove', handleDocumentTouchMove, { passive: true });
+            document.addEventListener('touchend', handleDocumentTouchEnd);
         }
 
         return () => {
-            // Clean up listeners
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('touchmove', handleTouchMove);
-            document.removeEventListener('mouseup', handleMouseUp);
-            document.removeEventListener('touchend', handleTouchEnd);
+            document.removeEventListener('mousemove', handleDocumentMouseMove);
+            document.removeEventListener('mouseup', handleDocumentMouseUp);
+            document.removeEventListener('touchmove', handleDocumentTouchMove);
+            document.removeEventListener('touchend', handleDocumentTouchEnd);
         };
-    }, [draggingIndex, dragOffset, appliedStickers]);
+    }, [draggingIndex, appliedStickers, dragOffset]);
 
     // Continue to payment function
     const continueToPayment = () => {
@@ -233,16 +290,20 @@ export default function StickerSection() {
                                 state={state}
                                 appliedStickers={appliedStickers}
                                 selectedStickerIndex={selectedStickerIndex}
-                                handleDragStart={handleDragStart}
+                                draggingIndex={draggingIndex}
+                                handleMouseDown={handleMouseDown}
+                                handleTouchStart={handleTouchStart}
                                 selectSticker={selectSticker}
                                 setSelectedStickerIndex={setSelectedStickerIndex}
                             />
 
-                            {/* Sticker editing controls */}
-                            {selectedStickerIndex !== null && (
+                            {/* Sticker editing controls - Always show during drag or selection */}
+                            {(selectedStickerIndex !== null || draggingIndex !== null) && (
                                 <StickerEditor
-                                    selectedStickerIndex={selectedStickerIndex}
+                                    // If dragging, use that index, otherwise use selected index
+                                    selectedStickerIndex={draggingIndex !== null ? draggingIndex : selectedStickerIndex}
                                     resizeSticker={resizeSticker}
+                                    rotateSticker={rotateSticker}
                                     removeSticker={removeSticker}
                                 />
                             )}
