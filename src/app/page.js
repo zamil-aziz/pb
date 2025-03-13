@@ -6,11 +6,11 @@ import CameraPreview from '../components/camera-preview/CameraPreview';
 import CountdownTimer from '../components/CountdownTimer';
 import PhotoPreview from '../components/PhotoPreview';
 import CustomizeSection from '../components/customize-section/CustomizeSection';
+import StickerSection from '../components/sticker-section/StickerSection';
 import PaymentProcessor from '../components/PaymentProcessor';
 import PrintManager from '../components/PrintManager';
 import ThankYou from '../components/ThankYou';
 import { Camera, Image, PartyPopper } from 'lucide-react';
-import StickersSection from '../components/StickersSection';
 
 export default function Photobooth() {
     const { state, dispatch } = useContext(PhotoboothContext);
@@ -251,7 +251,7 @@ export default function Photobooth() {
                 {state.currentView === 'countdown' && <CountdownTimer />}
                 {state.currentView === 'preview' && <PhotoPreview />}
                 {state.currentView === 'customize' && <CustomizeSection />}
-                {state.currentView === 'stickers' && <StickersSection />}
+                {state.currentView === 'stickers' && <StickerSection />}
                 {state.currentView === 'payment' && <PaymentProcessor />}
                 {state.currentView === 'printing' && <PrintManager />}
                 {state.currentView === 'thankyou' && <ThankYou />}
