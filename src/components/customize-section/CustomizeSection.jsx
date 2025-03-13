@@ -1,5 +1,5 @@
 'use client';
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect, useRef } from 'react';
 import { PhotoboothContext, ActionTypes } from '../../contexts/PhotoboothContext';
 import { frames } from './frames';
 import { FiltersPanel } from './FiltersPanel';
@@ -11,6 +11,8 @@ export default function CustomizeSection() {
     const { state, dispatch } = useContext(PhotoboothContext);
     const [selectedFrame, setSelectedFrame] = useState('classic'); // Always initialize with 'classic' ID
     const [activeTab, setActiveTab] = useState('frames'); // 'frames' or 'filters'
+    const previewContainerRef = useRef(null); // Add ref for sticker positioning
+    const [containerReady, setContainerReady] = useState(false); // Track if container is ready for measuring
 
     // Check if we're in single mode
     const isSingleMode = state.photoMode === 'single';
@@ -28,6 +30,18 @@ export default function CustomizeSection() {
             }
         }
     }, [state.selectedFrame]);
+
+    // Effect to check if the container is ready and set dimensions
+    useEffect(() => {
+        // Use a small timeout to ensure the DOM has fully rendered
+        const timer = setTimeout(() => {
+            if (previewContainerRef.current) {
+                setContainerReady(true);
+            }
+        }, 100);
+
+        return () => clearTimeout(timer);
+    }, []);
 
     const handleFrameSelect = frameId => {
         setSelectedFrame(frameId);
@@ -84,6 +98,7 @@ export default function CustomizeSection() {
                         <div>
                             <div className='flex justify-center mb-4'>
                                 <div
+                                    ref={previewContainerRef}
                                     className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[160px]'} mx-auto ${
                                         frames.find(f => f.id === selectedFrame)?.class
                                     } transform transition-all duration-500 hover:scale-105`}
@@ -114,6 +129,34 @@ export default function CustomizeSection() {
                                                 </div>
                                             ))}
                                     </div>
+
+                                    {/* Stickers overlay - Add this section to render stickers */}
+                                    {containerReady &&
+                                        state.appliedStickers &&
+                                        state.appliedStickers.map((sticker, index) => {
+                                            return (
+                                                <div
+                                                    key={sticker.id}
+                                                    className='absolute pointer-events-none'
+                                                    style={{
+                                                        width: `${sticker.width}px`,
+                                                        height: `${sticker.height}px`,
+                                                        left: `${sticker.x}px`,
+                                                        top: `${sticker.y}px`,
+                                                        zIndex: 100 + (sticker.zIndex || index),
+                                                        transform: `rotate(${sticker.rotation || 0}deg)`,
+                                                        transition: 'all 0.2s ease',
+                                                    }}
+                                                >
+                                                    <img
+                                                        src={sticker.url}
+                                                        alt={`Sticker ${index + 1}`}
+                                                        className='w-full h-full object-contain'
+                                                        draggable='false'
+                                                    />
+                                                </div>
+                                            );
+                                        })}
                                 </div>
                             </div>
                         </div>
