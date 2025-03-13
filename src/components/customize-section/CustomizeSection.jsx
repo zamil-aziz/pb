@@ -48,40 +48,37 @@ export default function CustomizeSection() {
                 <div className='flex flex-col lg:flex-row gap-8 mb-6'>
                     {/* Preview section - Enhanced with card effect */}
                     <div className='lg:w-2/5 flex flex-col justify-start items-center'>
-                        <div className='w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 shadow-lg border border-gray-100 mb-6'>
-                            <h3 className='text-xl font-semibold mb-6 text-gray-700 text-center'>Preview</h3>
-                            <div className='flex justify-center mb-4'>
-                                <div
-                                    className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[260px]'} mx-auto ${
-                                        frames.find(f => f.id === selectedFrame)?.class
-                                    } transform transition-all duration-500 hover:scale-105`}
-                                >
-                                    <div className={`flex flex-col gap-2 p-3 ${isSingleMode ? 'pb-16' : ''}`}>
-                                        {state.selectedPhotos &&
-                                            state.selectedPhotos.map((photo, index) => (
-                                                <div
-                                                    key={index}
-                                                    className={`relative ${
-                                                        isSingleMode ? 'h-80' : 'h-auto'
-                                                    } overflow-hidden rounded-sm`}
-                                                >
-                                                    <img
-                                                        src={photo}
-                                                        alt={`Selected photo ${index + 1}`}
-                                                        className={`w-full ${
-                                                            isSingleMode ? 'h-full object-cover' : 'h-auto'
-                                                        } transition-transform duration-300`}
-                                                        style={
-                                                            state.selectedFilter
-                                                                ? state.availableFilters.find(
-                                                                      f => f.id === state.selectedFilter
-                                                                  )?.style
-                                                                : {}
-                                                        }
-                                                    />
-                                                </div>
-                                            ))}
-                                    </div>
+                        <div className='flex justify-center mb-4'>
+                            <div
+                                className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[260px]'} mx-auto ${
+                                    frames.find(f => f.id === selectedFrame)?.class
+                                } transform transition-all duration-500 hover:scale-105`}
+                            >
+                                <div className={`flex flex-col gap-2 p-3 ${isSingleMode ? 'pb-16' : ''}`}>
+                                    {state.selectedPhotos &&
+                                        state.selectedPhotos.map((photo, index) => (
+                                            <div
+                                                key={index}
+                                                className={`relative ${
+                                                    isSingleMode ? 'h-80' : 'h-auto'
+                                                } overflow-hidden rounded-sm`}
+                                            >
+                                                <img
+                                                    src={photo}
+                                                    alt={`Selected photo ${index + 1}`}
+                                                    className={`w-full ${
+                                                        isSingleMode ? 'h-full object-cover' : 'h-auto'
+                                                    } transition-transform duration-300`}
+                                                    style={
+                                                        state.selectedFilter
+                                                            ? state.availableFilters.find(
+                                                                  f => f.id === state.selectedFilter
+                                                              )?.style
+                                                            : {}
+                                                    }
+                                                />
+                                            </div>
+                                        ))}
                                 </div>
                             </div>
                         </div>
