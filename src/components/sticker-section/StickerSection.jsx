@@ -295,7 +295,7 @@ export default function StickerSection() {
                     </h2>
                 </div>
                 <p className='text-center text-gray-600 max-w-lg mx-auto'>
-                    Drag, resize and rotate stickers to make your photos even more awesome!
+                    Perfect your photos with customizable stickers!
                 </p>
             </div>
 
@@ -353,13 +353,7 @@ export default function StickerSection() {
 
                     {/* Stickers panel with enhanced styling */}
                     <div className='lg:w-3/5'>
-                        <div className='bg-white bg-opacity-70 backdrop-blur-sm rounded-2xl shadow-lg border border-white border-opacity-60 p-4 transition-all duration-300 hover:shadow-xl'>
-                            <div className='flex items-center mb-3'>
-                                <Sticker size={18} className='text-indigo-500 mr-2' />
-                                <h3 className='text-lg font-semibold text-indigo-700'>Sticker Collection</h3>
-                            </div>
-                            <StickerGallery addSticker={addSticker} />
-                        </div>
+                        <StickerGallery addSticker={addSticker} />
                     </div>
                 </div>
 
@@ -369,43 +363,6 @@ export default function StickerSection() {
                         goBackToCustomize={goBackToCustomize}
                         continueToPayment={continueToPayment}
                     />
-                </div>
-
-                {/* Pro tips section */}
-                <div className='mt-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 border border-indigo-100 shadow-sm'>
-                    <h4 className='font-semibold text-indigo-700 mb-2 flex items-center'>
-                        <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            width='16'
-                            height='16'
-                            viewBox='0 0 24 24'
-                            fill='none'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            className='mr-2'
-                        >
-                            <circle cx='12' cy='12' r='10'></circle>
-                            <line x1='12' y1='16' x2='12' y2='12'></line>
-                            <line x1='12' y1='8' x2='12.01' y2='8'></line>
-                        </svg>
-                        Pro Tips
-                    </h4>
-                    <ul className='text-sm text-gray-700 space-y-1'>
-                        <li className='flex items-start'>
-                            <span className='text-indigo-500 mr-1'>•</span>
-                            Drag stickers to position them perfectly
-                        </li>
-                        <li className='flex items-start'>
-                            <span className='text-indigo-500 mr-1'>•</span>
-                            Use the resize buttons to make stickers bigger or smaller
-                        </li>
-                        <li className='flex items-start'>
-                            <span className='text-indigo-500 mr-1'>•</span>
-                            Rotate stickers for more creative possibilities
-                        </li>
-                    </ul>
                 </div>
             </div>
         </div>

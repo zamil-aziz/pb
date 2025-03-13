@@ -1,7 +1,10 @@
-import React from 'react';
-import { Sticker, Move } from 'lucide-react';
+import React, { useState } from 'react';
+import { Sticker, Move, Plus, Minus, RotateCcw, RotateCw, X, HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function StickerGallery({ addSticker }) {
+    // State to toggle instructions visibility
+    const [showInstructions, setShowInstructions] = useState(false);
+
     // Available stickers data
     const availableStickers = [
         { id: 'heart', name: 'Heart', url: '/stickers/heart.png' },
@@ -14,7 +17,7 @@ export default function StickerGallery({ addSticker }) {
         <div className='bg-white p-6 rounded-2xl shadow-lg border border-gray-100'>
             <div className='flex items-center mb-4'>
                 <Sticker size={20} className='mr-2 text-indigo-600' />
-                <h3 className='text-xl font-semibold text-gray-800'>Available Stickers</h3>
+                <h3 className='text-xl font-semibold text-indigo-700'>Available Stickers</h3>
             </div>
 
             <p className='text-gray-600 mb-4'>
@@ -41,18 +44,71 @@ export default function StickerGallery({ addSticker }) {
                 ))}
             </div>
 
-            <div className='mt-6 bg-blue-50 p-4 rounded-lg flex items-start'>
-                <Move size={24} className='text-blue-600 mr-3 mt-1 flex-shrink-0' />
-                <div>
-                    <h4 className='text-blue-800 font-medium'>How to use stickers</h4>
-                    <ul className='text-blue-700 text-sm mt-1 space-y-1'>
-                        <li>• Tap on any sticker above to add it to your photo</li>
-                        <li>• Drag and drop to position it where you want</li>
-                        <li>• Tap on a placed sticker to select it for editing</li>
-                        <li>• Use the + and - buttons to resize</li>
-                        <li>• Use the X button to remove a sticker</li>
-                    </ul>
-                </div>
+            {/* Improved collapsible instruction section */}
+            <div className='mt-4'>
+                <button
+                    onClick={() => setShowInstructions(!showInstructions)}
+                    className='w-full flex items-center justify-between p-3 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors'
+                >
+                    <div className='flex items-center'>
+                        <HelpCircle size={18} className='text-indigo-600 mr-2' />
+                        <span className='font-medium text-indigo-700'>How to use stickers</span>
+                    </div>
+                    {showInstructions ? (
+                        <ChevronUp size={18} className='text-indigo-600' />
+                    ) : (
+                        <ChevronDown size={18} className='text-indigo-600' />
+                    )}
+                </button>
+
+                {showInstructions && (
+                    <div className='mt-2 p-3 bg-indigo-50 rounded-lg'>
+                        <div className='grid grid-cols-2 gap-x-4 gap-y-2'>
+                            <div className='flex items-center'>
+                                <div className='w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center mr-2'>
+                                    <Sticker size={14} className='text-indigo-600' />
+                                </div>
+                                <span className='text-sm text-indigo-700'>Tap to add sticker</span>
+                            </div>
+                            <div className='flex items-center'>
+                                <div className='w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center mr-2'>
+                                    <Move size={14} className='text-indigo-600' />
+                                </div>
+                                <span className='text-sm text-indigo-700'>Drag to position</span>
+                            </div>
+                            <div className='flex items-center'>
+                                <div className='w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center mr-2'>
+                                    <Plus size={14} className='text-indigo-600' />
+                                </div>
+                                <span className='text-sm text-indigo-700'>Tap + to resize larger</span>
+                            </div>
+                            <div className='flex items-center'>
+                                <div className='w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center mr-2'>
+                                    <Minus size={14} className='text-indigo-600' />
+                                </div>
+                                <span className='text-sm text-indigo-700'>Tap - to resize smaller</span>
+                            </div>
+                            <div className='flex items-center'>
+                                <div className='w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center mr-2'>
+                                    <RotateCcw size={14} className='text-indigo-600' />
+                                </div>
+                                <span className='text-sm text-indigo-700'>Tap ↺ to rotate left</span>
+                            </div>
+                            <div className='flex items-center'>
+                                <div className='w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center mr-2'>
+                                    <RotateCw size={14} className='text-indigo-600' />
+                                </div>
+                                <span className='text-sm text-indigo-700'>Tap ↻ to rotate right</span>
+                            </div>
+                            <div className='flex items-center'>
+                                <div className='w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center mr-2'>
+                                    <X size={14} className='text-indigo-600' />
+                                </div>
+                                <span className='text-sm text-indigo-700'>Tap X to remove</span>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
