@@ -16,7 +16,7 @@ export default function StickerEditor({ selectedStickerIndex, resizeSticker, rot
                             title='Make smaller'
                             aria-label='Make sticker smaller'
                         >
-                            <Minus size={25} className='text-indigo-700' />
+                            <Minus size={20} className='text-indigo-700' />
                         </button>
 
                         <div className='h-10 w-px bg-gray-200'></div>
@@ -27,7 +27,7 @@ export default function StickerEditor({ selectedStickerIndex, resizeSticker, rot
                             title='Make larger'
                             aria-label='Make sticker larger'
                         >
-                            <Plus size={25} className='text-indigo-700' />
+                            <Plus size={20} className='text-indigo-700' />
                         </button>
                     </div>
 
@@ -39,7 +39,7 @@ export default function StickerEditor({ selectedStickerIndex, resizeSticker, rot
                             title='Rotate counterclockwise'
                             aria-label='Rotate sticker counterclockwise'
                         >
-                            <RotateCcw size={25} className='text-indigo-700' />
+                            <RotateCcw size={20} className='text-indigo-700' />
                         </button>
 
                         <div className='h-10 w-px bg-gray-200'></div>
@@ -50,7 +50,7 @@ export default function StickerEditor({ selectedStickerIndex, resizeSticker, rot
                             title='Rotate clockwise'
                             aria-label='Rotate sticker clockwise'
                         >
-                            <RotateCw size={25} className='text-indigo-700' />
+                            <RotateCw size={20} className='text-indigo-700' />
                         </button>
                     </div>
                 </div>
@@ -62,7 +62,7 @@ export default function StickerEditor({ selectedStickerIndex, resizeSticker, rot
                     title='Remove sticker'
                     aria-label='Remove sticker'
                 >
-                    <X size={25} />
+                    <X size={20} />
                 </button>
             </div>
         </div>

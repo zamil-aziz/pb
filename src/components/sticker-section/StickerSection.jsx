@@ -335,14 +335,6 @@ export default function StickerSection() {
                                     />
                                 )}
                             </div>
-
-                            {/* Helper text */}
-                            {appliedStickers.length > 0 && selectedStickerIndex === null && (
-                                <p className='text-center text-sm text-gray-500 mt-3 animate-fadeIn'>
-                                    <span className='inline-block animate-bounce mr-1'>👆</span>
-                                    Tap any sticker to edit it
-                                </p>
-                            )}
                         </div>
                     </div>
 
