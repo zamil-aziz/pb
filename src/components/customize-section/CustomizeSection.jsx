@@ -1,5 +1,5 @@
 'use client';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { PhotoboothContext, ActionTypes } from '../../contexts/PhotoboothContext';
 import { frames } from './frames';
 import { FiltersPanel } from './FiltersPanel';
@@ -8,11 +8,25 @@ import { Layout, Image, Save, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function CustomizeSection() {
     const { state, dispatch } = useContext(PhotoboothContext);
-    const [selectedFrame, setSelectedFrame] = useState(state.selectedFrame || 'classic');
+    const [selectedFrame, setSelectedFrame] = useState('classic'); // Always initialize with 'classic' ID
     const [activeTab, setActiveTab] = useState('frames'); // 'frames' or 'filters'
 
     // Check if we're in single mode
     const isSingleMode = state.photoMode === 'single';
+
+    // Effect to set the correct frame ID if there's a selected frame in state
+    useEffect(() => {
+        if (state.selectedFrame) {
+            // Try to find a frame that matches the class in state
+            const frameWithMatchingClass = frames.find(
+                frame => state.selectedFrame.includes(frame.class) || frame.class.includes(state.selectedFrame)
+            );
+
+            if (frameWithMatchingClass) {
+                setSelectedFrame(frameWithMatchingClass.id);
+            }
+        }
+    }, [state.selectedFrame]);
 
     const handleFrameSelect = frameId => {
         setSelectedFrame(frameId);
