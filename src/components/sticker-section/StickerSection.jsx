@@ -5,6 +5,7 @@ import StickerPhotoPreview from './StickerPhotoPreview';
 import StickerEditor from './StickerEditor';
 import StickerGallery from './StickerGallery';
 import StickerNavigationButtons from './StickerNavigationButtons';
+import { Sparkles, Sticker } from 'lucide-react';
 
 export default function StickerSection() {
     const { state, dispatch } = useContext(PhotoboothContext);
@@ -268,23 +269,46 @@ export default function StickerSection() {
     };
 
     return (
-        <div className='w-full max-w-5xl mx-auto bg-white bg-opacity-90 backdrop-blur-lg rounded-3xl shadow-2xl border border-white border-opacity-40 relative overflow-hidden p-0'>
-            {/* Decorative elements */}
-            <div className='absolute top-0 right-0 w-40 h-40 -mt-16 -mr-16 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full opacity-10'></div>
-            <div className='absolute bottom-0 left-0 w-48 h-48 -mb-20 -ml-20 bg-gradient-to-tr from-blue-400 to-indigo-400 rounded-full opacity-10'></div>
+        <div className='w-full max-w-5xl mx-auto bg-white bg-opacity-90 backdrop-blur-lg rounded-3xl shadow-2xl border border-white border-opacity-40 relative overflow-hidden p-0 transition-all duration-300 animate-fadeIn'>
+            {/* Enhanced decorative elements */}
+            <div className='absolute top-0 right-0 w-40 h-40 -mt-16 -mr-16 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full opacity-10 animate-pulse-slow'></div>
+            <div className='absolute bottom-0 left-0 w-48 h-48 -mb-20 -ml-20 bg-gradient-to-tr from-blue-400 to-indigo-500 rounded-full opacity-10 animate-pulse-slow delay-1000'></div>
+            <div className='absolute top-1/3 left-2/3 w-24 h-24 bg-gradient-to-r from-yellow-300 to-orange-400 rounded-full opacity-5 animate-float-medium'></div>
 
-            {/* Header section */}
-            <div className='p-5'>
-                <h2 className='text-3xl font-bold mt-0 text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600'>
-                    Add Fun Stickers
-                </h2>
+            {/* Light rays */}
+            <div className='absolute inset-0 pointer-events-none overflow-hidden'>
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(236,72,153,0.1),transparent_30%)]'></div>
+                <div className='absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(79,70,229,0.1),transparent_30%)]'></div>
             </div>
 
-            <div className='p-6 sm:p-8'>
+            {/* Shimmer effect */}
+            <div className='absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-10 -translate-x-full animate-shimmer'></div>
+
+            {/* Enhanced header section */}
+            <div className='relative z-10 pt-6 pb-2 px-5'>
+                <div className='flex items-center justify-center mb-2'>
+                    <div className='p-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 shadow-lg mr-3'>
+                        <Sticker size={24} className='text-white' />
+                    </div>
+                    <h2 className='text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600 animate-gradient'>
+                        Add Fun Stickers
+                    </h2>
+                </div>
+                <p className='text-center text-gray-600 max-w-lg mx-auto'>
+                    Drag, resize and rotate stickers to make your photos even more awesome!
+                </p>
+            </div>
+
+            <div className='p-6 sm:p-8 relative z-10'>
                 <div className='flex flex-col lg:flex-row gap-8 mb-6'>
-                    {/* Preview section */}
-                    <div className='lg:w-2/5 flex flex-col justify-start items-center pb-2'>
-                        <div className='flex flex-col items-center mb-4'>
+                    {/* Preview section with enhanced card styling */}
+                    <div className='lg:w-2/5 flex flex-col justify-start items-center'>
+                        <div className='w-full bg-white bg-opacity-70 backdrop-blur-sm rounded-2xl shadow-lg border border-white border-opacity-60 p-4 mb-4 transition-all duration-300 hover:shadow-xl'>
+                            <div className='flex items-center mb-3'>
+                                <Sparkles size={18} className='text-indigo-500 mr-2' />
+                                <h3 className='text-lg font-semibold text-indigo-700'>Photo Preview</h3>
+                            </div>
+
                             <StickerPhotoPreview
                                 previewContainerRef={previewContainerRef}
                                 state={state}
@@ -297,27 +321,92 @@ export default function StickerSection() {
                                 setSelectedStickerIndex={setSelectedStickerIndex}
                             />
 
-                            {/* Sticker editing controls - Always show during drag or selection */}
-                            {(selectedStickerIndex !== null || draggingIndex !== null) && (
-                                <StickerEditor
-                                    // If dragging, use that index, otherwise use selected index
-                                    selectedStickerIndex={draggingIndex !== null ? draggingIndex : selectedStickerIndex}
-                                    resizeSticker={resizeSticker}
-                                    rotateSticker={rotateSticker}
-                                    removeSticker={removeSticker}
-                                />
+                            {/* Improved sticker editing controls with transition */}
+                            <div
+                                className={`mt-4 overflow-hidden transition-all duration-300 ${
+                                    selectedStickerIndex !== null || draggingIndex !== null
+                                        ? 'max-h-40 opacity-100'
+                                        : 'max-h-0 opacity-0'
+                                }`}
+                            >
+                                {(selectedStickerIndex !== null || draggingIndex !== null) && (
+                                    <StickerEditor
+                                        selectedStickerIndex={
+                                            draggingIndex !== null ? draggingIndex : selectedStickerIndex
+                                        }
+                                        resizeSticker={resizeSticker}
+                                        rotateSticker={rotateSticker}
+                                        removeSticker={removeSticker}
+                                    />
+                                )}
+                            </div>
+
+                            {/* Helper text */}
+                            {appliedStickers.length > 0 && selectedStickerIndex === null && (
+                                <p className='text-center text-sm text-gray-500 mt-3 animate-fadeIn'>
+                                    <span className='inline-block animate-bounce mr-1'>👆</span>
+                                    Tap any sticker to edit it
+                                </p>
                             )}
                         </div>
                     </div>
 
-                    {/* Stickers panel */}
+                    {/* Stickers panel with enhanced styling */}
                     <div className='lg:w-3/5'>
-                        <StickerGallery addSticker={addSticker} />
+                        <div className='bg-white bg-opacity-70 backdrop-blur-sm rounded-2xl shadow-lg border border-white border-opacity-60 p-4 transition-all duration-300 hover:shadow-xl'>
+                            <div className='flex items-center mb-3'>
+                                <Sticker size={18} className='text-indigo-500 mr-2' />
+                                <h3 className='text-lg font-semibold text-indigo-700'>Sticker Collection</h3>
+                            </div>
+                            <StickerGallery addSticker={addSticker} />
+                        </div>
                     </div>
                 </div>
 
-                {/* Navigation buttons */}
-                <StickerNavigationButtons goBackToCustomize={goBackToCustomize} continueToPayment={continueToPayment} />
+                {/* Enhanced navigation buttons */}
+                <div className='relative z-10 mt-6'>
+                    <StickerNavigationButtons
+                        goBackToCustomize={goBackToCustomize}
+                        continueToPayment={continueToPayment}
+                    />
+                </div>
+
+                {/* Pro tips section */}
+                <div className='mt-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 border border-indigo-100 shadow-sm'>
+                    <h4 className='font-semibold text-indigo-700 mb-2 flex items-center'>
+                        <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            width='16'
+                            height='16'
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            stroke='currentColor'
+                            strokeWidth='2'
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            className='mr-2'
+                        >
+                            <circle cx='12' cy='12' r='10'></circle>
+                            <line x1='12' y1='16' x2='12' y2='12'></line>
+                            <line x1='12' y1='8' x2='12.01' y2='8'></line>
+                        </svg>
+                        Pro Tips
+                    </h4>
+                    <ul className='text-sm text-gray-700 space-y-1'>
+                        <li className='flex items-start'>
+                            <span className='text-indigo-500 mr-1'>•</span>
+                            Drag stickers to position them perfectly
+                        </li>
+                        <li className='flex items-start'>
+                            <span className='text-indigo-500 mr-1'>•</span>
+                            Use the resize buttons to make stickers bigger or smaller
+                        </li>
+                        <li className='flex items-start'>
+                            <span className='text-indigo-500 mr-1'>•</span>
+                            Rotate stickers for more creative possibilities
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     );
