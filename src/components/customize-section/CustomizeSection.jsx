@@ -84,7 +84,7 @@ export default function CustomizeSection() {
                         <div>
                             <div className='flex justify-center mb-4'>
                                 <div
-                                    className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[200px]'} mx-auto ${
+                                    className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[160px]'} mx-auto ${
                                         frames.find(f => f.id === selectedFrame)?.class
                                     } transform transition-all duration-500 hover:scale-105`}
                                 >
@@ -172,14 +172,12 @@ export default function CustomizeSection() {
                 </div>
 
                 {/* Navigation buttons - UPDATED TO USE REUSABLE COMPONENT */}
-                <div className='mt-6'>
-                    <NavigationButtons
-                        onBackClick={() => dispatch({ type: ActionTypes.SET_VIEW, payload: 'preview' })}
-                        onContinueClick={continueToStickers}
-                        backText='Back to Photos'
-                        continueText='Continue to Stickers'
-                    />
-                </div>
+                <NavigationButtons
+                    onBackClick={() => dispatch({ type: ActionTypes.SET_VIEW, payload: 'preview' })}
+                    onContinueClick={continueToStickers}
+                    backText='Back to Photos'
+                    continueText='Continue to Stickers'
+                />
             </div>
         </div>
     );

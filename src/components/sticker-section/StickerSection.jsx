@@ -353,14 +353,12 @@ export default function StickerSection() {
                 </div>
 
                 {/* Enhanced navigation buttons - UPDATED TO USE REUSABLE COMPONENT */}
-                <div className='relative z-10 mt-6'>
-                    <NavigationButtons
-                        onBackClick={goBackToCustomize}
-                        onContinueClick={continueToPayment}
-                        backText='Back to Customize'
-                        continueText='Continue to Payment'
-                    />
-                </div>
+                <NavigationButtons
+                    onBackClick={goBackToCustomize}
+                    onContinueClick={continueToPayment}
+                    backText='Back to Customize'
+                    continueText='Continue to Payment'
+                />
             </div>
         </div>
     );
