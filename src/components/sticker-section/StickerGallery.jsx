@@ -104,7 +104,7 @@ export default function StickerGallery({ addSticker }) {
                                 <div className='w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center mr-2'>
                                     <X size={14} className='text-indigo-600' />
                                 </div>
-                                <span className='text-sm text-indigo-700'>Tap X to remove</span>
+                                <span className='text-sm text-indigo-700'>Tap X to remove sticker</span>
                             </div>
                         </div>
                     </div>
