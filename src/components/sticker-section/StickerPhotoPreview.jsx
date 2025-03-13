@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 
 export default function StickerPhotoPreview({
     previewContainerRef,
@@ -11,6 +11,39 @@ export default function StickerPhotoPreview({
 }) {
     // Check if we're in single mode
     const isSingleMode = state.photoMode === 'single';
+
+    // Refs for sticker elements to attach non-passive touch listeners
+    const stickerRefs = useRef(new Map());
+
+    // Set up non-passive touch event listeners for stickers
+    useEffect(() => {
+        // Clean up previous listeners
+        stickerRefs.current.forEach((element, index) => {
+            if (element) {
+                element.removeEventListener('touchstart', element._touchStartHandler);
+            }
+        });
+
+        // Set up new listeners
+        stickerRefs.current.forEach((element, index) => {
+            if (element) {
+                // Create the handler and store it on the element for cleanup
+                element._touchStartHandler = e => handleDragStart(e, index);
+
+                // Add the non-passive event listener
+                element.addEventListener('touchstart', element._touchStartHandler, { passive: false });
+            }
+        });
+
+        // Cleanup on unmount
+        return () => {
+            stickerRefs.current.forEach(element => {
+                if (element) {
+                    element.removeEventListener('touchstart', element._touchStartHandler);
+                }
+            });
+        };
+    }, [appliedStickers, handleDragStart]);
 
     return (
         <div
@@ -70,8 +103,13 @@ export default function StickerPhotoPreview({
                             top: `${sticker.y}px`,
                             zIndex: 100 + index,
                         }}
+                        ref={el => {
+                            if (el) stickerRefs.current.set(index, el);
+                            else stickerRefs.current.delete(index);
+                        }}
                         onMouseDown={e => handleDragStart(e, index)}
-                        onTouchStart={e => handleDragStart(e, index)}
+                        // Remove the inline touch handler as we're handling it with addEventListener
+                        // onTouchStart={e => handleDragStart(e, index)}
                         onClick={e => selectSticker(index, e)}
                     >
                         <img

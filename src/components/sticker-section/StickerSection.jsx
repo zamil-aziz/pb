@@ -52,9 +52,11 @@ export default function StickerSection() {
         });
     };
 
-    // Handle sticker drag start
+    // Handle sticker drag start - UPDATED
     const handleDragStart = (e, index) => {
-        e.preventDefault();
+        if (e.cancelable) {
+            e.preventDefault();
+        }
 
         // Get sticker position
         const sticker = appliedStickers[index];
