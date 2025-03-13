@@ -4,8 +4,8 @@ import { PhotoboothContext, ActionTypes } from '../../contexts/PhotoboothContext
 import StickerPhotoPreview from './StickerPhotoPreview';
 import StickerEditor from './StickerEditor';
 import StickerGallery from './StickerGallery';
-import StickerNavigationButtons from './StickerNavigationButtons';
-import { Sparkles, Sticker } from 'lucide-react';
+import NavigationButtons from '../../components/NavigationButtons';
+import { Sticker } from 'lucide-react';
 
 export default function StickerSection() {
     const { state, dispatch } = useContext(PhotoboothContext);
@@ -352,11 +352,13 @@ export default function StickerSection() {
                     </div>
                 </div>
 
-                {/* Enhanced navigation buttons */}
+                {/* Enhanced navigation buttons - UPDATED TO USE REUSABLE COMPONENT */}
                 <div className='relative z-10 mt-6'>
-                    <StickerNavigationButtons
-                        goBackToCustomize={goBackToCustomize}
-                        continueToPayment={continueToPayment}
+                    <NavigationButtons
+                        onBackClick={goBackToCustomize}
+                        onContinueClick={continueToPayment}
+                        backText='Back to Customize'
+                        continueText='Continue to Payment'
                     />
                 </div>
             </div>

@@ -1,6 +1,7 @@
 'use client';
 import { useContext, useState } from 'react';
 import { PhotoboothContext, ActionTypes } from '../contexts/PhotoboothContext';
+import NavigationButtons from '../components/NavigationButtons';
 
 export default function PhotoModeSelector() {
     const { state, dispatch } = useContext(PhotoboothContext);
@@ -183,19 +184,14 @@ export default function PhotoModeSelector() {
                 </div>
             </div>
 
-            <div className='grid grid-cols-2 gap-6 max-w-2xl mx-auto'>
-                <button
-                    onClick={goBack}
-                    className='bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-lg transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2'
-                >
-                    Back
-                </button>
-                <button
-                    onClick={continueToCamera}
-                    className='bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-lg transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2'
-                >
-                    Continue
-                </button>
+            {/* Updated navigation buttons */}
+            <div>
+                <NavigationButtons
+                    onBackClick={goBack}
+                    onContinueClick={continueToCamera}
+                    backText='Back'
+                    continueText='Continue'
+                />
             </div>
 
             {/* Print Quantity Popup - Updated to blur background instead of black overlay */}

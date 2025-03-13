@@ -1,6 +1,7 @@
 'use client';
 import { useContext, useState } from 'react';
 import { PhotoboothContext, ActionTypes } from '../contexts/PhotoboothContext';
+import NavigationButtons from '../components/NavigationButtons';
 
 export default function PhotoPreview() {
     const { state, dispatch } = useContext(PhotoboothContext);
@@ -161,30 +162,18 @@ export default function PhotoPreview() {
                 </p>
             </div>
 
-            {/* Updated buttons to match ControlButtons style */}
-            <div className='grid grid-cols-2 gap-2 sm:gap-4 mt-4'>
-                <button
-                    onClick={() => {
+            {/* Updated buttons using the NavigationButtons component */}
+            <div className='mt-4'>
+                <NavigationButtons
+                    onBackClick={() => {
                         dispatch({ type: ActionTypes.CLEAR_PHOTOS });
                         dispatch({ type: ActionTypes.SET_VIEW, payload: 'camera' });
                     }}
-                    className='bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 sm:py-3 md:py-4 px-4 sm:px-5 md:px-6 rounded-lg sm:rounded-xl text-sm sm:text-base md:text-xl shadow-lg transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50'
-                    aria-label='Retake photos'
-                >
-                    Retake Photos
-                </button>
-                <button
-                    onClick={continueWithSelected}
-                    disabled={selectedPhotos.length !== requiredPhotos}
-                    className={`bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-2 sm:py-3 md:py-4 px-4 sm:px-5 md:px-6 rounded-lg sm:rounded-xl text-sm sm:text-base md:text-xl shadow-lg transform transition-all duration-300 ${
-                        selectedPhotos.length === requiredPhotos
-                            ? 'hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50'
-                            : 'opacity-50 cursor-not-allowed'
-                    }`}
-                    aria-label='Continue with selected photos'
-                >
-                    Continue with Selected
-                </button>
+                    onContinueClick={continueWithSelected}
+                    backText='Retake Photos'
+                    continueText='Continue with Selected'
+                    continueDisabled={selectedPhotos.length !== requiredPhotos}
+                />
             </div>
         </div>
     );

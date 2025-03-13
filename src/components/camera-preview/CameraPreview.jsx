@@ -7,7 +7,7 @@ import { useFaceMesh } from '../../hooks/useFaceMesh';
 import { Camera } from './Camera';
 import { BackgroundsPanel } from './BackgroundPanels';
 import { AccessoriesPanel } from './AccessoriesPanel';
-import { ControlButtons } from './ControlButtons';
+import NavigationButtons from '../../components/NavigationButtons';
 import { Footer } from './Footer';
 import { ImageIcon, Sparkles } from 'lucide-react';
 
@@ -80,6 +80,16 @@ export default function CameraPreview() {
         }
     }, [state.selectedBackground, state.selectedAccessory, videoRef.current, canvasRef.current]);
 
+    // Handler for the back button
+    const handleGoBack = () => {
+        dispatch({ type: 'SET_VIEW', payload: 'photoMode' });
+    };
+
+    // Handler for the take photos button
+    const handleTakePhotos = () => {
+        dispatch({ type: 'SET_VIEW', payload: 'countdown' });
+    };
+
     return (
         <div className='p-4 max-w-full w-full sm:max-w-2xl md:max-w-4xl mx-auto bg-white bg-opacity-90 backdrop-blur-sm rounded-xl sm:rounded-2xl md:rounded-3xl shadow-xl sm:shadow-2xl border border-white border-opacity-40 relative h-full flex flex-col overflow-hidden'>
             {/* Decorative elements */}
@@ -146,7 +156,16 @@ export default function CameraPreview() {
                 </div>
             </div>
 
-            <ControlButtons dispatch={dispatch} />
+            {/* NavigationButtons directly integrated, replacing ControlButtons */}
+            <div className='mt-auto flex-shrink-0 mb-2 sm:mb-3'>
+                <NavigationButtons
+                    onBackClick={handleGoBack}
+                    onContinueClick={handleTakePhotos}
+                    backText='Go Back'
+                    continueText='Take Photos'
+                    className='mb-0'
+                />
+            </div>
 
             <Footer state={state} />
         </div>
