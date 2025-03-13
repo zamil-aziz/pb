@@ -37,17 +37,7 @@ export const Camera = ({ videoRef, canvasRef, isLoading, state, modelLoaded, err
             {/* Container for camera and overlays */}
             <div className='relative w-full h-full'>
                 {/* Video feed */}
-                <video
-                    ref={videoRef}
-                    autoPlay
-                    playsInline
-                    className='w-full h-full object-cover rounded-xl'
-                    style={
-                        state.selectedFilter
-                            ? state.availableFilters.find(f => f.id === state.selectedFilter)?.style
-                            : {}
-                    }
-                />
+                <video ref={videoRef} autoPlay playsInline className='w-full h-full object-cover rounded-xl' />
 
                 {/* Face-tracking accessory */}
                 {state.selectedAccessory && facePoints && (
@@ -62,11 +52,6 @@ export const Camera = ({ videoRef, canvasRef, isLoading, state, modelLoaded, err
                 <canvas
                     ref={canvasRef}
                     className={state.selectedBackground ? 'w-full h-full object-cover absolute top-0 left-0' : 'hidden'}
-                    style={
-                        state.selectedFilter
-                            ? state.availableFilters.find(f => f.id === state.selectedFilter)?.style
-                            : {}
-                    }
                 />
             </div>
 
