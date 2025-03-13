@@ -88,7 +88,7 @@ export default function CustomizeSection() {
 
                             <div className='flex justify-center mb-4'>
                                 <div
-                                    className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[200px]'} mx-auto ${
+                                    className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[170px]'} mx-auto ${
                                         frames.find(f => f.id === selectedFrame)?.class
                                     } transform transition-all duration-500 hover:scale-105`}
                                 >
