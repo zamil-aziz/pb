@@ -9,6 +9,10 @@ export default function StickerGallery({ addSticker }) {
     const availableStickers = [
         { id: 'heart', name: 'Heart', url: '/stickers/heart.png' },
         // Uncomment when more stickers are available
+        { id: 'cat-ears', name: 'Cat Ears', url: '/stickers/cat-ears.png' },
+        { id: 'glasses', name: 'Glasses', url: '/stickers/glasses.png' },
+        { id: 'cowboy-hat', name: 'Cat Ears', url: '/stickers/cowboy-hat.png' },
+
         // { id: 'star', name: 'Star', url: '/stickers/star.png' },
         // { id: 'balloon', name: 'Balloon', url: '/stickers/balloon.png' },
     ];
