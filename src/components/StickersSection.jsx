@@ -95,14 +95,19 @@ export default function StickersSection() {
         const updatedStickers = [...appliedStickers];
         const sticker = updatedStickers[draggingIndex];
 
-        // Add boundary checks
-        const maxX = containerRect.width - sticker.width;
-        const maxY = containerRect.height - sticker.height;
+        // Set even boundaries on all sides (50% outside on any edge)
+        // For left and top edges
+        const minX = -(sticker.width / 2);
+        const minY = -(sticker.height / 2);
+
+        // For right and bottom edges
+        const maxX = containerRect.width - sticker.width / 2;
+        const maxY = containerRect.height - sticker.height / 2;
 
         updatedStickers[draggingIndex] = {
             ...sticker,
-            x: Math.max(0, Math.min(newX, maxX)),
-            y: Math.max(0, Math.min(newY, maxY)),
+            x: Math.max(minX, Math.min(newX, maxX)),
+            y: Math.max(minY, Math.min(newY, maxY)),
         };
 
         // Update local state only during drag
@@ -215,14 +220,15 @@ export default function StickersSection() {
             <div className='p-6 sm:p-8'>
                 <div className='flex flex-col lg:flex-row gap-8 mb-6'>
                     {/* Preview section */}
-                    <div className='lg:w-2/5 flex flex-col justify-start items-center'>
-                        <div className='flex justify-center mb-4'>
-                            <div onClick={() => setSelectedStickerIndex(null)} className='relative'>
+                    <div className='lg:w-2/5 flex flex-col justify-start items-center pb-2'>
+                        <div className='flex flex-col items-center mb-4'>
+                            <div className='relative'>
                                 <div
                                     ref={previewContainerRef}
-                                    className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[260px]'} mx-auto ${
+                                    onClick={() => setSelectedStickerIndex(null)}
+                                    className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[210px]'} mx-auto ${
                                         state.selectedFrame ? state.selectedFrame : 'classic'
-                                    } transform transition-all duration-500 hover:scale-105`}
+                                    } transform transition-all duration-500 hover:scale-105 overflow-hidden`}
                                 >
                                     <div className={`flex flex-col gap-2 p-3 ${isSingleMode ? 'pb-16' : ''}`}>
                                         {state.selectedPhotos &&
@@ -252,48 +258,62 @@ export default function StickersSection() {
                                     </div>
 
                                     {/* Stickers overlay */}
-                                    {appliedStickers.map((sticker, index) => (
-                                        <div
-                                            key={sticker.id}
-                                            className={`absolute cursor-move ${
-                                                selectedStickerIndex === index
-                                                    ? 'ring-2 ring-indigo-500 ring-offset-2'
-                                                    : ''
-                                            }`}
-                                            style={{
-                                                width: `${sticker.width}px`,
-                                                height: `${sticker.height}px`,
-                                                left: `${sticker.x}px`,
-                                                top: `${sticker.y}px`,
-                                                zIndex: 100 + index,
-                                            }}
-                                            onMouseDown={e => handleDragStart(e, index)}
-                                            onTouchStart={e => handleDragStart(e, index)}
-                                            onClick={e => selectSticker(index, e)}
-                                        >
-                                            <img
-                                                src={sticker.url}
-                                                alt={`Sticker ${index + 1}`}
-                                                className='w-full h-full object-contain pointer-events-none'
-                                                draggable='false'
-                                            />
-                                        </div>
-                                    ))}
+                                    {appliedStickers.map((sticker, index) => {
+                                        // Check if sticker is completely outside the container
+                                        const containerWidth = previewContainerRef.current?.offsetWidth || 0;
+                                        const containerHeight = previewContainerRef.current?.offsetHeight || 0;
+                                        const isOutside =
+                                            sticker.x >= containerWidth ||
+                                            sticker.y >= containerHeight ||
+                                            sticker.x + sticker.width <= 0 ||
+                                            sticker.y + sticker.height <= 0;
+
+                                        // Only render stickers that are at least partially inside the container
+                                        if (isOutside) return null;
+
+                                        return (
+                                            <div
+                                                key={sticker.id}
+                                                className={`absolute cursor-move ${
+                                                    selectedStickerIndex === index
+                                                        ? 'ring-2 ring-indigo-500 ring-offset-2'
+                                                        : ''
+                                                }`}
+                                                style={{
+                                                    width: `${sticker.width}px`,
+                                                    height: `${sticker.height}px`,
+                                                    left: `${sticker.x}px`,
+                                                    top: `${sticker.y}px`,
+                                                    zIndex: 100 + index,
+                                                }}
+                                                onMouseDown={e => handleDragStart(e, index)}
+                                                onTouchStart={e => handleDragStart(e, index)}
+                                                onClick={e => selectSticker(index, e)}
+                                            >
+                                                <img
+                                                    src={sticker.url}
+                                                    alt={`Sticker ${index + 1}`}
+                                                    className='w-full h-full object-contain pointer-events-none'
+                                                    draggable='false'
+                                                />
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
 
                             {/* Sticker editing controls */}
                             {selectedStickerIndex !== null && (
-                                <div className='mt-4 flex flex-wrap gap-2 justify-center p-3 bg-gray-100 rounded-xl'>
+                                <div className='mt-4 flex flex-wrap gap-4 justify-center p-4 bg-gray-100 rounded-xl'>
                                     <button
                                         onClick={() => resizeSticker(selectedStickerIndex, -5)}
-                                        className='p-2 bg-white rounded-full shadow-sm hover:bg-gray-50'
+                                        className='p-4 bg-white rounded-full shadow hover:bg-gray-50 active:bg-gray-100 touch-manipulation'
                                         title='Make smaller'
                                     >
                                         <svg
                                             xmlns='http://www.w3.org/2000/svg'
-                                            width='20'
-                                            height='20'
+                                            width='24'
+                                            height='24'
                                             viewBox='0 0 24 24'
                                             fill='none'
                                             stroke='currentColor'
@@ -306,13 +326,13 @@ export default function StickersSection() {
                                     </button>
                                     <button
                                         onClick={() => resizeSticker(selectedStickerIndex, 5)}
-                                        className='p-2 bg-white rounded-full shadow-sm hover:bg-gray-50'
+                                        className='p-4 bg-white rounded-full shadow hover:bg-gray-50 active:bg-gray-100 touch-manipulation'
                                         title='Make larger'
                                     >
                                         <svg
                                             xmlns='http://www.w3.org/2000/svg'
-                                            width='20'
-                                            height='20'
+                                            width='24'
+                                            height='24'
                                             viewBox='0 0 24 24'
                                             fill='none'
                                             stroke='currentColor'
@@ -326,10 +346,10 @@ export default function StickersSection() {
                                     </button>
                                     <button
                                         onClick={() => removeSticker(selectedStickerIndex)}
-                                        className='p-2 bg-white rounded-full shadow-sm hover:bg-red-50 text-red-500'
+                                        className='p-4 bg-white rounded-full shadow hover:bg-red-50 active:bg-red-100 text-red-500 touch-manipulation'
                                         title='Remove sticker'
                                     >
-                                        <X size={20} />
+                                        <X size={24} />
                                     </button>
                                 </div>
                             )}
@@ -391,7 +411,7 @@ export default function StickersSection() {
                 </div>
 
                 {/* Navigation buttons */}
-                <div className='grid grid-cols-2 gap-4 mt-6'>
+                <div className='grid grid-cols-2 gap-4'>
                     <button
                         onClick={() => dispatch({ type: ActionTypes.SET_VIEW, payload: 'customize' })}
                         className='group bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white font-bold py-4 px-6 rounded-xl text-base md:text-lg shadow-lg transition-all duration-300 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 relative overflow-hidden'
