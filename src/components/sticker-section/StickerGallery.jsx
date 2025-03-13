@@ -14,7 +14,7 @@ export default function StickerGallery({ addSticker }) {
     ];
 
     return (
-        <div className='bg-white p-6 rounded-2xl shadow-lg border border-gray-100'>
+        <div className='bg-white p-4 rounded-2xl shadow-lg border border-gray-100'>
             <div className='flex items-center mb-4'>
                 <Sticker size={20} className='mr-2 text-indigo-600' />
                 <h3 className='text-xl font-semibold text-indigo-700'>Available Stickers</h3>
