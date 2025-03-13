@@ -28,6 +28,7 @@ const initialState = {
     availableBackgrounds: [],
     selectedFilter: null,
     selectedAccessory: null, // New property for selected accessory
+    selectedFrame: 'classic', // Added default frame value
     availableFilters: [
         { id: 'normal', name: 'Normal', style: {} },
         { id: 'grayscale', name: 'Retro', style: { filter: 'grayscale(100%)' } },

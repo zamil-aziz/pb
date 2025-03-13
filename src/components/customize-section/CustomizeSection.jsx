@@ -23,8 +23,11 @@ export default function CustomizeSection() {
         dispatch({ type: ActionTypes.SET_FILTER, payload: filterId });
     };
 
-    const continueToPayment = () => {
-        dispatch({ type: ActionTypes.SET_FRAME, payload: selectedFrame });
+    const continueToStickers = () => {
+        // Get the frame class from the selected frame ID
+        const frameClass = frames.find(f => f.id === selectedFrame)?.class || 'classic';
+        // Store the frame class instead of just the ID
+        dispatch({ type: ActionTypes.SET_FRAME, payload: frameClass });
         dispatch({ type: ActionTypes.SET_VIEW, payload: 'stickers' });
     };
 
@@ -152,7 +155,7 @@ export default function CustomizeSection() {
                         <span className='absolute inset-0 bg-gradient-to-r from-gray-600 to-gray-700 opacity-0 group-hover:opacity-30 transition-opacity duration-300'></span>
                     </button>
                     <button
-                        onClick={continueToPayment}
+                        onClick={continueToStickers}
                         className='group bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl text-base md:text-lg shadow-lg transition-all duration-300 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 relative overflow-hidden'
                     >
                         <span className='relative z-10 flex items-center justify-center gap-2'>
