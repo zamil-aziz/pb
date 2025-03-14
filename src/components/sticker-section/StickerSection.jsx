@@ -258,9 +258,9 @@ export default function StickerSection() {
         };
     }, [draggingIndex, appliedStickers, dragOffset]);
 
-    // Continue to payment function
-    const continueToPayment = () => {
-        dispatch({ type: ActionTypes.SET_VIEW, payload: 'payment' });
+    // Continue to final product function
+    const continueToFinalProduct = () => {
+        dispatch({ type: ActionTypes.SET_VIEW, payload: 'finalProduct' });
     };
 
     // Go back to customize function
@@ -344,12 +344,12 @@ export default function StickerSection() {
                     </div>
                 </div>
 
-                {/* Enhanced navigation buttons - UPDATED TO USE REUSABLE COMPONENT */}
+                {/* Enhanced navigation buttons - UPDATED DESTINATION */}
                 <NavigationButtons
                     onBackClick={goBackToCustomize}
-                    onContinueClick={continueToPayment}
+                    onContinueClick={continueToFinalProduct}
                     backText='Back to Customize'
-                    continueText='Continue to Payment'
+                    continueText='Review Your Creation'
                 />
             </div>
         </div>

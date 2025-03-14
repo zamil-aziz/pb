@@ -7,6 +7,7 @@ import CountdownTimer from '../components/CountdownTimer';
 import PhotoPreview from '../components/PhotoPreview';
 import CustomizeSection from '../components/customize-section/CustomizeSection';
 import StickerSection from '../components/sticker-section/StickerSection';
+import FinalProduct from '../components/FinalProduct';
 import PaymentProcessor from '../components/PaymentProcessor';
 import PrintManager from '../components/PrintManager';
 import ThankYou from '../components/ThankYou';
@@ -246,12 +247,13 @@ export default function Photobooth() {
                         </button>
                     </div>
                 )}
-                {state.currentView === 'photoMode' && <PhotoModeSelector />}{' '}
+                {state.currentView === 'photoMode' && <PhotoModeSelector />}
                 {state.currentView === 'camera' && <CameraPreview />}
                 {state.currentView === 'countdown' && <CountdownTimer />}
                 {state.currentView === 'preview' && <PhotoPreview />}
                 {state.currentView === 'customize' && <CustomizeSection />}
                 {state.currentView === 'stickers' && <StickerSection />}
+                {state.currentView === 'finalProduct' && <FinalProduct />}
                 {state.currentView === 'payment' && <PaymentProcessor />}
                 {state.currentView === 'printing' && <PrintManager />}
                 {state.currentView === 'thankyou' && <ThankYou />}
