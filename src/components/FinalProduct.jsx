@@ -171,7 +171,7 @@ export default function FinalProduct() {
             </header>
 
             <main className='p-6 sm:p-8 relative z-10'>
-                <div className='flex flex-col lg:flex-row gap-8 mb-4'>
+                <div className='flex flex-col lg:flex-row gap-8 mb-8'>
                     {/* Preview section - Left side (2/5 width on large screens) */}
                     <section className='lg:w-2/5 flex flex-col justify-start items-center'>
                         <div
