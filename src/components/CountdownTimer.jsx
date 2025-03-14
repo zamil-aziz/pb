@@ -88,8 +88,8 @@ export default function CountdownTimer() {
     useEffect(() => {
         if (countdown > 0) {
             // TODO: reset the countdown to 3 after 1 second
-            // const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-            const timer = setTimeout(() => setCountdown(countdown - 1), 1);
+            const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+            // const timer = setTimeout(() => setCountdown(countdown - 1), 1);
             return () => clearTimeout(timer);
         } else if (countdown === 0) {
             // Show "Smile!" message
