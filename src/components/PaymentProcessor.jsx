@@ -159,12 +159,12 @@ export default function PaymentProcessor() {
             {/* Back Button with enhanced styling */}
             <div className='mt-6'>
                 <button
-                    onClick={() => dispatch({ type: 'SET_VIEW', payload: 'stickers' })}
+                    onClick={() => dispatch({ type: 'SET_VIEW', payload: 'finalProduct' })}
                     disabled={isProcessing}
                     className='w-full bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-lg transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 flex items-center justify-center'
                 >
                     <ArrowLeft size={20} className='mr-3' />
-                    Back to Stickers
+                    Back to Final Preview
                 </button>
             </div>
         </div>
