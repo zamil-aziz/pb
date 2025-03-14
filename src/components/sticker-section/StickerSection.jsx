@@ -349,7 +349,7 @@ export default function StickerSection() {
                     onBackClick={goBackToCustomize}
                     onContinueClick={continueToFinalProduct}
                     backText='Back to Customize'
-                    continueText='Review Your Creation'
+                    continueText='Finalize Your Creation'
                 />
             </div>
         </div>

@@ -218,7 +218,7 @@ export default function CustomizeSection() {
                 <NavigationButtons
                     onBackClick={() => dispatch({ type: ActionTypes.SET_VIEW, payload: 'preview' })}
                     onContinueClick={continueToStickers}
-                    backText='Back to Photos'
+                    backText='Back to Photo Selection'
                     continueText='Continue to Stickers'
                 />
             </div>
