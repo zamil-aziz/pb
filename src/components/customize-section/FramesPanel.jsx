@@ -25,7 +25,16 @@ export const FramesPanel = ({ frames, selectedFrame, onFrameSelect, isSingleMode
                     >
                         {/* Fixed height preview for mini frame examples */}
                         <div className='h-24 mb-3 overflow-hidden rounded-lg shadow-sm group-hover:shadow-md transition-shadow duration-300'>
-                            <div className={`h-full w-full ${frame.class} bg-gray-50`}>
+                            <div className={`h-full w-full ${frame.class} bg-gray-50 relative`}>
+                                {/* Add rendering for PNG frames in preview */}
+                                {frame.type === 'png' && (
+                                    <img
+                                        src={frame.imgSrc}
+                                        alt={`${frame.name} frame`}
+                                        className='absolute inset-0 w-full h-full object-contain pointer-events-none'
+                                    />
+                                )}
+
                                 <div className='h-full flex flex-col p-1 relative'>
                                     {/* Mini representation of photos based on mode */}
                                     {isSingleMode ? (

@@ -54,11 +54,22 @@ export default function CustomizeSection() {
 
     const continueToStickers = () => {
         // Get the frame class from the selected frame ID
-        const frameClass = frames.find(f => f.id === selectedFrame)?.class || 'classic';
-        // Store the frame class instead of just the ID
-        dispatch({ type: ActionTypes.SET_FRAME, payload: frameClass });
+        const selectedFrameObj = frames.find(f => f.id === selectedFrame);
+        const frameClass = selectedFrameObj?.class || 'classic';
+
+        // Also store the frame type and image source if it's a PNG frame
+        const framePayload =
+            selectedFrameObj.type === 'png'
+                ? { class: frameClass, type: 'png', imgSrc: selectedFrameObj.imgSrc }
+                : frameClass;
+
+        // Store the frame information
+        dispatch({ type: ActionTypes.SET_FRAME, payload: framePayload });
         dispatch({ type: ActionTypes.SET_VIEW, payload: 'stickers' });
     };
+
+    // Get the current selected frame object
+    const currentFrame = frames.find(f => f.id === selectedFrame) || frames[0];
 
     return (
         <div className='w-full max-w-5xl mx-auto bg-white bg-opacity-90 backdrop-blur-lg rounded-3xl shadow-2xl border border-white border-opacity-40 relative overflow-hidden p-0 transition-all duration-300 animate-fadeIn'>
@@ -100,9 +111,19 @@ export default function CustomizeSection() {
                                 <div
                                     ref={previewContainerRef}
                                     className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[160px]'} mx-auto ${
-                                        frames.find(f => f.id === selectedFrame)?.class
+                                        currentFrame.class
                                     } transform transition-all duration-500 hover:scale-105`}
                                 >
+                                    {/* Render PNG frame if the current frame is a PNG type */}
+                                    {currentFrame.type === 'png' && (
+                                        <img
+                                            src={currentFrame.imgSrc}
+                                            alt='Frame border'
+                                            className='absolute inset-0 w-full h-full object-contain pointer-events-none z-10'
+                                            draggable='false'
+                                        />
+                                    )}
+
                                     <div className={`flex flex-col gap-2 p-3 ${isSingleMode ? 'pb-16' : ''}`}>
                                         {state.selectedPhotos &&
                                             state.selectedPhotos.map((photo, index) => (

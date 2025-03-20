@@ -10,7 +10,7 @@ export const ActionTypes = {
     SET_PHOTO_MODE: 'SET_PHOTO_MODE',
     SET_BACKGROUND: 'SET_BACKGROUND',
     SET_FILTER: 'SET_FILTER',
-    SET_ACCESSORY: 'SET_ACCESSORY', // New action type for accessories
+    SET_ACCESSORY: 'SET_ACCESSORY',
     SET_BACKGROUNDS: 'SET_BACKGROUNDS',
     ADD_PHOTO: 'ADD_PHOTO',
     CLEAR_PHOTOS: 'CLEAR_PHOTOS',
@@ -29,6 +29,8 @@ const initialState = {
     selectedFilter: null,
     selectedAccessory: null, // New property for selected accessory
     selectedFrame: 'classic', // Added default frame value
+    frameType: 'css', // Added frame type property
+    frameImgSrc: null, // Added for PNG frame source
     availableFilters: [
         { id: 'normal', name: 'Normal', style: {} },
         { id: 'grayscale', name: 'Retro', style: { filter: 'grayscale(100%)' } },
@@ -100,7 +102,7 @@ function reducer(state, action) {
                 selectedFilter: action.payload,
                 lastActivityTime: Date.now(),
             };
-        case ActionTypes.SET_ACCESSORY: // New case for accessory selection
+        case ActionTypes.SET_ACCESSORY:
             return {
                 ...state,
                 selectedAccessory: action.payload,
@@ -136,11 +138,24 @@ function reducer(state, action) {
                 lastActivityTime: Date.now(),
             };
         case ActionTypes.SET_FRAME:
-            return {
-                ...state,
-                selectedFrame: action.payload,
-                lastActivityTime: Date.now(),
-            };
+            // Updated to handle both CSS-only frames and PNG frames
+            if (typeof action.payload === 'object' && action.payload.type === 'png') {
+                return {
+                    ...state,
+                    selectedFrame: action.payload.class,
+                    frameType: 'png',
+                    frameImgSrc: action.payload.imgSrc,
+                    lastActivityTime: Date.now(),
+                };
+            } else {
+                return {
+                    ...state,
+                    selectedFrame: action.payload,
+                    frameType: 'css',
+                    frameImgSrc: null,
+                    lastActivityTime: Date.now(),
+                };
+            }
         case ActionTypes.SET_APPLIED_STICKERS:
             return {
                 ...state,
