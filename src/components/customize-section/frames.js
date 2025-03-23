@@ -6,6 +6,7 @@ export const frames = [
         previewClass: 'bg-gradient-to-r from-white to-gray-100',
         description: 'Timeless white frame that complements any photo style',
         type: 'css',
+        color: 'bg-white', // Default white background
     },
     {
         id: 'pngFrame',
@@ -15,5 +16,6 @@ export const frames = [
         description: 'Custom PNG frame with decorative border',
         type: 'png',
         imgSrc: '/frames/cinnamoroll.png',
+        color: 'bg-pink-200', // Light pink background for Cinnamoroll
     },
 ];

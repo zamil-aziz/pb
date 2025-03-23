@@ -57,10 +57,15 @@ export default function CustomizeSection() {
         const selectedFrameObj = frames.find(f => f.id === selectedFrame);
         const frameClass = selectedFrameObj?.class || 'classic';
 
-        // Also store the frame type and image source if it's a PNG frame
+        // Also store the frame type, image source, and color if it's a PNG frame
         const framePayload =
             selectedFrameObj.type === 'png'
-                ? { class: frameClass, type: 'png', imgSrc: selectedFrameObj.imgSrc }
+                ? {
+                      class: frameClass,
+                      type: 'png',
+                      imgSrc: selectedFrameObj.imgSrc,
+                      color: selectedFrameObj.color || 'bg-white',
+                  }
                 : frameClass;
 
         // Store the frame information
@@ -114,12 +119,15 @@ export default function CustomizeSection() {
                         <div>
                             <div className='flex justify-center mb-4'>
                                 <div ref={previewContainerRef} className={frameContainerClasses}>
+                                    {/* Color background div */}
+                                    <div className={`absolute inset-0 ${currentFrame.color || 'bg-white'} z-0`}></div>
+
                                     {/* Render PNG frame if the current frame is a PNG type */}
                                     {currentFrame.type === 'png' && (
                                         <img
                                             src={currentFrame.imgSrc}
                                             alt='Frame border'
-                                            className='absolute inset-0 w-full h-full object-cover pointer-events-none z-10'
+                                            className='absolute inset-0 w-full h-full object-cover pointer-events-none z-20'
                                             style={{ objectFit: 'fill', objectPosition: 'center' }}
                                             draggable='false'
                                         />
@@ -128,7 +136,7 @@ export default function CustomizeSection() {
                                     <div
                                         className={`flex flex-col gap-2 p-3 w-full h-full ${
                                             isSingleMode ? 'pb-16' : ''
-                                        }`}
+                                        } relative z-5`}
                                     >
                                         {state.selectedPhotos &&
                                             state.selectedPhotos.map((photo, index) => (
