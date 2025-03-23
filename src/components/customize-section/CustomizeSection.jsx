@@ -120,23 +120,25 @@ export default function CustomizeSection() {
                             <div className='flex justify-center mb-4'>
                                 <div ref={previewContainerRef} className={frameContainerClasses}>
                                     {/* Color background div */}
-                                    <div className={`absolute inset-0 ${currentFrame.color || 'bg-white'} z-0`}></div>
+                                    <div className={`absolute inset-0 ${currentFrame.color || 'bg-white'} z-1`}></div>
 
                                     {/* Render PNG frame if the current frame is a PNG type */}
                                     {currentFrame.type === 'png' && (
-                                        <img
-                                            src={currentFrame.imgSrc}
-                                            alt='Frame border'
-                                            className='absolute inset-0 w-full h-full object-cover pointer-events-none z-20'
-                                            style={{ objectFit: 'fill', objectPosition: 'center' }}
-                                            draggable='false'
-                                        />
+                                        <div className='absolute inset-0 w-full h-full z-30 pointer-events-none'>
+                                            <img
+                                                src={currentFrame.imgSrc}
+                                                alt='Frame border'
+                                                className='w-full h-full'
+                                                style={{ objectFit: 'fill' }}
+                                                draggable='false'
+                                            />
+                                        </div>
                                     )}
 
                                     <div
                                         className={`flex flex-col gap-2 p-3 w-full h-full ${
                                             isSingleMode ? 'pb-16' : ''
-                                        } relative z-5`}
+                                        } relative z-10`}
                                     >
                                         {state.selectedPhotos &&
                                             state.selectedPhotos.map((photo, index) => (
