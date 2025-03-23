@@ -71,6 +71,11 @@ export default function CustomizeSection() {
     // Get the current selected frame object
     const currentFrame = frames.find(f => f.id === selectedFrame) || frames[0];
 
+    // Define fixed dimensions for the frame container with padding adjustments
+    const frameContainerClasses = `relative ${isSingleMode ? 'w-[340px] h-[460px]' : 'w-[160px]'} mx-auto ${
+        currentFrame.class
+    } transform transition-all duration-500 hover:scale-105`;
+
     return (
         <div className='w-full max-w-5xl mx-auto bg-white bg-opacity-90 backdrop-blur-lg rounded-3xl shadow-2xl border border-white border-opacity-40 relative overflow-hidden p-0 transition-all duration-300 animate-fadeIn'>
             {/* Enhanced decorative elements */}
@@ -108,23 +113,23 @@ export default function CustomizeSection() {
                     <div className='lg:w-2/5 flex flex-col justify-start items-center'>
                         <div>
                             <div className='flex justify-center mb-4'>
-                                <div
-                                    ref={previewContainerRef}
-                                    className={`relative ${isSingleMode ? 'max-w-[340px]' : 'max-w-[160px]'} mx-auto ${
-                                        currentFrame.class
-                                    } transform transition-all duration-500 hover:scale-105`}
-                                >
+                                <div ref={previewContainerRef} className={frameContainerClasses}>
                                     {/* Render PNG frame if the current frame is a PNG type */}
                                     {currentFrame.type === 'png' && (
                                         <img
                                             src={currentFrame.imgSrc}
                                             alt='Frame border'
-                                            className='absolute inset-0 w-full h-full object-contain pointer-events-none z-10'
+                                            className='absolute inset-0 w-full h-full object-cover pointer-events-none z-10'
+                                            style={{ objectFit: 'fill', objectPosition: 'center' }}
                                             draggable='false'
                                         />
                                     )}
 
-                                    <div className={`flex flex-col gap-2 p-3 ${isSingleMode ? 'pb-16' : ''}`}>
+                                    <div
+                                        className={`flex flex-col gap-2 p-3 w-full h-full ${
+                                            isSingleMode ? 'pb-16' : ''
+                                        }`}
+                                    >
                                         {state.selectedPhotos &&
                                             state.selectedPhotos.map((photo, index) => (
                                                 <div
