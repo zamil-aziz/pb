@@ -28,4 +28,24 @@ export const frames = [
         imgSrc: '/frames/kuromi.png',
         color: 'bg-purple-100', // Updated to light lavender color
     },
+    {
+        id: 'cat',
+        name: 'Frame 3',
+        class: 'bg-transparent', // Minimal base styling for PNG frames
+        previewClass: 'bg-gradient-to-r from-blue-400 to-cyan-500',
+        description: 'Custom PNG frame with cat theme',
+        type: 'png',
+        imgSrc: '/frames/cat.png',
+        color: 'bg-blue-100', // Light blue background
+    },
+    {
+        id: 'jjk',
+        name: 'Frame 4',
+        class: 'bg-transparent', // Minimal base styling for PNG frames
+        previewClass: 'bg-gradient-to-r from-red-500 to-purple-600',
+        description: 'Custom PNG frame with JJK anime theme',
+        type: 'png',
+        imgSrc: '/frames/jjk2.png',
+        color: 'bg-black', // Light gray background
+    },
 ];
