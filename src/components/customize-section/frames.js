@@ -9,13 +9,23 @@ export const frames = [
         color: 'bg-white', // Default white background
     },
     {
-        id: 'pngFrame',
-        name: 'Custom Frame',
+        id: 'cinnamoroll',
+        name: 'Frame 1',
         class: 'bg-transparent', // Minimal base styling for PNG frames
         previewClass: 'bg-gradient-to-r from-yellow-400 to-amber-500',
         description: 'Custom PNG frame with decorative border',
         type: 'png',
         imgSrc: '/frames/cinnamoroll.png',
+        color: 'bg-purple-100', // Updated to light lavender color
+    },
+    {
+        id: 'kuromi',
+        name: 'Frame 2',
+        class: 'bg-transparent', // Minimal base styling for PNG frames
+        previewClass: 'bg-gradient-to-r from-yellow-400 to-amber-500',
+        description: 'Custom PNG frame with decorative border',
+        type: 'png',
+        imgSrc: '/frames/kuromi.png',
         color: 'bg-purple-100', // Updated to light lavender color
     },
 ];
