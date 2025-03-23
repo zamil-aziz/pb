@@ -16,6 +16,6 @@ export const frames = [
         description: 'Custom PNG frame with decorative border',
         type: 'png',
         imgSrc: '/frames/cinnamoroll.png',
-        color: 'bg-pink-200', // Light pink background for Cinnamoroll
+        color: 'bg-purple-100', // Updated to light lavender color
     },
 ];
